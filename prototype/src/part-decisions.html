@@ -1,0 +1,118 @@
+<section class="decisions" id="g-decisions">
+  <h2>方案已确认</h2>
+  <p class="lead">桌面版有 7 个侧边栏页面，手机按「使用频率 + 上下文」重排为 5 个 Tab。下面记录已经落定的结构、移动端取舍与全部已确认方案。</p>
+
+  <div class="group-label" style="font-size:13px;color:var(--text2);padding:0 0 10px">信息架构</div>
+  <div class="decision" style="margin-bottom:22px">
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px 28px;font-size:12.5px;line-height:1.9;color:var(--text2)">
+      <div>
+        <b style="color:var(--text)">TabView（5 Tab）</b><br>
+        ├─ 记录 <span class="muted">观影 / 读书 · 已看 / 想看 · 搜索 · 详情（资源）· 补录 · 同步</span><br>
+        ├─ 豆列 <span class="muted">影视 / 书籍 · 详情 · 条目信息</span><br>
+        ├─ 计划 <span class="muted">观影 / 读书 · 文件夹 · 详情 · 从想读/豆列添加</span><br>
+        ├─ 报告 <span class="muted">月报 / 年报 / 自定义 / 全部 · 预览 · 批量</span><br>
+        └─ 设置 <span class="muted">外观 · Excel · 云同步 · 字数 · 登录 · 探索空间 · 回收站</span>
+      </div>
+      <div>
+        <b style="color:var(--text)">从桌面映射</b><br>
+        观影记录 + 读书记录 → 记录（分段切换）<br>
+        我的豆列 → 豆列<br>
+        我的计划 → 计划<br>
+        报告中心 → 报告<br>
+        应用设置 + 回收站 → 设置（回收站二级页）
+      </div>
+    </div>
+  </div>
+
+  <div class="group-label" style="font-size:13px;color:var(--text2);padding:0 0 10px">已确认的设计决策</div>
+  <div class="decision-grid">
+    <div class="decision">
+      <h3><span class="idx">01</span>5 Tab，不做中央「＋」</h3>
+      <p>唯一需要「新建」的是记录，但同步豆瓣才是核心动作；中央按钮会误导成记账式唯一入口。新增放在记录页标题栏，同步固定在记录页右上。</p>
+      <div class="rec">记录 / 豆列 / 计划 / 报告 / 设置，与桌面 7 个页面的信息层级一一对应。</div>
+    </div>
+    <div class="decision">
+      <h3><span class="idx">02</span>海报墙 3 列</h3>
+      <p>桌面 5 列在 390pt 宽度下只能显示 2 列半；3 列能同时保留日期分组、标题两行与星级，接近豆瓣 App 的浏览手感。</p>
+      <div class="rec">封面 2:3，卡片内显示评分角标、标题 2 行、时长/字数与星级。</div>
+    </div>
+    <div class="decision">
+      <h3><span class="idx">03</span>详情与编辑用半屏浮层</h3>
+      <p>浏览时点卡片先看详情，不离开海报墙；详情里再进编辑。浮层可下拉关闭，返回时保留列表滚动位置。</p>
+      <div class="rec">长评在浮层内滚动，操作固定为豆瓣页面 / 换封面 / 删除。</div>
+    </div>
+    <div class="decision">
+      <h3><span class="idx">04</span>本地优先规则显式呈现</h3>
+      <p>桌面「本地改过的日期、评分、短评不被覆盖」在手机上容易被忽略。用封面右上金点 + 编辑页说明 + 「恢复豆瓣原始时间」开关把规则讲清楚。</p>
+      <div class="rec">金点 = 本地修改；开关关闭时同步不会覆盖本地值。</div>
+    </div>
+    <div class="decision">
+      <h3><span class="idx">05</span>同步方式与范围一次选择</h3>
+      <p>三种同步方式在手机上用单选行呈现，默认「增量 + 新增并移除」；观影 / 读书 / 豆列可分别勾选，避免每次全量。</p>
+      <div class="rec">同步结果在同一浮层展示新增 / 更新 / 移除与耗时。</div>
+    </div>
+    <div class="decision">
+      <h3><span class="idx">06</span>报告复用桌面 HTML</h3>
+      <p>报告版式复杂（TOP 5、整合海报、日历、短评），用 SwiftUI 重写成本高且容易走样。iOS 生成同一份 HTML，用 WKWebView 预览，PNG 由 WebView 快照导出。</p>
+      <div class="rec">已确认：PNG 用 WebView 快照，超过 12000px 自动分段；HTML 始终保留。</div>
+    </div>
+    <div class="decision">
+      <h3><span class="idx">07</span>云同步走「文件」里的 iCloud Drive</h3>
+      <p>不接 CloudKit：快照是整库 SQLite，与桌面共用同一套「同步目录 + latest.json + 多份快照」逻辑，Mac 与 iPhone 可互相恢复。</p>
+      <div class="rec">每台设备 3 份自动 + 2 份手动；恢复前先备份本机数据库。</div>
+    </div>
+    <div class="decision">
+      <h3><span class="idx">08</span>字数统计不依赖 Calibre</h3>
+      <p>iOS 无法运行 Calibre。直接解析「文件」中的 EPUB / TXT / DOCX；MOBI / AZW3 提示先转换格式。手动字数始终优先。</p>
+      <div class="rec">统计结果写回记录，并随快照同步到其他设备。</div>
+    </div>
+    <div class="decision">
+      <h3><span class="idx">09</span>回收站与彻底删除</h3>
+      <p>回收站放在设置内（低频但重要），记录 / 豆列 / 计划共用。彻底删除留标记，避免下次同步被加回，也能随 Excel 导入到其他设备。</p>
+      <div class="rec">已确认：留在设置内，不做一级入口；删除 Toast 提供「撤销」。</div>
+    </div>
+    <div class="decision">
+      <h3><span class="idx">10</span>深色优先，但跟随系统</h3>
+      <p>桌面主打暗色 + 金色；移动端默认跟随系统，设置里可强制浅色 / 深色。海报本身是彩色，暗色模式只换界面与描边，不改变封面。</p>
+      <div class="rec">主色 #E8B65C；已读 #688A4A，想看 #B86F30，统计 #2E8775；深色为墨蓝 + 香槟金。</div>
+    </div>
+    <div class="decision">
+      <h3><span class="idx">11</span>登录：WKWebView + Keychain</h3>
+      <p>豆瓣没有 OAuth 回调，Safari 登录后的 Cookie 也无法交给 App。改为 App 内 WKWebView 承载豆瓣登录页，成功后读取 Cookie 存本机 Keychain；Safari 打开与粘贴 Cookie 仅作兜底。</p>
+      <div class="rec">默认 App 内扫码/账号登录；Safari 兜底需手动复制 Cookie，两者都不上传服务器。</div>
+    </div>
+    <div class="decision">
+      <h3><span class="idx">12</span>探索空间：GitHub 下发 + 连通性</h3>
+      <p>远端站点列表由 GitHub 的 sites.json 下发；本地可新增站点并标「本地」，拉取不覆盖。左上角「拉取」更新列表，「刷新」并发探测连通性，绿勾 / 红叉对应可达与不可达。点链接复制完整地址并 Toast。</p>
+      <div class="rec">远端配置只读 + 本地缓存；拉取失败沿用旧配置；长链接按可用宽度自动省略。</div>
+    </div>
+    <div class="decision">
+      <h3><span class="idx">13</span>详情页「资源」：searchUrl 直达</h3>
+      <p>已看与想看的记录详情都放同一个「资源」入口。配置里的 searchUrl 支持 {title}，有模板就带标题打开站内结果页；没有模板或站点异常则打开首页，豆瓣条目兜底。</p>
+      <div class="rec">只做 URL 模板跳转，不注入 Cookie、不模拟站内表单。</div>
+    </div>
+    <div class="decision">
+      <h3><span class="idx">14</span>布局与字号范式</h3>
+      <p>全屏页固定头 250pt（约 30%）：状态栏、标题、筛选、摘要不滚动；下方滚动区约 70%，底部统一 24pt。正文 16，行标题 16，辅助 14，元信息 12.5，标签 10.5–12；3 列海报标题 13.5 为密度例外。</p>
+      <div class="rec">新页面统一 .page-head + .body.scroll；浮层统一 .sheet-head + .sheet-body；不要把筛选器或摘要放进滚动区。</div>
+    </div>
+  </div>
+
+  <div class="group-label" style="font-size:13px;color:var(--text2);padding:26px 0 10px">数据模型建议</div>
+  <div class="decision" style="margin-bottom:22px">
+    <table class="map-table">
+      <thead><tr><th>桌面 SQLite</th><th>iOS SwiftData</th><th>说明</th></tr></thead>
+      <tbody>
+        <tr><td>records</td><td>@Model Record</td><td>mediaType、status、subjectId、markedDate、effectiveDate、rating、comment、coverPath、wordCount、bookFile、各类 overridden 标记</td></tr>
+        <tr><td>doulists / doulist_items</td><td>Doulist / DoulistItem</td><td>条目按 mediaType 过滤；本地时长、页数、字数写在 item 上</td></tr>
+        <tr><td>plan_folders / plan_items</td><td>PlanFolder / PlanItem</td><td>folder 带 note 与 sort；item 带 position、source（wish / doulist / manual）</td></tr>
+        <tr><td>settings</td><td>@AppStorage + Settings</td><td>豆瓣 ID、Cookie、同步方式、外观等；Cookie 存 Keychain 更合适</td></tr>
+        <tr><td>ignored_subjects / book_meta / book_words</td><td>同表或 Record 字段</td><td>换源忽略、页数固化、豆列字数，随快照与 Excel 一起迁移</td></tr>
+        <tr><td>SQLite 快照 + latest.json</td><td>文件包快照</td><td>导出为 zip / 单文件快照，写入用户选择的 iCloud Drive 目录</td></tr>
+        <tr><td>GitHub sites.json</td><td>ExploreConfig / ExploreSite / LocalExploreSite</td><td>version、movie / book 分组、name / url / searchUrl；远端缓存只读，本地站点合并展示</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="board-foot" style="padding:38px 0 0">静态原型 · 数据均为示意 · 交互说明见每屏下方注释 · 2026-11-22</div>
+</section>

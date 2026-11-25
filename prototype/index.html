@@ -1,0 +1,2554 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>书影记录 · iOS App 原型 v2</title>
+<script>
+  (function () {
+    var params = new URLSearchParams(location.search);
+    var theme = params.get('theme') || localStorage.getItem('bookfilm-theme') || 'light';
+    document.documentElement.dataset.theme = theme;
+  })();
+</script>
+<style>
+:root{
+  --fs-display:30px; --fs-h1:22px; --fs-h2:19px; --fs-title:17px; --fs-body:16px; --fs-body-sm:14px; --fs-caption:12.5px; --fs-micro:10.5px;
+  --head-h:250px; --scroll-inset:24px;
+  --board-bg:#EAE5DB; --bg:#F7F3EA; --surface:#FFFCF6; --surface2:#FBF7EF; --subtle:#F2ECE1;
+  --track:#EBE4D8; --divider-soft:#F1EBE0; --border:#E7DFD2; --border-strong:#D9CFBE; --board-border:#D6CBBA;
+  --text:#211E18; --text2:#5E574A; --text3:#8B8273; --text4:#B0A695;
+  --gold:#9A6211; --gold-deep:#7C4D08; --gold-soft:#F9ECD2; --gold-border:#E7CFA2; --gold-bright:#E8B65C;
+  --teal:#2E8775; --teal-soft:#E1F1EC; --read:#688A4A; --read-soft:#EDF2E3; --wish:#B86F30; --wish-soft:#F9EEE3;
+  --danger:#C54949; --danger-soft:#FBEDEC; --star:#D89A2A;
+  --chevron:#C0B7A7; --grabber:#D5CCBC; --homebar:#15130F;
+  --seg-bg:#EFE8DC; --toggle-off:#D8CFC0; --scrim:rgba(26,22,16,.46);
+  --nav-bg:rgba(255,252,246,.88); --tabbar-bg:rgba(255,252,246,.94); --sheet-bg:#F8F4EC;
+  --header-bg:radial-gradient(120% 145% at 88% 0%,#F8E3BC 0%,#FCF7ED 46%,#F6F1E7 100%),radial-gradient(70% 90% at 0% 110%,rgba(46,135,117,.12),transparent 62%);
+  --rpt-bg:#14110C; --rpt-card:#1E1A12; --rpt-line:#322B1F; --rpt-text:#F0E8D7; --rpt-gold:#E8BC6B; --rpt-muted:#968B74;
+}
+:root[data-theme="dark"]{
+  --board-bg:#0A0D13; --bg:#12161F; --surface:#1A1F2A; --surface2:#1F2430; --subtle:#232935;
+  --track:#2C3341; --divider-soft:#242A35; --border:#2A3140; --border-strong:#374055; --board-border:#242B38;
+  --text:#F2EBDD; --text2:#C3BBA9; --text3:#8E94A3; --text4:#697080;
+  --gold:#E9BE70; --gold-deep:#F4D495; --gold-soft:#30291A; --gold-border:#554727; --gold-bright:#E9BE70;
+  --teal:#5CBBA7; --teal-soft:#1B302C; --read:#94C477; --read-soft:#28321E; --wish:#E2A46C; --wish-soft:#392A1B;
+  --danger:#FF7F87; --danger-soft:#39222A; --star:#E9BE70;
+  --chevron:#5B6272; --grabber:#3C4350; --homebar:#F2EBDD;
+  --seg-bg:#252B36; --toggle-off:#414A5C; --scrim:rgba(0,0,0,.58);
+  --nav-bg:rgba(18,22,31,.88); --tabbar-bg:rgba(26,31,42,.94); --sheet-bg:#1A1F29;
+  --header-bg:radial-gradient(120% 145% at 88% 0%,#3B2F19 0%,#181D28 48%,#0E1219 100%),radial-gradient(70% 90% at 0% 110%,rgba(92,187,167,.08),transparent 62%);
+  --rpt-bg:#0F1117; --rpt-card:#1A1C21; --rpt-line:#2D2B26; --rpt-text:#F0E8D7; --rpt-gold:#E9BE70; --rpt-muted:#8C8573;
+}
+*{box-sizing:border-box;-webkit-font-smoothing:antialiased}
+html,body{margin:0}
+body{background:var(--board-bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","PingFang SC","Helvetica Neue",Arial,sans-serif}
+
+/* ---------- board ---------- */
+.board-header{padding:56px 56px 34px;background:var(--header-bg);border-bottom:1px solid var(--border-strong)}
+.brand{display:flex;align-items:center;gap:10px;font-size:14px;font-weight:600;letter-spacing:.02em;color:var(--gold)}
+.brand img{width:32px;height:32px;border-radius:10px;box-shadow:0 2px 6px rgba(30,22,10,.18)}
+.brand .en{color:var(--text3);font-weight:500}
+.board-header h1{margin:18px 0 8px;font-size:38px;line-height:1.15;letter-spacing:-.02em}
+.board-header .sub{margin:0;max-width:800px;font-size:15px;line-height:1.68;color:var(--text2)}
+.meta{display:flex;flex-wrap:wrap;gap:8px;margin-top:22px}
+.pill{font-size:12px;color:var(--text2);background:var(--surface);border:1px solid var(--border-strong);border-radius:999px;padding:6px 12px}
+.pill b{color:var(--text);font-weight:600}
+
+.board-nav{position:sticky;top:0;z-index:20;display:flex;gap:6px;flex-wrap:wrap;padding:12px 56px;background:var(--nav-bg);backdrop-filter:blur(18px);border-bottom:1px solid var(--border-strong)}
+.board-nav a,.board-nav a:visited{font-size:13px;color:var(--text2);text-decoration:none;padding:7px 14px;border-radius:8px}
+.board-nav a:hover{background:var(--gold-soft);color:var(--gold-deep)}
+
+main{padding:20px 56px}
+.group{padding:34px 0 26px;border-bottom:1px dashed var(--board-border);scroll-margin-top:64px}
+.group:last-child{border-bottom:none}
+.group-head{display:flex;align-items:flex-end;gap:14px;margin-bottom:26px}
+.group-num{font-size:13px;font-weight:700;color:var(--gold);background:var(--gold-soft);border-radius:8px;padding:5px 9px;letter-spacing:.04em}
+.group-head h2{margin:0;font-size:24px;letter-spacing:-.01em}
+.group-head p{margin:0 0 2px;font-size:13px;color:var(--text3);line-height:1.5}
+
+.screens{display:flex;flex-wrap:wrap;gap:44px 34px;align-items:flex-start}
+figure{margin:0;width:390px;display:flex;flex-direction:column;gap:12px}
+figcaption{font-size:12.5px;line-height:1.62;color:var(--text2);background:var(--surface);border:1px solid var(--border-strong);border-radius:12px;padding:11px 13px}
+figcaption b{display:block;margin-bottom:3px;font-size:13px;color:var(--text);font-weight:600}
+.tagline{display:inline-block;font-size:11px;font-weight:600;color:var(--gold);background:var(--gold-soft);border-radius:5px;padding:1px 6px;margin-left:6px;vertical-align:1px}
+
+/* ---------- phone ---------- */
+.phone{position:relative;width:390px;height:844px;flex:0 0 auto;overflow:hidden;background:var(--bg);border-radius:44px;display:flex;flex-direction:column;box-shadow:0 0 0 10px #1B1F27,0 0 0 11px #3B4250,0 28px 56px rgba(20,23,32,.22)}
+.sb{height:54px;flex:0 0 54px;display:flex;align-items:flex-end;justify-content:space-between;padding:0 26px 8px;font-size:15px;font-weight:600;letter-spacing:.01em;color:var(--text)}
+.sb-icons{display:flex;align-items:center;gap:5px}
+.sb-icons svg{height:11px;width:auto;fill:currentColor}
+.sb-icons .battery{height:12px}
+
+.nav{flex:0 0 44px;display:flex;align-items:center;justify-content:space-between;padding:0 16px;gap:8px}
+.nav-title{font-size:var(--fs-title);font-weight:600;letter-spacing:.01em}
+.nav .link{font-size:16px;color:var(--gold)}
+.nav .link.muted{color:var(--text2)}
+.nav .icons{display:flex;gap:15px;color:var(--text)}
+.nav .icons svg,.nav .back svg{width:22px;height:22px}
+.nav .back{display:flex;align-items:center;gap:2px;font-size:16px;color:var(--gold);margin-left:-4px}
+
+.ico{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;flex:0 0 auto}
+.ico.sm{width:18px;height:18px}
+.ico.xs{width:15px;height:15px;stroke-width:1.8}
+.ico.ss{width:13px;height:13px;stroke-width:1.9}
+.chev{color:var(--chevron)}
+
+.large{padding:2px 18px 8px;display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
+.large h3{margin:0;font-size:var(--fs-display);font-weight:700;letter-spacing:-.02em;display:flex;align-items:center;gap:6px}
+.large .cap{margin-top:4px;font-size:12.5px;color:var(--text3)}
+.large .icons{display:flex;gap:16px;margin-top:4px}
+.large .icons svg{width:22px;height:22px}
+
+.body{flex:1;min-height:0;overflow:hidden;padding:0 16px var(--scroll-inset)}
+.body.scroll{overflow-y:auto;scrollbar-width:none;padding-bottom:var(--scroll-inset)}
+.body.scroll::-webkit-scrollbar{display:none}
+
+.card{background:var(--surface);border:1px solid var(--border);border-radius:16px}
+.muted{color:var(--text3)}
+.nums{font-variant-numeric:tabular-nums}
+.b600{font-weight:600}
+.gold{color:var(--gold)} .teal{color:var(--teal)} .read{color:var(--read)} .wish{color:var(--wish)} .danger{color:var(--danger)}
+
+/* ---------- headers / segmented ---------- */
+.title-row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:0 16px 10px}
+.seg{display:flex;background:var(--seg-bg);border-radius:10px;padding:3px;flex:1}
+.seg span{flex:1;text-align:center;padding:7px 0;border-radius:8px;font-size:14px;font-weight:600;color:var(--text2);white-space:nowrap}
+.seg .on{background:var(--surface);color:var(--text);box-shadow:0 1px 3px rgba(27,31,39,.12)}
+.seg.gold .on{background:var(--gold-bright);color:#211806;box-shadow:0 2px 6px rgba(165,118,34,.24)}
+.seg.sm span{font-size:12.5px;padding:5px 0}
+.seg.fit{flex:0 0 auto}
+.seg.fit span{flex:0 0 auto;padding-left:19px;padding-right:19px}
+
+.chips{display:flex;flex-wrap:wrap;gap:7px}
+.chips.hscroll{flex-wrap:nowrap;overflow-x:auto;overflow-y:hidden;scrollbar-width:none;padding-bottom:2px}
+.chips.hscroll::-webkit-scrollbar{display:none}
+.chip{font-size:13px;color:var(--text2);background:var(--surface);border:1px solid var(--border-strong);border-radius:999px;padding:5px 11px;display:flex;align-items:center;gap:5px;white-space:nowrap}
+.chip.on{background:var(--gold-soft);border-color:var(--gold-border);color:var(--gold-deep);font-weight:600}
+.chip .n{font-size:10.5px;color:var(--text3)}
+.chips.row{flex-wrap:nowrap;overflow:hidden}
+
+.icon-btn{width:34px;height:34px;border-radius:10px;background:var(--subtle);display:grid;place-items:center;color:var(--text)}
+.sync-btn{display:inline-flex;align-items:center;gap:5px;height:34px;padding:0 12px;border-radius:9px;background:var(--gold-soft);border:1px solid var(--gold-border);color:var(--gold-deep);font-size:13px;font-weight:600;flex:0 0 auto}
+.sync-btn .ico{width:15px;height:15px;stroke-width:1.9}
+.icon-btn.gold{background:var(--gold-bright);color:#211806}
+.btn{display:flex;align-items:center;justify-content:center;gap:7px;height:48px;border-radius:13px;font-size:16px;font-weight:600;background:var(--surface);border:1px solid var(--border-strong);color:var(--text)}
+.btn.primary{background:linear-gradient(135deg,#F4D083,#BC7C1D);border-color:transparent;color:#211806;box-shadow:0 8px 18px rgba(150,96,18,.28)}
+.btn.teal{background:var(--teal);border-color:transparent;color:#fff}
+.btn.ghost{background:var(--subtle);border-color:transparent;color:var(--text2)}
+.btn.danger{color:var(--danger);border-color:var(--border-strong)}
+.btn.sm{height:36px;font-size:14px;border-radius:10px}
+.btn.xs{height:30px;font-size:12.5px;border-radius:9px;padding:0 10px}
+.btn .ico{width:16px;height:16px}
+
+/* ---------- poster wall ---------- */
+.day-head{display:flex;align-items:center;justify-content:space-between;padding:15px 2px 9px;font-size:12.5px;color:var(--text3)}
+.day-head .l{display:flex;align-items:center;gap:7px}
+.day-head .d{font-size:13px;font-weight:600;color:var(--text2)}
+.day-head .sum{font-variant-numeric:tabular-nums}
+.wall{display:grid;grid-template-columns:repeat(3,1fr);gap:14px 10px}
+.pitem{min-width:0}
+.poster{position:relative;border-radius:9px;overflow:hidden;aspect-ratio:2/3;display:flex;flex-direction:column;justify-content:flex-end;padding:9px 8px;color:#fff;background-color:#1A1511;box-shadow:inset 0 0 0 1px rgba(255,255,255,.1),0 4px 12px rgba(40,28,14,.18);isolation:isolate}
+.poster .art{position:absolute;inset:0;width:100%;height:100%;z-index:0}
+.poster::after{content:"";position:absolute;inset:0;z-index:1;background:linear-gradient(180deg,rgba(0,0,0,0) 36%,rgba(0,0,0,.5) 100%),repeating-linear-gradient(0deg,rgba(255,255,255,.022) 0 1px,transparent 1px 3px);pointer-events:none}
+.poster .pt{position:relative;z-index:2;font-size:12.5px;font-weight:700;line-height:1.25;letter-spacing:.02em;text-shadow:0 1px 8px rgba(0,0,0,.5)}
+.poster .pb{position:relative;z-index:2;font-size:5.5px;letter-spacing:.16em;opacity:.66;margin-top:3px;text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.poster .rbadge{position:absolute;top:6px;right:6px;z-index:3;font-size:8px;font-weight:700;color:#241804;background:var(--gold-bright);border-radius:4px;padding:1px 4px;letter-spacing:.02em;box-shadow:0 1px 4px rgba(40,24,4,.25)}
+.poster .wbadge{position:absolute;top:6px;left:6px;z-index:3;font-size:8px;font-weight:600;color:#fff;background:rgba(0,0,0,.4);border-radius:4px;padding:2px 5px;backdrop-filter:blur(4px)}
+.p-title{font-size:13.5px;font-weight:600;line-height:1.32;margin-top:6px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.p-meta{font-size:11.5px;color:var(--text3);margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.p-foot{display:flex;align-items:center;justify-content:space-between;margin-top:3px}
+.stars{color:var(--star);font-size:10.5px;letter-spacing:.4px}
+.p-foot .d{font-size:10.5px;color:var(--text3)}
+.local-dot{display:inline-block;width:5px;height:5px;border-radius:2px;background:var(--gold-bright);vertical-align:1px;margin-left:3px}
+.empty{padding:56px 16px;text-align:center;color:var(--text3);font-size:12.5px;line-height:1.6}
+.note{font-size:var(--fs-caption);color:var(--text3);line-height:1.55;padding:10px 2px 0}
+
+/* movie poster skies (SVG art is layered on top at runtime) */
+.p-a{background:linear-gradient(180deg,#6E1E1A 0%,#3B1210 58%,#140606 100%)}
+.p-a2{background:linear-gradient(180deg,#4A0F12,#1C0908)}
+.p-b{background:linear-gradient(180deg,#0E1B2E,#16324F 55%,#07101C)}
+.p-b2{background:linear-gradient(180deg,#123047,#1B4B63 60%,#07131C)}
+.p-d{background:linear-gradient(180deg,#1B3A2A,#0F241B 60%,#07130E)}
+.p-e{background:linear-gradient(180deg,#2A1B3D,#1A1026 65%,#0C0714)}
+.p-g{background:linear-gradient(180deg,#15303A,#0D2026 65%,#071216)}
+.p-h{background:radial-gradient(60% 38% at 70% 32%,rgba(255,190,120,.3),rgba(255,190,120,0) 65%),linear-gradient(180deg,#7A2A1A 0%,#A34A25 52%,#3A1108 54%,#120403 100%)}
+.p-j{background:linear-gradient(180deg,#3E2E12,#1C1307 70%,#0B0703)}
+.p-k{background:linear-gradient(180deg,#0F2A3A,#081A26 60%,#04101A)}
+.p-k2{background:linear-gradient(180deg,#2A0D08,#160604)}
+.p-m{background:linear-gradient(180deg,#233A2E,#11221A 65%,#07120C)}
+.p-n{background:linear-gradient(180deg,#0E1B2A,#0A1420 60%,#050B12)}
+
+/* poster title typography */
+.poster.p-a .pt,.poster.p-a2 .pt{font-family:"Songti SC","STSong",serif;font-size:14px;line-height:1.34;letter-spacing:.08em}
+.poster.p-j .pt{font-family:"Songti SC","STSong",serif;font-size:13px;letter-spacing:.14em}
+.poster.p-k .pt{font-family:"Songti SC","STSong",serif;font-size:13px;letter-spacing:.1em}
+.poster.p-n .pt{font-family:"Songti SC","STSong",serif;font-size:13px;letter-spacing:.06em}
+
+/* ---------- book covers ---------- */
+.poster.book{justify-content:center;padding:17px 11px;text-align:center;color:#3A2B18;border-radius:6px;box-shadow:inset 0 0 0 1px rgba(255,255,255,.38),0 4px 12px rgba(40,28,14,.18)}
+.poster.book .art{display:none}
+.poster.book::before{content:"";position:absolute;inset:6px;border:1px solid currentColor;opacity:.22;border-radius:2px;z-index:1}
+.poster.book::after{content:"";position:absolute;inset:0;z-index:1;pointer-events:none;background:
+  linear-gradient(90deg,rgba(0,0,0,.16),rgba(0,0,0,0) 9%,rgba(0,0,0,0) 92%,rgba(0,0,0,.12)),
+  radial-gradient(circle at 50% 16%,rgba(255,255,255,.2),rgba(255,255,255,0) 62%),
+  repeating-linear-gradient(0deg,rgba(90,64,30,.022) 0 1px,rgba(90,64,30,0) 1px 5px)}
+.poster.book .pt{position:relative;z-index:2;font-family:"Songti SC","STSong","Noto Serif SC",serif;font-size:12.5px;line-height:1.58;letter-spacing:.08em;text-shadow:none}
+.poster.book .pt::before{content:"";display:block;width:20px;height:1px;background:currentColor;opacity:.5;margin:0 auto 9px}
+.poster.book .pb{position:relative;z-index:2;font-size:5.8px;letter-spacing:.1em;opacity:.7;color:currentColor;margin-top:8px;line-height:1.45;white-space:normal;text-transform:none}
+.poster.book.p-c{background:linear-gradient(155deg,#F8F0DF,#EDDCBA 64%,#E3CEA4);color:#3A2B18}
+.poster.book.p-e{background:radial-gradient(circle at 50% 24%,#463358,#2A2038 62%,#191122);color:#F1E8F7}
+.poster.book.p-f{background:linear-gradient(160deg,#EEDDBE,#DDBF8C 70%,#C9A66C);color:#3B2B18}
+.poster.book.p-i{background:linear-gradient(155deg,#F0EBDD,#E2DAC8 62%,#CEC4AF);color:#2B3529}
+.poster.book.p-j{background:linear-gradient(155deg,#2E2A22,#1F1C16 65%,#14110C);color:#EFC67D}
+.poster.book.p-l{background:linear-gradient(155deg,#D6DFCB,#BFCDB4 62%,#A7B99E);color:#253020}
+.poster.book.p-e::after{background:
+  radial-gradient(circle at 30% 23%,rgba(255,255,255,.7) 0 1px,rgba(255,255,255,0) 1.8px),
+  radial-gradient(circle at 62% 17%,rgba(255,255,255,.6) 0 1px,rgba(255,255,255,0) 1.8px),
+  radial-gradient(circle at 76% 36%,rgba(255,255,255,.55) 0 1px,rgba(255,255,255,0) 1.8px),
+  linear-gradient(118deg,rgba(255,255,255,0) 0 46%,rgba(255,255,255,.18) 46.2% 46.5%,rgba(255,255,255,0) 47%),
+  linear-gradient(90deg,rgba(0,0,0,.16),rgba(0,0,0,0) 9%,rgba(0,0,0,0) 92%,rgba(0,0,0,.12))}
+.poster.book.p-f::after{background:
+  linear-gradient(114deg,rgba(90,60,24,0) 0 54%,rgba(90,60,24,.2) 54.2% 54.7%,rgba(90,60,24,0) 55%),
+  linear-gradient(90deg,rgba(0,0,0,.13),rgba(0,0,0,0) 9%,rgba(0,0,0,0) 92%,rgba(0,0,0,.1))}
+.poster.book.p-i::after{background:
+  radial-gradient(circle at 50% 30%,rgba(60,80,54,0) 0 8%,rgba(60,80,54,.22) 8.6% 9.2%,rgba(60,80,54,0) 9.8%),
+  linear-gradient(118deg,rgba(60,80,54,0) 0 52%,rgba(60,80,54,.18) 52.2% 52.7%,rgba(60,80,54,0) 53%),
+  linear-gradient(90deg,rgba(0,0,0,.11),rgba(0,0,0,0) 9%,rgba(0,0,0,0) 92%,rgba(0,0,0,.09))}
+.poster.book.p-j::after{background:
+  radial-gradient(circle at 74% 22%,rgba(232,188,107,.32) 0 12%,rgba(232,188,107,0) 13%),
+  linear-gradient(90deg,rgba(0,0,0,.28),rgba(0,0,0,0) 10%,rgba(0,0,0,0) 92%,rgba(0,0,0,.2))}
+.poster.book.p-l::after{background:
+  linear-gradient(118deg,rgba(37,48,32,0) 0 56%,rgba(37,48,32,.18) 56.2% 56.6%,rgba(37,48,32,0) 57%),
+  linear-gradient(90deg,rgba(0,0,0,.12),rgba(0,0,0,0) 9%,rgba(0,0,0,0) 92%,rgba(0,0,0,.1))}
+
+/* ---------- sheet ---------- */
+.sheet-scrim{position:absolute;inset:0;background:var(--scrim);backdrop-filter:blur(1.5px);z-index:5}
+.under{position:absolute;inset:0;background:var(--bg);padding:62px 16px 0;display:flex;flex-direction:column;gap:12px;z-index:1;filter:saturate(.9)}
+.under-nav{height:22px;width:132px;border-radius:7px;background:var(--border-strong)}
+.under-block{height:92px;border-radius:15px;background:var(--surface);border:1px solid var(--border)}
+.under-row{height:58px;border-radius:13px;background:var(--surface);border:1px solid var(--border)}
+.under-wall{flex:1;display:grid;grid-template-columns:repeat(3,1fr);gap:12px 10px;align-content:start}
+.under-wall i{display:block;border-radius:8px;aspect-ratio:2/3;opacity:.55;filter:blur(.4px)}
+.under-wall i:nth-child(3n+1){background:linear-gradient(165deg,#7E2B25,#2A1214)}
+.under-wall i:nth-child(3n+2){background:linear-gradient(165deg,#2A4E7C,#0B1524)}
+.under-wall i:nth-child(3n){background:linear-gradient(165deg,#476F52,#16241C)}
+.sheet{position:absolute;left:0;right:0;bottom:0;z-index:6;display:flex;flex-direction:column;background:var(--sheet-bg);border-radius:22px 22px 0 0;overflow:hidden;box-shadow:0 -14px 40px rgba(15,17,21,.26)}
+.grabber{width:36px;height:5px;border-radius:3px;background:var(--grabber);margin:8px auto 0;flex:0 0 auto}
+.sheet-head{flex:0 0 auto;display:flex;align-items:center;justify-content:space-between;padding:10px 18px 12px}
+.sheet-head .st{font-size:17px;font-weight:600}
+.sheet-head .link{font-size:15px;color:var(--text2)}
+.sheet-head .link.strong{color:var(--gold);font-weight:600}
+.sheet-body{flex:1;min-height:0;overflow:hidden;padding:0 16px var(--scroll-inset)}
+.sheet-body.scroll{overflow-y:auto;scrollbar-width:none}
+.sheet-body.scroll::-webkit-scrollbar{display:none}
+
+/* ---------- forms / rows ---------- */
+.group-card{background:var(--surface);border-radius:14px;overflow:hidden;border:1px solid var(--border)}
+.group-label{font-size:12px;font-weight:600;color:var(--text3);padding:15px 6px 7px;letter-spacing:.03em}
+.field{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:13px 15px;background:var(--surface);border-bottom:1px solid var(--divider-soft);font-size:var(--fs-body)}
+.field:last-child{border-bottom:none}
+.field .lb{color:var(--text2);flex:0 0 auto}
+.field .vl{color:var(--text);text-align:right;display:flex;align-items:center;gap:6px;min-width:0}
+.field .fl{display:flex;align-items:center;gap:10px;min-width:0}
+.field .vl.muted{color:var(--text3)}
+.field .sub{font-size:12px;color:var(--text3);margin-top:2px}
+.field .ico{width:18px;height:18px}
+.field .ico.gold{color:var(--gold)}
+.toggle{width:44px;height:26px;border-radius:13px;background:var(--teal);position:relative;flex:0 0 auto}
+.toggle::after{content:"";position:absolute;top:2px;right:2px;width:22px;height:22px;border-radius:11px;background:#fff;box-shadow:0 1px 2px rgba(0,0,0,.2)}
+.toggle.off{background:var(--toggle-off)}
+.toggle.off::after{right:auto;left:2px}
+.toggle.sm{width:36px;height:22px}
+.toggle.sm::after{width:18px;height:18px}
+
+.input{display:flex;align-items:center;gap:8px;background:var(--surface);border:1px solid var(--border-strong);border-radius:11px;padding:11px 13px;font-size:16px;color:var(--text3);overflow:hidden}
+.input span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+.input.on{border-color:var(--gold-border);color:var(--text)}
+.input .ph{color:var(--text4)}
+.searchbar{display:flex;align-items:center;gap:8px;background:var(--subtle);border-radius:10px;padding:10px 12px;font-size:15px;color:var(--text3)}
+.searchbar .ico{width:16px;height:16px;stroke-width:2}
+
+.textarea{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:13px;font-size:16px;line-height:1.62;color:var(--text);min-height:104px}
+.textarea .ph{color:var(--text4)}
+
+/* ---------- tabbar ---------- */
+.tabbar{position:relative;flex:0 0 84px;display:flex;padding:7px 6px 0;border-top:1px solid var(--border);background:var(--tabbar-bg);backdrop-filter:blur(20px)}
+.tab{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;font-size:10.5px;color:var(--text3)}
+.tab svg{width:23px;height:23px}
+.tab.on{color:var(--gold)}
+.homebar{position:absolute;left:50%;bottom:8px;transform:translateX(-50%);width:134px;height:5px;border-radius:3px;background:var(--homebar)}
+
+/* ---------- detail ---------- */
+.detail-top{display:flex;gap:14px}
+.detail-cover{width:118px;flex:0 0 118px;aspect-ratio:2/3;border-radius:9px;position:relative;overflow:hidden;box-shadow:0 6px 16px rgba(10,12,16,.24)}
+.detail-cover .poster{height:100%;aspect-ratio:auto;border-radius:9px}
+.detail-info{flex:1;min-width:0;padding-top:2px}
+.detail-info h4{margin:0;font-size:var(--fs-h1);line-height:1.3;letter-spacing:-.01em}
+.detail-info .sub{margin-top:5px;font-size:13px;color:var(--text3)}
+.kv{display:flex;align-items:baseline;justify-content:space-between;gap:10px;padding:7px 0;border-bottom:1px solid var(--divider-soft);font-size:14.5px}
+.kv:last-child{border-bottom:none}
+.kv .k{color:var(--text3)}
+.kv .v{font-weight:600;text-align:right}
+.comment{margin-top:4px;font-size:var(--fs-body);line-height:1.72;color:var(--text2);white-space:pre-line}
+.section-t{display:flex;align-items:center;justify-content:space-between;font-size:var(--fs-body-sm);font-weight:600;color:var(--text2);padding:16px 2px 8px}
+.section-t .link{font-size:13.5px;font-weight:500;color:var(--gold)}
+
+/* ---------- doulist / plan rows ---------- */
+.dl-card{display:flex;gap:12px;padding:12px;background:var(--surface);border:1px solid var(--border);border-radius:14px;margin-bottom:10px}
+.mosaic{width:84px;flex:0 0 84px;display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;gap:2px;border-radius:8px;overflow:hidden}
+.mosaic .poster{aspect-ratio:auto;border-radius:0;padding:3px;box-shadow:none}
+.mosaic .poster .pt{font-size:6.5px;line-height:1.1}
+.mosaic .poster .pb{display:none}
+.dl-main{flex:1;min-width:0;display:flex;flex-direction:column;justify-content:center}
+.dl-main h5{margin:0;font-size:16px;line-height:1.35;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.dl-main .meta{margin-top:4px;font-size:12.5px;color:var(--text3)}
+.dl-main .tags{margin-top:7px;display:flex;gap:5px;flex-wrap:wrap}
+.tag{display:inline-flex;align-items:center;gap:4px;font-size:10.5px;font-weight:600;border-radius:6px;padding:2px 6px;background:var(--subtle);color:var(--text3)}
+.tag.gold{color:var(--gold-deep);background:var(--gold-soft)}
+.tag.teal{color:var(--teal);background:var(--teal-soft)}
+.tag.read{color:var(--read);background:var(--read-soft)}
+.tag.wish{color:var(--wish);background:var(--wish-soft)}
+
+.row{display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--surface);border:1px solid var(--border);border-radius:13px;margin-bottom:8px}
+.row + .row{margin-top:0}
+.row .thumb{width:42px;flex:0 0 42px;aspect-ratio:2/3;border-radius:6px;overflow:hidden;position:relative}
+.row .thumb .poster{height:100%;aspect-ratio:auto;border-radius:6px;padding:4px}
+.row .thumb .poster .pt{font-size:7px;line-height:1.15}
+.row .thumb .poster .pb{display:none}
+.row-main{flex:1;min-width:0}
+.row-title{font-size:var(--fs-body);font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.row-sub{font-size:12.5px;color:var(--text3);margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.row .right{display:flex;align-items:center;gap:7px;flex:0 0 auto}
+.pos{width:17px;flex:0 0 17px;font-size:10.5px;font-weight:700;color:var(--text4);text-align:center}
+.checkbox{width:22px;height:22px;border-radius:50%;border:1.6px solid var(--border-strong);display:grid;place-items:center;color:transparent;flex:0 0 auto}
+.checkbox.on{background:var(--gold-bright);border-color:var(--gold-bright);color:#211806}
+.checkbox.lock{background:var(--subtle);border-color:var(--border)}
+.checkbox svg{width:13px;height:13px;stroke-width:2.4}
+
+.folder-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.folder{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:8px;display:flex;flex-direction:column;gap:6px}
+.folder .stack{position:relative;aspect-ratio:3/2;border-radius:8px;overflow:hidden;background:var(--subtle)}
+.folder .stack .poster{position:absolute;border-radius:0;aspect-ratio:auto;box-shadow:none}
+.folder .stack .poster.s1{inset:0;width:100%;height:100%;filter:brightness(.8) saturate(.9)}
+.folder .stack .poster.s2{right:6px;bottom:6px;width:37%;height:54%;border-radius:5px;border:1px solid rgba(255,255,255,.32);box-shadow:0 4px 12px rgba(0,0,0,.3)}
+.folder .stack .poster .pt{font-size:8px}
+.folder .stack .poster .pb{display:none}
+.folder .stack::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.08),rgba(0,0,0,.34))}
+.folder h6{margin:2px 2px 0;font-size:14px;line-height:1.35;font-weight:600;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.folder .fm{display:flex;align-items:center;justify-content:space-between;font-size:11px;color:var(--text3);padding:0 2px}
+.progress{height:6px;border-radius:3px;background:var(--track);overflow:hidden}
+.progress .fill{height:100%;border-radius:3px;background:linear-gradient(90deg,#F4D083,#BC7C1D)}
+.progress.teal .fill{background:linear-gradient(90deg,#7AC9B8,var(--teal))}
+
+/* ---------- report ---------- */
+.report-compose{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:13px}
+.compose-row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:8px 0;border-bottom:1px solid var(--divider-soft);font-size:14.5px}
+.compose-row:last-of-type{border-bottom:none}
+.compose-row .lb{color:var(--text2)}
+.compose-row .vl{color:var(--text);font-weight:600;display:flex;align-items:center;gap:5px}
+.report-file{display:flex;align-items:center;gap:11px;padding:11px 12px;background:var(--surface);border:1px solid var(--border);border-radius:13px;margin-bottom:8px}
+.report-file .rf-ico{width:34px;height:34px;border-radius:10px;background:var(--gold-soft);color:var(--gold);display:grid;place-items:center;flex:0 0 auto}
+.report-file .rf-ico svg{width:17px;height:17px}
+.report-file .rf-main{flex:1;min-width:0}
+.report-file .rf-title{font-size:15.5px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.report-file .rf-meta{font-size:11.5px;color:var(--text3);margin-top:2px}
+.report-file .more{color:var(--text3)}
+
+.rpt{background:var(--rpt-bg);color:var(--rpt-text);border-radius:12px;overflow:hidden;padding:16px 14px 18px;position:relative}
+.rpt .rp-top{display:flex;align-items:flex-start;justify-content:space-between}
+.rpt .rp-brand{display:flex;align-items:center;gap:7px;font-size:10px;color:var(--rpt-muted)}
+.rpt .rp-brand i{width:19px;height:19px;border-radius:6px;background:linear-gradient(135deg,#F4D083,#BC7C1D);display:grid;place-items:center;color:#241A08;font-size:9px;font-weight:800;font-style:normal}
+.rpt .rp-brand b{color:var(--rpt-gold);font-weight:700;letter-spacing:.06em;font-size:9.5px}
+.rpt .rp-num{font-size:34px;font-weight:800;letter-spacing:-.03em;color:var(--rpt-gold);line-height:1;font-variant-numeric:tabular-nums}
+.rpt .rp-sub{font-size:8.5px;color:var(--rpt-muted);text-align:right;margin-top:5px}
+.rpt .rp-stats{display:grid;grid-template-columns:4.2fr 3fr 3fr 3fr;gap:1px;background:var(--rpt-line);border:1px solid var(--rpt-line);border-radius:7px;overflow:hidden;margin-top:14px}
+.rpt .rp-stat{background:var(--rpt-card);padding:7px 7px 8px}
+.rpt .rp-stat .k{display:block;font-size:7px;color:var(--rpt-muted);margin-bottom:3px;letter-spacing:.03em}
+.rpt .rp-stat .v{font-size:13px;font-weight:700;color:var(--rpt-gold);font-variant-numeric:tabular-nums}
+.rpt .rp-stat .v small{font-size:7px;color:var(--rpt-muted);font-weight:500;margin-left:2px}
+.rpt .rp-sec{display:flex;align-items:center;gap:6px;margin:15px 0 7px;font-size:9.5px;color:var(--rpt-muted);letter-spacing:.05em}
+.rpt .rp-sec::before{content:"";width:2px;height:10px;background:var(--rpt-gold);border-radius:1px}
+.rpt .rp-hero{display:flex;gap:9px;align-items:stretch}
+.rpt .rp-hero .poster{width:33%;flex:0 0 33%;aspect-ratio:2/3;border-radius:4px;padding:5px}
+.rpt .rp-hero .poster .pt{font-size:7px}
+.rpt .rp-hero .poster .pb{display:none}
+.rpt .rp-hero .poster::after{background:linear-gradient(180deg,rgba(0,0,0,0) 55%,rgba(0,0,0,.4))}
+.rpt .rp-rank{flex:1;display:flex;flex-direction:column;gap:6px}
+.rpt .rp-rank .it{display:flex;gap:6px;align-items:flex-start;font-size:7px;line-height:1.45;color:var(--rpt-muted);border-bottom:1px solid var(--rpt-line);padding-bottom:5px}
+.rpt .rp-rank .it:last-child{border-bottom:none;padding-bottom:0}
+.rpt .rp-rank .no{font-size:8px;font-weight:800;color:var(--rpt-muted);font-variant-numeric:tabular-nums}
+.rpt .rp-rank .it b{display:block;color:var(--rpt-text);font-size:8px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:126px}
+.rpt .rp-rank .it .dt{display:block;font-size:6.2px;color:var(--rpt-muted);margin-top:1px}
+.rpt .rp-rank .it .st{color:var(--rpt-gold);font-size:6px;letter-spacing:.5px;margin-top:1px;display:block}
+.rpt .rp-wall{display:grid;grid-template-columns:repeat(4,1fr);gap:3px}
+.rpt .rp-wall .poster{aspect-ratio:2/3;border-radius:2px;padding:3px}
+.rpt .rp-wall .poster .pt{font-size:5px;line-height:1.1}
+.rpt .rp-wall .poster .pb{display:none}
+.rpt .rp-wall .poster::after{background:linear-gradient(180deg,rgba(0,0,0,0) 60%,rgba(0,0,0,.36))}
+.rpt .rp-cal{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;font-size:5.5px;color:var(--rpt-muted);text-align:center}
+.rpt .rp-cal span{aspect-ratio:1;display:grid;place-items:center;border-radius:2px;background:rgba(255,255,255,.03)}
+.rpt .rp-cal .h{color:var(--rpt-muted);opacity:.7;background:none}
+.rpt .rp-cal .l1{background:rgba(229,180,95,.16)}
+.rpt .rp-cal .l2{background:rgba(229,180,95,.34);color:#1B160A}
+.rpt .rp-cal .l3{background:rgba(229,180,95,.62);color:#1B160A}
+.rpt .rp-notes{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:2px}
+.rpt .rp-note{background:var(--rpt-card);border-radius:3px;padding:6px;font-size:6px;line-height:1.55;color:var(--rpt-muted)}
+.rpt .rp-note b{display:block;font-size:7px;color:var(--rpt-text);font-weight:600;margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rpt .rp-note .dt{display:flex;justify-content:space-between;margin-top:3px;color:var(--rpt-muted);font-size:5.5px}
+.rpt .rp-foot{display:flex;justify-content:space-between;margin-top:14px;font-size:6px;color:var(--rpt-muted);border-top:1px solid var(--rpt-line);padding-top:6px}
+
+/* ---------- settings ---------- */
+.profile{display:flex;align-items:center;gap:12px;background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:14px;margin-bottom:4px}
+.avatar{width:48px;height:48px;border-radius:15px;background:linear-gradient(135deg,#F4D083,#B87A1D);display:grid;place-items:center;color:#241A08;font-weight:800;font-size:17px;flex:0 0 auto}
+.profile .pm{flex:1;min-width:0}
+.profile .pn{font-size:17px;font-weight:700}
+.profile .ps{font-size:12.5px;color:var(--text3);margin-top:3px}
+.profile .pstat{font-size:10.5px;color:var(--read);background:var(--read-soft);border-radius:6px;padding:3px 7px;font-weight:600}
+.sf-ico{width:29px;height:29px;border-radius:8px;display:grid;place-items:center;color:#fff;flex:0 0 auto}
+.sf-ico svg{width:17px;height:17px}
+.sf-ico.gold{background:linear-gradient(135deg,#EDC575,#B87A1D);color:#241A08}
+.sf-ico.teal{background:linear-gradient(135deg,#74C9B8,#2E8775)}
+.sf-ico.blue{background:linear-gradient(135deg,#8EAEDC,#41649E)}
+.sf-ico.violet{background:linear-gradient(135deg,#C0A5E0,#7955A6)}
+.sf-ico.red{background:linear-gradient(135deg,#E79A96,#B44B48)}
+.settings-group{margin-bottom:14px}
+
+/* ---------- calendar / misc ---------- */
+.month-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.mcell{background:var(--subtle);border-radius:10px;padding:8px 6px;display:flex;flex-direction:column;align-items:center;gap:2px}
+.mcell .m{font-size:11px;color:var(--text3)}
+.mcell .v{font-size:10.5px;font-weight:600;font-variant-numeric:tabular-nums;color:var(--text2)}
+.mcell.on{background:var(--gold-soft);box-shadow:inset 0 0 0 1px var(--gold-border)}
+.mcell.on .m,.mcell.on .v{color:var(--gold-deep)}
+.mcell.dim .v{color:var(--text4)}
+.legend{display:flex;align-items:center;gap:12px;font-size:10.5px;color:var(--text3)}
+.legend .sw{width:8px;height:8px;border-radius:2px;display:inline-block;margin-right:4px}
+
+.sunken{font-size:10.5px;color:var(--text3);line-height:1.5;padding:8px 2px 0}
+.divider{height:1px;background:var(--divider-soft);margin:2px 0}
+
+/* ---------- decisions ---------- */
+.decisions{padding:8px 56px 64px}
+.decisions h2{font-size:24px;margin:0 0 6px;letter-spacing:-.01em}
+.decisions .lead{margin:0 0 22px;font-size:13.5px;color:var(--text2);line-height:1.6}
+.decision-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(360px,1fr));gap:14px}
+.decision{background:var(--surface);border:1px solid var(--border-strong);border-radius:14px;padding:16px 18px}
+.decision h3{margin:0 0 6px;font-size:14.5px;display:flex;align-items:center;gap:8px}
+.decision h3 .idx{font-size:11px;font-weight:700;color:var(--gold);background:var(--gold-soft);border-radius:5px;padding:2px 6px}
+.decision p{margin:0 0 8px;font-size:12.5px;line-height:1.65;color:var(--text2)}
+.decision .rec{font-size:12px;color:var(--gold-deep);background:var(--gold-soft);border-radius:8px;padding:7px 9px;line-height:1.55}
+.decision.open .rec{color:var(--wish);background:var(--wish-soft)}
+.board-foot{padding:0 56px 60px;font-size:12px;color:var(--text3)}
+
+.t9{font-size:9px}.t10{font-size:10px}.t11{font-size:11px}.t115{font-size:11.5px}.t12{font-size:12px}.t13{font-size:13px}.t135{font-size:13.5px}.t14{font-size:14px}.t15{font-size:15px}
+.mt2{margin-top:2px}.mt4{margin-top:4px}.mt6{margin-top:6px}.mt8{margin-top:8px}.mt10{margin-top:10px}.mt12{margin-top:12px}.mt14{margin-top:14px}.mt16{margin-top:16px}
+.flexb{display:flex;align-items:center;justify-content:space-between}
+.hstack{display:flex;align-items:center}
+.grow{flex:1;min-width:0;min-height:0}
+.pad16{padding-left:16px;padding-right:16px}
+.divide-t{border-top:1px solid var(--divider-soft)}
+.hidden{display:none}
+
+body.only .group{padding-top:16px;border-bottom:none}
+body.only main{padding-top:0}
+
+/* dark tweaks */
+:root[data-theme="dark"] .poster{box-shadow:inset 0 0 0 1px rgba(255,255,255,.1),0 2px 7px rgba(0,0,0,.4)}
+:root[data-theme="dark"] .poster.book{box-shadow:inset 0 0 0 1px rgba(255,255,255,.18),0 2px 7px rgba(0,0,0,.4)}
+:root[data-theme="dark"] .seg .on{box-shadow:0 1px 3px rgba(0,0,0,.5)}
+:root[data-theme="dark"] .avatar,:root[data-theme="dark"] .brand .dot{color:#241A08}
+:root[data-theme="dark"] .sheet{box-shadow:0 -14px 40px rgba(0,0,0,.55)}
+:root[data-theme="dark"] .phone{background:var(--bg)}
+:root[data-theme="dark"] figcaption{background:var(--surface)}
+:root[data-theme="dark"] .toggle::after{background:#F0ECE2}
+
+.theme-toggle{position:fixed;right:24px;bottom:24px;z-index:99;display:flex;align-items:center;gap:7px;height:40px;padding:0 16px;border-radius:20px;background:var(--surface);color:var(--text);border:1px solid var(--border);box-shadow:0 8px 20px rgba(27,31,39,.14);font-size:13px;font-weight:600;cursor:pointer;font-family:inherit}
+.theme-toggle svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+body.only .theme-toggle{display:none}
+
+/* ---------- additions ---------- */
+.hl{background:var(--gold-bright);color:#211806;border-radius:2px;padding:0 1px}
+.radio{width:20px;height:20px;border-radius:50%;border:1.5px solid var(--gold);background:radial-gradient(circle,var(--gold) 0 42%,transparent 43%);display:inline-block;flex:0 0 auto}
+.radio.off{border-color:var(--border-strong);background:transparent}
+.qr{position:relative;width:158px;height:158px;border-radius:8px;background:#fff;
+  background-image:repeating-conic-gradient(#17140D 0 25%,#FFFFFF 0 50%);
+  background-size:15px 15px;background-position:0 0;box-shadow:0 6px 18px rgba(20,18,12,.18)}
+.qr::before,.qr::after{content:"";position:absolute;width:38px;height:38px;background:#fff;border:7px solid #17140D;border-radius:4px}
+.qr::before{left:7px;top:7px}
+.qr::after{left:7px;bottom:7px;background:
+  linear-gradient(#17140D,#17140D) center/18px 18px no-repeat,#fff}
+.qr i{position:absolute;right:7px;top:7px;width:38px;height:38px;background:#fff;border:7px solid #17140D;border-radius:4px}
+.bottom-bar{flex:0 0 auto;display:flex;align-items:center;gap:8px;padding:9px 16px 4px;border-top:1px solid var(--border);background:var(--tabbar-bg)}
+.t105{font-size:10.5px}.t18{font-size:18px}.t22{font-size:22px}
+.sf-ico.read{background:linear-gradient(135deg,#A6CA86,#5F8343);color:#1E2A14}
+.map-table{width:100%;border-collapse:collapse;font-size:11.8px;color:var(--text2);line-height:1.55}
+.map-table th{text-align:left;font-size:11px;color:var(--text3);font-weight:600;padding:0 10px 7px 0;border-bottom:1px solid var(--border-strong)}
+.map-table td{padding:8px 10px 8px 0;border-bottom:1px solid var(--divider-soft);vertical-align:top}
+.map-table td:first-child{color:var(--text);font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:11px;white-space:nowrap}
+.map-table tr:last-child td{border-bottom:none}
+
+/* ---------- login webview + explore ---------- */
+.webview{background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden;text-align:left}
+.wv-bar{display:flex;align-items:center;gap:7px;padding:8px 10px;background:var(--subtle);border-bottom:1px solid var(--border);color:var(--text3);font-size:10.5px}
+.wv-url{flex:1;min-width:0;display:flex;align-items:center;gap:5px;background:var(--surface);border:1px solid var(--border);border-radius:7px;padding:5px 8px;font-size:10px;color:var(--text2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.wv-url .ico{width:11px;height:11px;color:var(--read)}
+.wv-body{padding:14px 14px 16px;text-align:center;background:linear-gradient(180deg,var(--surface),var(--surface2))}
+.db-logo{width:34px;height:34px;border-radius:9px;background:#2F9E44;color:#fff;display:grid;place-items:center;font-size:13px;font-weight:800;margin:0 auto 8px}
+.webview .qr{width:126px;height:126px;background-size:12px 12px;margin:0 auto}
+.webview .qr::before,.webview .qr::after{width:30px;height:30px;border-width:6px;left:6px}
+.webview .qr::before{top:6px}.webview .qr::after{bottom:6px}
+.webview .qr i{width:30px;height:30px;border-width:6px;right:6px;top:6px}
+.sstat{width:22px;height:22px;border-radius:50%;display:grid;place-items:center;flex:0 0 auto}
+.sstat svg{width:13px;height:13px;stroke-width:2.3}
+.sstat.ok{background:var(--read-soft);color:var(--read)}
+.sstat.bad{background:var(--danger-soft);color:var(--danger)}
+.site-row{display:flex;align-items:center;gap:10px;padding:8px 13px;border-bottom:1px solid var(--divider-soft)}
+.site-row:last-child{border-bottom:none}
+.site-main{flex:1;min-width:0}
+.site-name{font-size:var(--fs-body);font-weight:600;line-height:1.3;display:flex;align-items:center;gap:5px;min-width:0}
+.site-name .tag{font-size:9px;padding:1px 4px;flex:0 0 auto}
+.site-link{font-size:12.5px;color:var(--text3);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:190px}
+.site-row .copy{color:var(--text4);flex:0 0 auto}
+.site-row .copy svg{width:15px;height:15px}
+.toast{position:absolute;left:50%;bottom:30px;transform:translateX(-50%);z-index:9;display:flex;align-items:center;gap:6px;background:rgba(28,25,20,.92);color:#fff;border-radius:999px;padding:9px 16px;font-size:12.5px;font-weight:600;box-shadow:0 8px 22px rgba(0,0,0,.28);white-space:nowrap}
+.toast svg{width:14px;height:14px;color:#7FD1A8;flex:0 0 auto}
+:root[data-theme="dark"] .toast{background:rgba(240,232,215,.94);color:#1C1812}
+:root[data-theme="dark"] .toast svg{color:#2E8775}
+
+.explore .field{padding-top:10px;padding-bottom:10px}
+.explore .section-t{padding:11px 2px 6px}
+.explore .note{padding-top:6px}
+
+.plan-actions{flex:0 0 auto;display:flex;align-items:flex-start;padding:8px 8px 22px;border-top:1px solid var(--border);background:var(--tabbar-bg)}
+.pa{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:4px 0;font-size:10px;color:var(--text3);line-height:1.2;white-space:nowrap}
+.pa .ico{width:21px;height:21px;stroke-width:1.7}
+.pa.on{color:var(--gold-deep);font-weight:600}
+.pa.on .ico{color:var(--gold)}
+
+.resource-entry{display:flex;align-items:center;gap:11px;margin-top:12px;padding:10px 12px;background:var(--gold-soft);border:1px solid var(--gold-border);border-radius:13px}
+.re-ico{width:34px;height:34px;border-radius:10px;background:var(--gold-bright);color:#241804;display:grid;place-items:center;flex:0 0 auto}
+.re-ico .ico{width:18px;height:18px;stroke-width:1.9}
+.re-main{flex:1;min-width:0}
+.re-t{font-size:13.5px;font-weight:600;color:var(--gold-deep);line-height:1.25}
+.re-s{font-size:10.5px;color:var(--text3);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.re-go{display:flex;align-items:center;gap:2px;font-size:11.5px;font-weight:600;color:var(--gold-deep);flex:0 0 auto}
+
+.page-head{flex:0 0 auto;min-height:var(--head-h);display:flex;flex-direction:column;overflow:hidden}
+.page-head .profile{margin-left:16px;margin-right:16px}
+.page-head > .group-card{margin-left:16px;margin-right:16px}
+
+.rpt-cover{flex:1;min-height:0;margin:0 16px;padding:14px 14px 10px;border-radius:12px 12px 0 0}
+.rpt-body{padding-top:0;border-radius:0 0 12px 12px}
+.rpt-body .rp-sec:first-of-type{margin-top:14px}
+
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-record" viewBox="0 0 24 24"><rect x="3.2" y="5.2" width="17.6" height="13.6" rx="3"/><path d="M8 5.2v13.6M16 5.2v13.6M3.2 9.4h4.8M3.2 14.6h4.8M16 9.4h4.8M16 14.6h4.8"/></symbol>
+  <symbol id="i-list" viewBox="0 0 24 24"><rect x="3.5" y="4" width="17" height="16" rx="3"/><path d="M7 9h5M7 13h5M7 17h5M15.5 9h1.5M15.5 13h1.5M15.5 17h1.5"/></symbol>
+  <symbol id="i-folder" viewBox="0 0 24 24"><path d="M3.4 7.4a2 2 0 0 1 2-2h3.3l2 2.4h7.9a2 2 0 0 1 2 2v7.8a2 2 0 0 1-2 2H5.4a2 2 0 0 1-2-2z"/><path d="M7 13.6h10"/></symbol>
+  <symbol id="i-report" viewBox="0 0 24 24"><path d="M6 3.5h8l4 4v13H6z"/><path d="M14 3.5v4h4M9 16.5v-4M12 16.5v-7M15 16.5v-2.5"/></symbol>
+  <symbol id="i-set" viewBox="0 0 24 24"><path d="M4 7.5h16M4 16.5h16"/><circle cx="9" cy="7.5" r="2.4"/><circle cx="15" cy="16.5" r="2.4"/></symbol>
+  <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.4"/><path d="M15.8 15.8 20 20"/></symbol>
+  <symbol id="i-filter" viewBox="0 0 24 24"><path d="M4 6.5h16M7 12h10M10 17.5h4"/></symbol>
+  <symbol id="i-cal" viewBox="0 0 24 24"><rect x="3.5" y="5.5" width="17" height="15" rx="3"/><path d="M3.5 10h17M8 3.5v4M16 3.5v4"/></symbol>
+  <symbol id="i-sync" viewBox="0 0 24 24"><path d="M20 12a8 8 0 0 1-13.7 5.6M4 12a8 8 0 0 1 13.7-5.6"/><path d="M4 17.6v-4.2h4.2M20 6.4v4.2h-4.2"/></symbol>
+  <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+  <symbol id="i-chev" viewBox="0 0 24 24"><path d="M9.5 5.5 16 12l-6.5 6.5"/></symbol>
+  <symbol id="i-chev-d" viewBox="0 0 24 24"><path d="M6 9.5 12 15.5 18 9.5"/></symbol>
+  <symbol id="i-back" viewBox="0 0 24 24"><path d="M14.5 5.5 8 12l6.5 6.5"/></symbol>
+  <symbol id="i-close" viewBox="0 0 24 24"><path d="M6.5 6.5l11 11M17.5 6.5l-11 11"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="M5 12.5 9.5 17 19 7"/></symbol>
+  <symbol id="i-edit" viewBox="0 0 24 24"><path d="M4.5 19.5h4L20 8l-4-4L4.5 15.5v4z"/><path d="M14.5 5.5l4 4"/></symbol>
+  <symbol id="i-trash" viewBox="0 0 24 24"><path d="M4.5 7h15M9.5 7V4.2h5V7M6.5 7l.9 13h9.2l.9-13"/></symbol>
+  <symbol id="i-link" viewBox="0 0 24 24"><path d="M10.5 13.5a4 4 0 0 0 5.7 0l2.1-2.1a4 4 0 0 0-5.7-5.7l-1.2 1.2"/><path d="M13.5 10.5a4 4 0 0 0-5.7 0l-2.1 2.1a4 4 0 0 0 5.7 5.7l1.2-1.2"/></symbol>
+  <symbol id="i-photo" viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="14" rx="3"/><circle cx="8.8" cy="10" r="1.5"/><path d="m4.5 17 4.6-4.2 3.2 2.8 3-2.6 4.2 4"/></symbol>
+  <symbol id="i-cloud" viewBox="0 0 24 24"><path d="M7.2 18.5h9.6a4.1 4.1 0 0 0 .3-8.2 6.2 6.2 0 0 0-11.8 1.7 3.4 3.4 0 0 0 1.9 6.5z"/></symbol>
+  <symbol id="i-upload" viewBox="0 0 24 24"><path d="M12 16V4.5M7.5 9 12 4.5 16.5 9"/><path d="M4.5 15v3.5a2 2 0 0 0 2 2h11a2 2 0 0 0 2-2V15"/></symbol>
+  <symbol id="i-download" viewBox="0 0 24 24"><path d="M12 4.5V16M7.5 11.5 12 16l4.5-4.5"/><path d="M4.5 15v3.5a2 2 0 0 0 2 2h11a2 2 0 0 0 2-2V15"/></symbol>
+  <symbol id="i-share" viewBox="0 0 24 24"><path d="M12 15.5V3.5M7.8 7.7 12 3.5l4.2 4.2"/><path d="M5 13.5v5a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-5"/></symbol>
+  <symbol id="i-doc" viewBox="0 0 24 24"><path d="M6 3.5h8l4 4v13H6z"/><path d="M14 3.5v4h4M9 12h6M9 16h6"/></symbol>
+  <symbol id="i-drag" viewBox="0 0 24 24"><circle cx="9" cy="6" r="1.2" fill="currentColor" stroke="none"/><circle cx="15" cy="6" r="1.2" fill="currentColor" stroke="none"/><circle cx="9" cy="12" r="1.2" fill="currentColor" stroke="none"/><circle cx="15" cy="12" r="1.2" fill="currentColor" stroke="none"/><circle cx="9" cy="18" r="1.2" fill="currentColor" stroke="none"/><circle cx="15" cy="18" r="1.2" fill="currentColor" stroke="none"/></symbol>
+  <symbol id="i-more" viewBox="0 0 24 24"><circle cx="6" cy="12" r="1.4" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.4" fill="currentColor" stroke="none"/><circle cx="18" cy="12" r="1.4" fill="currentColor" stroke="none"/></symbol>
+  <symbol id="i-lock" viewBox="0 0 24 24"><rect x="4.5" y="10.5" width="15" height="10" rx="3"/><path d="M8 10.5V8a4 4 0 0 1 8 0v2.5M12 14.5v2"/></symbol>
+  <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></symbol>
+  <symbol id="i-book" viewBox="0 0 24 24"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v15.5H6.5A2.5 2.5 0 0 0 4 21z"/><path d="M4 18.5A2.5 2.5 0 0 1 6.5 16H20"/></symbol>
+  <symbol id="i-eye" viewBox="0 0 24 24"><path d="M2.5 12S6 6.5 12 6.5 21.5 12 21.5 12 18 17.5 12 17.5 2.5 12 2.5 12z"/><circle cx="12" cy="12" r="2.6"/></symbol>
+  <symbol id="i-star" viewBox="0 0 24 24"><path d="m12 4 2.4 5 5.6.7-4.1 3.8 1.1 5.5L12 16.4 7 19l1.1-5.5L4 9.7 9.6 9z"/></symbol>
+  <symbol id="i-up" viewBox="0 0 24 24"><path d="M12 19V5M6.5 10.5 12 5l5.5 5.5"/></symbol>
+  <symbol id="i-down" viewBox="0 0 24 24"><path d="M12 5v14M6.5 13.5 12 19l5.5-5.5"/></symbol>
+  <symbol id="i-compass" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="m14.8 9.2-1.5 4.1-4.1 1.5 1.5-4.1z"/></symbol>
+  <symbol id="i-copy" viewBox="0 0 24 24"><rect x="8.5" y="8.5" width="11" height="11" rx="2.5"/><path d="M15.5 8.5V6.5a2 2 0 0 0-2-2h-7a2 2 0 0 0-2 2v7a2 2 0 0 0 2 2h2"/></symbol>
+  <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4.2"/><path d="M12 3v2M12 19v2M3 12h2M19 12h2M5.6 5.6l1.4 1.4M17 17l1.4 1.4M18.4 5.6 17 7M7 17l-1.4 1.4"/></symbol>
+
+  <!-- poster art symbols (injected into movie posters at runtime) -->
+  <symbol id="art-war" viewBox="0 0 100 150" preserveAspectRatio="xMidYMid slice">
+    <circle cx="70" cy="34" r="22" fill="#FFD9A0" opacity=".12"/>
+    <circle cx="70" cy="34" r="11" fill="#FFE3B4" opacity=".92"/>
+    <g opacity=".14" stroke="#FFD9A0" stroke-width=".7"><path d="M0 28 100 72"/><path d="M0 42 100 86"/><path d="M0 56 100 100"/></g>
+    <path d="M0 104 14 96 27 102 42 93 58 99 74 92 88 98 100 94V150H0Z" fill="#30100F" opacity=".7"/>
+    <path d="M0 120 22 112 40 118 60 110 82 117 100 112V150H0Z" fill="#140505"/>
+    <g fill="#0C0404"><circle cx="17" cy="107" r="2.2"/><rect x="16" y="109" width="2.6" height="14"/><circle cx="24" cy="110" r="2"/><rect x="23" y="112" width="2.3" height="12"/><circle cx="31" cy="108" r="2.1"/><rect x="30" y="110" width="2.4" height="13"/><circle cx="38" cy="111" r="1.8"/><rect x="37.2" y="113" width="2.1" height="11"/></g>
+    <g stroke="#0C0404" stroke-width="1" opacity=".95"><path d="M16 116 12 103"/><path d="M23 118 19 105"/><path d="M30 116 26 103"/><path d="M37 118 33 106"/></g>
+    <path d="M48 108c-3-13 8-17 4-30-2-7 6-8 6-17" fill="none" stroke="#FFD9A0" stroke-width="3.4" opacity=".14" stroke-linecap="round"/>
+    <path d="M86 112c-2-10 7-13 5-22" fill="none" stroke="#FFD9A0" stroke-width="2.4" opacity=".1" stroke-linecap="round"/>
+    <rect x="0" y="136" width="100" height="14" fill="#0A0303" opacity=".82"/>
+  </symbol>
+  <symbol id="art-stage" viewBox="0 0 100 150" preserveAspectRatio="xMidYMid slice">
+    <path d="M0 0h19c0 34 6 64 0 150H0Z" fill="#4C1014"/><path d="M100 0H81c0 34-6 64 0 150h19Z" fill="#4C1014"/>
+    <path d="M19 0c6 44 0 94 4 150h54c4-56-2-106 4-150Z" fill="#1A0808" opacity=".55"/>
+    <ellipse cx="50" cy="64" rx="25" ry="31" fill="#FFDFA8" opacity=".13"/>
+    <ellipse cx="50" cy="98" rx="35" ry="10" fill="#E8B65C" opacity=".15"/>
+    <g fill="#0B0505"><circle cx="50" cy="73" r="10"/><path d="M40 86c2-8 18-8 20 0l4 24H36Z"/></g>
+    <path d="M44 67h12M46 71h8" stroke="#FFDFA8" stroke-width="1" opacity=".45"/>
+    <g stroke="#FFDFA8" opacity=".09" stroke-width="6"><path d="M50 0 28 150"/><path d="M50 0 72 150"/></g>
+  </symbol>
+  <symbol id="art-space" viewBox="0 0 100 150" preserveAspectRatio="xMidYMid slice">
+    <circle cx="66" cy="44" r="30" fill="#76A9D6" opacity=".16"/><circle cx="66" cy="44" r="22" fill="#8AB8E0"/>
+    <path d="M46 38a22 22 0 0 1 30-8 22 22 0 0 1 2 28 22 22 0 0 1-30 6 22 22 0 0 1-2-26Z" fill="#6E9BC4" opacity=".55"/>
+    <ellipse cx="66" cy="44" rx="34" ry="6.5" fill="none" stroke="#F0D9A8" stroke-width="1.2" opacity=".7" transform="rotate(-16 66 44)"/>
+    <g fill="#fff"><circle cx="24" cy="18" r="1.3"/><circle cx="36" cy="30" r=".8"/><circle cx="16" cy="46" r="1"/><circle cx="82" cy="20" r="1"/><circle cx="90" cy="58" r=".8"/><circle cx="44" cy="14" r=".7"/></g>
+    <path d="M0 120q26-7 52-1t48-2v33H0Z" fill="#0A1522" opacity=".85"/><path d="M0 132q34-6 100 1v17H0Z" fill="#050B12"/>
+    <g stroke="#8AB8E0" opacity=".12"><path d="M10 150 30 120"/><path d="M50 150 58 118"/><path d="M90 150 82 122"/></g>
+  </symbol>
+  <symbol id="art-road" viewBox="0 0 100 150" preserveAspectRatio="xMidYMid slice">
+    <circle cx="70" cy="38" r="14" fill="#F3C27C" opacity=".82"/>
+    <path d="M0 106 20 100 38 106 56 98 76 104 100 98v52H0Z" fill="#33120F"/><path d="M0 124 30 118 60 124 100 116v34H0Z" fill="#150606"/>
+    <path d="M42 150 50 112 58 150Z" fill="#090303"/><path d="M40 118 60 118" stroke="#F3C27C" opacity=".35"/>
+    <g fill="#090303"><path d="M24 114h18l-3 7H27Z"/><path d="M28 108h12l2 6H26Z"/><circle cx="30" cy="123" r="3"/><circle cx="46" cy="123" r="3"/></g>
+    <g stroke="#F3C27C" opacity=".18"><path d="M50 118 18 150"/><path d="M50 118 82 150"/></g>
+  </symbol>
+  <symbol id="art-dunes" viewBox="0 0 100 150" preserveAspectRatio="xMidYMid slice">
+    <circle cx="50" cy="50" r="17" fill="#F2DDB0" opacity=".8"/><circle cx="50" cy="50" r="32" fill="#F2DDB0" opacity=".12"/>
+    <path d="M0 106c22-14 40-14 58 0 14 10 28 8 42 2v42H0Z" fill="#5A4322" opacity=".8"/>
+    <path d="M0 128c26-10 44-2 62-6 14-4 26-2 38 4v24H0Z" fill="#1A1208"/><path d="M0 140c30-6 66-6 100 2v8H0Z" fill="#0D0904"/>
+    <g fill="#1A1208"><path d="M64 96h7v8h-7Z"/><path d="M77 92h4v6h-4Z"/></g>
+  </symbol>
+  <symbol id="art-mountains" viewBox="0 0 100 150" preserveAspectRatio="xMidYMid slice">
+    <circle cx="68" cy="34" r="10" fill="#CFE8D8" opacity=".7"/>
+    <path d="M0 96 18 72 34 88 50 60 68 84 84 70 100 92v58H0Z" fill="#1B3A31" opacity=".78"/>
+    <path d="M0 114 22 92 40 108 58 88 76 106 92 96 100 104v46H0Z" fill="#0E241E" opacity=".92"/><path d="M0 132c30-8 70-8 100 0v18H0Z" fill="#071410"/>
+    <path d="M0 138h100" stroke="#CFE8D8" opacity=".25" stroke-width=".7"/>
+    <g stroke="#D9EDE2" opacity=".16" stroke-width=".8"><path d="M20 150 42 108"/><path d="M52 150 58 112"/><path d="M80 150 70 110"/></g>
+    <g fill="#071410"><path d="M14 126h4v8h-4Z"/><path d="M20 124h2v10h-2Z"/></g>
+  </symbol>
+  <symbol id="art-sea" viewBox="0 0 100 150" preserveAspectRatio="xMidYMid slice">
+    <circle cx="72" cy="34" r="13" fill="#F6E2B8" opacity=".85"/><circle cx="72" cy="34" r="27" fill="#F6E2B8" opacity=".12"/>
+    <rect x="0" y="96" width="100" height="54" fill="#0A2230"/>
+    <g stroke="#F6E2B8" opacity=".22"><path d="M10 108h22M52 112h20M26 122h16M62 126h24M14 136h30M56 142h26"/></g>
+    <g fill="#08131A"><path d="M20 92h36l-5 8H25Z"/><path d="M28 84h18v8H28Z"/><rect x="36" y="72" width="2" height="13"/></g>
+    <g fill="#F6E2B8" opacity=".78"><rect x="8" y="138" width="9" height="4"/><rect x="18" y="138" width="9" height="4"/><rect x="28" y="138" width="9" height="4"/><rect x="38" y="138" width="9" height="4"/><rect x="48" y="138" width="9" height="4"/><rect x="58" y="138" width="9" height="4"/></g>
+  </symbol>
+  <symbol id="art-bokeh" viewBox="0 0 100 150" preserveAspectRatio="xMidYMid slice">
+    <rect x="12" y="16" width="76" height="96" fill="#F0D9B5" opacity=".1"/>
+    <g fill="#F6E3C8" opacity=".75"><circle cx="26" cy="28" r="10"/><circle cx="64" cy="22" r="6"/><circle cx="78" cy="46" r="9"/><circle cx="38" cy="56" r="5"/></g>
+    <g fill="#F6E3C8" opacity=".9"><circle cx="18" cy="116" r="1"/><circle cx="30" cy="104" r="1.2"/><circle cx="46" cy="122" r=".9"/><circle cx="62" cy="108" r="1.1"/><circle cx="78" cy="126" r=".8"/><circle cx="86" cy="98" r=".9"/></g>
+    <path d="M0 136c30-10 66-10 100 0v14H0Z" fill="#050B12"/>
+    <g fill="#050B12"><circle cx="42" cy="116" r="7"/><path d="M33 136c0-10 18-10 18 0Z"/><circle cx="58" cy="118" r="6"/><path d="M51 136c0-9 14-9 14 0Z"/></g>
+  </symbol>
+  <symbol id="art-forest" viewBox="0 0 100 150" preserveAspectRatio="xMidYMid slice">
+    <circle cx="50" cy="38" r="12" fill="#E9F2C8" opacity=".35"/>
+    <g fill="#12301F"><path d="M10 150V50l8-22 8 22v100Z" opacity=".7"/><path d="M76 150V42l10-24 10 24v108Z" opacity=".8"/></g>
+    <g fill="#1C4430" opacity=".82"><path d="M30 150V70l6-18 6 18v80Z"/><path d="M58 150V60l7-20 7 20v90Z"/></g>
+    <path d="M0 128c26-12 60-12 100 0v22H0Z" fill="#0A1F16"/>
+    <g stroke="#DCEBB8" opacity=".13"><path d="M40 0 20 150"/><path d="M60 0 76 150"/></g>
+  </symbol>
+  <symbol id="art-city" viewBox="0 0 100 150" preserveAspectRatio="xMidYMid slice">
+    <circle cx="76" cy="30" r="8" fill="#E9D6A8" opacity=".7"/>
+    <g fill="#0A1519"><rect x="0" y="86" width="14" height="64"/><rect x="18" y="72" width="12" height="78"/><rect x="34" y="94" width="16" height="56"/><rect x="54" y="64" width="12" height="86"/><rect x="70" y="82" width="14" height="68"/><rect x="88" y="70" width="12" height="80"/></g>
+    <g fill="#F0D9A8" opacity=".5"><rect x="4" y="94" width="2" height="3"/><rect x="9" y="94" width="2" height="3"/><rect x="22" y="80" width="2" height="3"/><rect x="26" y="88" width="2" height="3"/><rect x="58" y="74" width="2" height="3"/><rect x="62" y="84" width="2" height="3"/><rect x="74" y="92" width="2" height="3"/><rect x="91" y="78" width="2" height="3"/></g>
+    <path d="M0 140h100v10H0Z" fill="#050A0C"/><g stroke="#E9D6A8" opacity=".18"><path d="M0 140 50 120 100 140"/></g>
+  </symbol>
+  <symbol id="art-nebula" viewBox="0 0 100 150" preserveAspectRatio="xMidYMid slice">
+    <circle cx="60" cy="54" r="26" fill="#B07AD6" opacity=".2"/><circle cx="60" cy="54" r="14" fill="#E4B6FF" opacity=".3"/>
+    <ellipse cx="60" cy="54" rx="34" ry="12" fill="none" stroke="#E4B6FF" stroke-width="1" opacity=".45" transform="rotate(-24 60 54)"/>
+    <ellipse cx="60" cy="54" rx="24" ry="34" fill="none" stroke="#8FD6E8" stroke-width=".8" opacity=".3" transform="rotate(18 60 54)"/>
+    <g fill="#fff"><circle cx="24" cy="20" r="1"/><circle cx="42" cy="14" r=".8"/><circle cx="82" cy="24" r="1.2"/><circle cx="90" cy="60" r=".7"/><circle cx="18" cy="62" r="1"/><circle cx="70" cy="84" r=".8"/></g>
+    <path d="M0 126c26-8 58-8 100 0v24H0Z" fill="#0B0812"/>
+  </symbol>
+  <symbol id="art-anime" viewBox="0 0 100 150" preserveAspectRatio="xMidYMid slice">
+    <circle cx="76" cy="30" r="12" fill="#FFE6A8" opacity=".8"/>
+    <g fill="#EAF6FF" opacity=".55"><ellipse cx="30" cy="44" rx="18" ry="7"/><ellipse cx="22" cy="40" rx="10" ry="5"/><ellipse cx="66" cy="60" rx="14" ry="5"/></g>
+    <path d="M0 124c30-10 66-10 100 0v26H0Z" fill="#0B1B2A"/>
+    <g fill="#0B1B2A"><rect x="34" y="92" width="14" height="20" rx="2"/><rect x="37" y="84" width="8" height="9" rx="2"/><circle cx="41" cy="102" r="1.2" fill="#8FD6E8"/><rect x="36" y="112" width="3" height="12"/><rect x="43" y="112" width="3" height="12"/></g>
+    <path d="M30 96 22 88M48 96 56 88" stroke="#0B1B2A" stroke-width="2" stroke-linecap="round"/>
+    <g fill="#EAF6FF" opacity=".4"><circle cx="18" cy="70" r="1"/><circle cx="28" cy="80" r=".8"/><circle cx="60" cy="76" r="1"/></g>
+  </symbol>
+  <symbol id="art-volcano" viewBox="0 0 100 150" preserveAspectRatio="xMidYMid slice">
+    <circle cx="50" cy="120" r="30" fill="#FF8A4C" opacity=".25"/>
+    <path d="M0 118 20 86 38 104 52 74 70 100 84 84 100 112v38H0Z" fill="#1A0D09"/>
+    <path d="M52 74 62 112 42 112Z" fill="#F06A33" opacity=".65"/>
+    <path d="M52 74c-4-14 6-18 2-32" stroke="#E8B65C" stroke-width="3" opacity=".25" fill="none" stroke-linecap="round"/>
+    <g fill="#FF9B5E" opacity=".8"><circle cx="40" cy="104" r="1"/><circle cx="60" cy="106" r="1.2"/><circle cx="72" cy="112" r=".8"/></g>
+    <path d="M0 134h100v16H0Z" fill="#0A0503"/>
+  </symbol>
+</svg>
+
+<header class="board-header">
+  <div class="brand"><img src="assets/icon.png" alt="书影记录">书影记录 <span class="en">BookFilmJournal</span></div>
+  <h1>iOS App 原型 <span style="color:var(--text3);font-weight:600">v2</span></h1>
+  <p class="sub">把桌面版「书影记录」重构为 iPhone 原生应用。v2 重做视觉：浅色「暖纸 + 墨字」、深色「墨蓝 + 香槟金」，海报与书籍封面全部换成 13 套内嵌 SVG 插画；新增探索空间与详情页「资源」搜索；28 个界面覆盖记录、豆列、计划、报告、设置与探索空间；全屏页固定头约 30%、滚动区约 70%，正文统一 16px。</p>
+  <div class="meta">
+    <span class="pill">iPhone 15 · 390 × 844</span>
+    <span class="pill">目标 iOS 18+ / SwiftUI</span>
+    <span class="pill">主色 <b>#E8B65C</b></span>
+    <span class="pill">结构 <b>5 Tab</b></span>
+    <span class="pill">固定头 <b>30%</b> · 滚动 <b>70%</b></span>
+    <span class="pill">正文 <b>16px</b> · 底部留白 <b>24pt</b></span>
+    <span class="pill">数据 <b>SwiftData + iCloud Drive</b></span>
+  </div>
+</header>
+
+<nav class="board-nav">
+  <a href="#g-records">01 记录</a>
+  <a href="#g-doulist">02 豆列</a>
+  <a href="#g-plan">03 计划</a>
+  <a href="#g-report">04 报告</a>
+  <a href="#g-settings">05 设置</a>
+  <a href="#g-decisions">方案已确认</a>
+</nav>
+
+<main id="board">
+<section class="group" id="g-records" data-group="records">
+  <div class="group-head">
+    <span class="group-num">01</span>
+    <h2>记录</h2>
+    <p>海报墙 · 搜索 · 详情与感想 · 补录与同步</p>
+  </div>
+  <div class="screens">
+
+    <figure>
+      <div class="phone">
+        <div class="page-head">
+        <div class="sb"><span>9:41</span><span class="sb-icons"><svg viewBox="0 0 18 12"><rect x="0" y="8" width="3" height="4" rx="1"/><rect x="5" y="6" width="3" height="6" rx="1"/><rect x="10" y="3.5" width="3" height="8.5" rx="1"/><rect x="15" y="1" width="3" height="11" rx="1"/></svg><svg viewBox="0 0 16 12"><path d="M8 11l2.2-2.6a3.4 3.4 0 0 0-4.4 0L8 11z"/><path d="M8 5.6c1.7 0 3.3.6 4.6 1.7l1.3-1.6A9.5 9.5 0 0 0 8 3.4c-2.2 0-4.3.8-5.9 2.3l1.3 1.6A7 7 0 0 1 8 5.6z" opacity=".9"/></svg><svg class="battery" viewBox="0 0 26 12"><rect x=".5" y="1" width="21" height="10" rx="3" fill="none" stroke="currentColor"/><rect x="2.5" y="3" width="17" height="6" rx="1.6"/><path d="M23.5 4.6v2.8c1-.4 1.5-1 1.5-1.4s-.5-1-1.5-1.4z"/></svg></span></div>
+        <div class="large">
+          <div>
+            <h3>观影记录</h3>
+            <div class="cap">同步自豆瓣 · 38 部 · 11-20 21:06</div>
+          </div>
+          <div class="icons"><svg class="ico"><use href="#i-search"/></svg><svg class="ico"><use href="#i-cal"/></svg></div>
+        </div>
+        <div class="title-row">
+          <div class="seg gold fit"><span class="on">已看</span><span>想看</span></div>
+          <div class="sync-btn"><svg class="ico"><use href="#i-sync"/></svg>同步</div>
+        </div>
+        <div class="chips hscroll" style="padding:0 16px 4px">
+          <span class="chip on">全部</span><span class="chip">2026</span><span class="chip">2025</span><span class="chip">2024</span>
+        </div>
+        </div>
+        <div class="body scroll">
+          <div class="day-head"><span class="l"><span class="d">2026 年 10 月 25 日</span>· 周日</span><span class="sum">2 部</span></div>
+          <div class="wall">
+            <div class="pitem">
+              <div class="poster p-a"><span class="rbadge">8.4</span><span class="pt">大决战<br>辽沈战役</span><span class="pb">The Great Decisive War</span></div>
+              <div class="p-title">大决战之辽沈战役</div>
+              <div class="p-meta">3 小时 29 分</div>
+              <div class="p-foot"><span class="stars">★★★★★</span><span class="d">10-25</span></div>
+            </div>
+            <div class="pitem">
+              <div class="poster p-b"><span class="rbadge">8.3</span><span class="pt">流浪地球 2</span><span class="pb">The Wandering Earth II</span></div>
+              <div class="p-title">流浪地球 2</div>
+              <div class="p-meta">2 小时 53 分</div>
+              <div class="p-foot"><span class="stars">★★★★<span style="opacity:.28">★</span></span><span class="d">10-25</span></div>
+            </div>
+            <div class="pitem">
+              <div class="poster p-m"><span class="rbadge">7.9</span><span class="pt">路边野餐</span><span class="pb">Kaili Blues</span></div>
+              <div class="p-title">路边野餐</div>
+              <div class="p-meta">1 小时 50 分</div>
+              <div class="p-foot"><span class="stars">★★★★<span style="opacity:.28">★</span></span><span class="d">10-24</span></div>
+            </div>
+          </div>
+
+          <div class="day-head"><span class="l"><span class="d">2026 年 10 月 12 日</span>· 周一</span><span class="sum">3 部</span></div>
+          <div class="wall">
+            <div class="pitem">
+              <div class="poster p-h"><span class="rbadge">8.6</span><span class="pt">疯狂的麦克斯 4<br>狂暴之路</span><span class="pb">Mad Max: Fury Road</span></div>
+              <div class="p-title">疯狂的麦克斯 4：狂暴之路</div>
+              <div class="p-meta">2 小时</div>
+              <div class="p-foot"><span class="stars">★★★★★</span><span class="d">10-12</span></div>
+            </div>
+            <div class="pitem">
+              <div class="poster p-k"><span class="rbadge">9.3</span><span class="pt">海上钢琴师</span><span class="pb">The Legend of 1900</span></div>
+              <div class="p-title">海上钢琴师</div>
+              <div class="p-meta">2 小时 45 分</div>
+              <div class="p-foot"><span class="stars">★★★★★</span><span class="d">10-12</span></div>
+            </div>
+            <div class="pitem">
+              <div class="poster p-g"><span class="rbadge">8.5</span><span class="pt">白日梦想家</span><span class="pb">The Secret Life of Walter Mitty</span></div>
+              <div class="p-title">白日梦想家</div>
+              <div class="p-meta">1 小时 54 分</div>
+              <div class="p-foot"><span class="stars">★★★★<span style="opacity:.28">★</span></span><span class="d">10-11</span></div>
+            </div>
+          </div>
+
+          <div class="day-head"><span class="l"><span class="d">2026 年 09 月 30 日</span>· 周三</span><span class="sum">1 部</span></div>
+          <div class="wall">
+            <div class="pitem">
+              <div class="poster p-n"><span class="rbadge">8.9</span><span class="pt">情书</span><span class="pb">Love Letter</span></div>
+              <div class="p-title">情书 <span class="local-dot"></span></div>
+              <div class="p-meta">1 小时 57 分</div>
+              <div class="p-foot"><span class="stars">★★★★★</span><span class="d">09-30</span></div>
+            </div>
+            <div class="pitem">
+              <div class="poster p-d"><span class="rbadge">9.0</span><span class="pt">小森林<br>夏秋篇</span><span class="pb">Little Forest</span></div>
+              <div class="p-title">小森林 夏秋篇</div>
+              <div class="p-meta">1 小时 51 分</div>
+              <div class="p-foot"><span class="stars">★★★★<span style="opacity:.28">★</span></span><span class="d">09-30</span></div>
+            </div>
+            <div class="pitem" style="display:flex;align-items:center;justify-content:center">
+              <div style="width:100%;aspect-ratio:2/3;border:1px dashed var(--border-strong);border-radius:8px;display:grid;place-items:center;color:var(--text3);font-size:11px;text-align:center;line-height:1.5">补录<br>未同步的条目</div>
+            </div>
+          </div>
+          <div class="note">按本地生效日期分组；金色圆点表示日期、评分或短评被本地改过，同步不会覆盖。</div>
+        </div>
+        <div class="tabbar"><div class="tab on"><svg class="ico"><use href="#i-record"/></svg><span>记录</span></div><div class="tab"><svg class="ico"><use href="#i-list"/></svg><span>豆列</span></div><div class="tab"><svg class="ico"><use href="#i-folder"/></svg><span>计划</span></div><div class="tab"><svg class="ico"><use href="#i-report"/></svg><span>报告</span></div><div class="tab"><svg class="ico"><use href="#i-set"/></svg><span>设置</span></div><div class="homebar"></div></div>
+      </div>
+      <figcaption><b>观影记录 <span class="tagline">默认 Tab</span></b>桌面版是 5 列海报墙，手机改为 3 列：日期分组保留，卡片收成海报 + 标题 + 时长 + 星级；点卡片看详情，长按卡片可直接编辑或删除，日历图标跳转日期。</figcaption>
+    </figure>
+
+    <figure>
+      <div class="phone">
+        <div class="page-head">
+        <div class="sb"><span>9:41</span><span class="sb-icons"><svg viewBox="0 0 18 12"><rect x="0" y="8" width="3" height="4" rx="1"/><rect x="5" y="6" width="3" height="6" rx="1"/><rect x="10" y="3.5" width="3" height="8.5" rx="1"/><rect x="15" y="1" width="3" height="11" rx="1"/></svg><svg viewBox="0 0 16 12"><path d="M8 11l2.2-2.6a3.4 3.4 0 0 0-4.4 0L8 11z"/><path d="M8 5.6c1.7 0 3.3.6 4.6 1.7l1.3-1.6A9.5 9.5 0 0 0 8 3.4c-2.2 0-4.3.8-5.9 2.3l1.3 1.6A7 7 0 0 1 8 5.6z" opacity=".9"/></svg><svg class="battery" viewBox="0 0 26 12"><rect x=".5" y="1" width="21" height="10" rx="3" fill="none" stroke="currentColor"/><rect x="2.5" y="3" width="17" height="6" rx="1.6"/><path d="M23.5 4.6v2.8c1-.4 1.5-1 1.5-1.4s-.5-1-1.5-1.4z"/></svg></span></div>
+        <div class="large">
+          <div>
+            <h3>读书记录</h3>
+            <div class="cap">已读 52 本 · 累计 1,842.6 万字</div>
+          </div>
+          <div class="icons"><svg class="ico"><use href="#i-search"/></svg><svg class="ico"><use href="#i-cal"/></svg></div>
+        </div>
+        <div class="title-row">
+          <div class="seg gold fit"><span class="on">已读</span><span>想读</span></div>
+          <div class="sync-btn"><svg class="ico"><use href="#i-sync"/></svg>同步</div>
+        </div>
+        <div class="chips hscroll" style="padding:0 16px 4px">
+          <span class="chip on">全部</span><span class="chip">2026</span><span class="chip">2025</span><span class="chip">有字数</span>
+        </div>
+        </div>
+        <div class="body scroll">
+          <div class="day-head"><span class="l"><span class="d">2026 年 11 月 08 日</span>· 周日</span><span class="sum">2 本</span></div>
+          <div class="wall">
+            <div class="pitem">
+              <div class="poster book p-c"><span class="rbadge">9.2</span><span class="pt">百年孤独</span><span class="pb">Cien años de soledad</span></div>
+              <div class="p-title">百年孤独</div>
+              <div class="p-meta">26.2 万字 · 360 页</div>
+              <div class="p-foot"><span class="stars">★★★★★</span><span class="d">11-08</span></div>
+            </div>
+            <div class="pitem">
+              <div class="poster book p-e"><span class="rbadge">9.1</span><span class="pt">献给阿尔吉侬<br>的花束</span><span class="pb">Flowers for Algernon</span></div>
+              <div class="p-title">献给阿尔吉侬的花束</div>
+              <div class="p-meta">22.4 万字 · 320 页</div>
+              <div class="p-foot"><span class="stars">★★★★★</span><span class="d">11-08</span></div>
+            </div>
+            <div class="pitem">
+              <div class="poster book p-l"><span class="rbadge">9.3</span><span class="pt">杀死一只<br>知更鸟</span><span class="pb">To Kill a Mockingbird</span></div>
+              <div class="p-title">杀死一只知更鸟</div>
+              <div class="p-meta">18.6 万字 · 442 页</div>
+              <div class="p-foot"><span class="stars">★★★★<span style="opacity:.28">★</span></span><span class="d">11-08</span></div>
+            </div>
+          </div>
+
+          <div class="day-head"><span class="l"><span class="d">2026 年 10 月 30 日</span>· 周五</span><span class="sum">2 本</span></div>
+          <div class="wall">
+            <div class="pitem">
+              <div class="poster book p-f"><span class="rbadge">9.0</span><span class="pt">悉达多</span><span class="pb">Siddhartha</span></div>
+              <div class="p-title">悉达多 <span class="local-dot"></span></div>
+              <div class="p-meta">12.8 万字 · 208 页</div>
+              <div class="p-foot"><span class="stars">★★★★<span style="opacity:.28">★</span></span><span class="d">10-30</span></div>
+            </div>
+            <div class="pitem">
+              <div class="poster book p-i"><span class="rbadge">9.4</span><span class="pt">我与地坛</span><span class="pb">The Temple of Earth</span></div>
+              <div class="p-title">我与地坛</div>
+              <div class="p-meta">11.2 万字 · 256 页</div>
+              <div class="p-foot"><span class="stars">★★★★★</span><span class="d">10-30</span></div>
+            </div>
+            <div class="pitem">
+              <div class="poster book p-j"><span class="rbadge">8.8</span><span class="pt">人类简史</span><span class="pb">Sapiens</span></div>
+              <div class="p-title">人类简史</div>
+              <div class="p-meta">32.5 万字 · 440 页</div>
+              <div class="p-foot"><span class="stars">★★★★<span style="opacity:.28">★</span></span><span class="d">10-29</span></div>
+            </div>
+          </div>
+          <div class="note">读书页额外显示页数与字数；字数可本地统计 EPUB / TXT / DOCX，也可手动修正。</div>
+        </div>
+        <div class="tabbar"><div class="tab on"><svg class="ico"><use href="#i-record"/></svg><span>记录</span></div><div class="tab"><svg class="ico"><use href="#i-list"/></svg><span>豆列</span></div><div class="tab"><svg class="ico"><use href="#i-folder"/></svg><span>计划</span></div><div class="tab"><svg class="ico"><use href="#i-report"/></svg><span>报告</span></div><div class="tab"><svg class="ico"><use href="#i-set"/></svg><span>设置</span></div><div class="homebar"></div></div>
+      </div>
+      <figcaption><b>读书记录 <span class="tagline">字数与页数</span></b>沿用桌面「类型切换」：观影 / 读书各自保留状态筛选。书籍海报按 2:3 竖版显示，封面上的「本地」标记同步可见。</figcaption>
+    </figure>
+
+    <figure>
+      <div class="phone">
+        <div class="page-head">
+        <div class="sb"><span>9:41</span><span class="sb-icons"><svg viewBox="0 0 18 12"><rect x="0" y="8" width="3" height="4" rx="1"/><rect x="5" y="6" width="3" height="6" rx="1"/><rect x="10" y="3.5" width="3" height="8.5" rx="1"/><rect x="15" y="1" width="3" height="11" rx="1"/></svg><svg viewBox="0 0 16 12"><path d="M8 11l2.2-2.6a3.4 3.4 0 0 0-4.4 0L8 11z"/><path d="M8 5.6c1.7 0 3.3.6 4.6 1.7l1.3-1.6A9.5 9.5 0 0 0 8 3.4c-2.2 0-4.3.8-5.9 2.3l1.3 1.6A7 7 0 0 1 8 5.6z" opacity=".9"/></svg><svg class="battery" viewBox="0 0 26 12"><rect x=".5" y="1" width="21" height="10" rx="3" fill="none" stroke="currentColor"/><rect x="2.5" y="3" width="17" height="6" rx="1.6"/><path d="M23.5 4.6v2.8c1-.4 1.5-1 1.5-1.4s-.5-1-1.5-1.4z"/></svg></span></div>
+        <div class="large">
+          <div>
+            <h3>观影记录</h3>
+            <div class="cap">想看 12 部 · 按标记日期</div>
+          </div>
+          <div class="icons"><svg class="ico"><use href="#i-search"/></svg><svg class="ico"><use href="#i-cal"/></svg></div>
+        </div>
+        <div class="title-row">
+          <div class="seg gold fit"><span>已看</span><span class="on">想看</span></div>
+          <div class="sync-btn"><svg class="ico"><use href="#i-sync"/></svg>同步</div>
+        </div>
+        <div class="chips hscroll" style="padding:0 16px 4px">
+          <span class="chip on">全部</span><span class="chip">待映</span><span class="chip">2026</span>
+        </div>
+        </div>
+        <div class="body scroll">
+          <div class="day-head"><span class="l"><span class="d">想看的 12 部</span>· 最近标记</span><span class="sum">按豆瓣排序</span></div>
+          <div class="wall">
+            <div class="pitem">
+              <div class="poster p-j"><span class="wbadge">待映 · 12-20</span><span class="pt">沙丘 3</span><span class="pb">Dune: Part Three</span></div>
+              <div class="p-title">沙丘 3</div>
+              <div class="p-meta">标记于 11-18</div>
+              <div class="p-foot"><span class="stars" style="color:var(--text4)">未评分</span><span class="d">想看</span></div>
+            </div>
+            <div class="pitem">
+              <div class="poster p-g"><span class="wbadge">想看</span><span class="pt">完美的日子</span><span class="pb">Perfect Days</span></div>
+              <div class="p-title">完美的日子</div>
+              <div class="p-meta">标记于 11-10</div>
+              <div class="p-foot"><span class="stars" style="color:var(--text4)">未评分</span><span class="d">想看</span></div>
+            </div>
+            <div class="pitem">
+              <div class="poster p-b2"><span class="wbadge">想看</span><span class="pt">机器人之梦</span><span class="pb">Robot Dreams</span></div>
+              <div class="p-title">机器人之梦</div>
+              <div class="p-meta">标记于 10-22</div>
+              <div class="p-foot"><span class="stars" style="color:var(--text4)">未评分</span><span class="d">想看</span></div>
+            </div>
+            <div class="pitem">
+              <div class="poster p-a2"><span class="wbadge">想看</span><span class="pt">椒麻堂会</span><span class="pb">A New Old Play</span></div>
+              <div class="p-title">椒麻堂会</div>
+              <div class="p-meta">标记于 10-20</div>
+              <div class="p-foot"><span class="stars" style="color:var(--text4)">未评分</span><span class="d">想看</span></div>
+            </div>
+            <div class="pitem">
+              <div class="poster p-k2"><span class="wbadge">想看</span><span class="pt">火山挚恋</span><span class="pb">Fire of Love</span></div>
+              <div class="p-title">火山挚恋</div>
+              <div class="p-meta">标记于 10-02</div>
+              <div class="p-foot"><span class="stars" style="color:var(--text4)">未评分</span><span class="d">想看</span></div>
+            </div>
+            <div class="pitem">
+              <div class="poster p-e"><span class="wbadge">想看</span><span class="pt">可怜的东西</span><span class="pb">Poor Things</span></div>
+              <div class="p-title">可怜的东西</div>
+              <div class="p-meta">标记于 09-18</div>
+              <div class="p-foot"><span class="stars" style="color:var(--text4)">未评分</span><span class="d">想看</span></div>
+            </div>
+          </div>
+          <div class="note">点卡片看详情；详情页「资源」可选择站点搜索。长按可加入计划，看完切回「已看」补评分。</div>
+        </div>
+        <div class="tabbar"><div class="tab on"><svg class="ico"><use href="#i-record"/></svg><span>记录</span></div><div class="tab"><svg class="ico"><use href="#i-list"/></svg><span>豆列</span></div><div class="tab"><svg class="ico"><use href="#i-folder"/></svg><span>计划</span></div><div class="tab"><svg class="ico"><use href="#i-report"/></svg><span>报告</span></div><div class="tab"><svg class="ico"><use href="#i-set"/></svg><span>设置</span></div><div class="homebar"></div></div>
+      </div>
+      <figcaption><b>想看 / 想读 <span class="tagline">同一页切换</span></b>不新增一级入口，用分段控件在「已看 / 想看」之间切换；想看状态保留「待映」等信息；点卡片看详情，详情页新增「资源」入口，长按可加入计划。</figcaption>
+    </figure>
+
+    <figure>
+      <div class="phone">
+        <div class="under">
+          <div class="under-nav"></div>
+          <div class="under-wall"><i></i><i></i><i></i><i></i><i></i><i></i></div>
+        </div>
+        <div class="sheet-scrim"></div>
+        <div class="sheet" style="height:684px">
+          <div class="grabber"></div>
+          <div class="sheet-head"><span class="link">关闭</span><span class="st">资源</span><span class="link strong">完成</span></div>
+          <div class="sheet-body scroll">
+            <div class="flexb" style="align-items:flex-start;gap:10px;margin-bottom:10px">
+              <div style="min-width:0">
+                <div class="t18 b700">沙丘 3</div>
+                <div class="t11 mt2" style="color:var(--text3)">想看 · 待映 12-20 · 豆瓣 8.9</div>
+              </div>
+              <span class="tag wish">想看</span>
+            </div>
+            <div class="searchbar"><svg class="ico"><use href="#i-search"/></svg><span style="color:var(--text)">沙丘 3</span><span class="tag gold" style="margin-left:auto">标题自动填入</span></div>
+
+            <div class="section-t"><span>电影站点 · 4 个</span><span class="link">优先 searchUrl</span></div>
+            <div class="group-card">
+              <div class="field"><span class="fl"><span class="sstat ok"><svg class="ico"><use href="#i-check"/></svg></span><span><span class="t135 b600">豆瓣电影</span><br><span class="t105 muted">站内搜索 · 标题自动填入</span></span></span><span class="vl"><span class="tag gold">搜索</span></span></div>
+              <div class="field"><span class="fl"><span class="sstat ok"><svg class="ico"><use href="#i-check"/></svg></span><span><span class="t135 b600">TMDB</span><br><span class="t105 muted">站内搜索 · query=沙丘 3</span></span></span><span class="vl"><span class="tag gold">搜索</span></span></div>
+              <div class="field"><span class="fl"><span class="sstat bad"><svg class="ico"><use href="#i-close"/></svg></span><span><span class="t135 b600">爱奇艺</span><br><span class="t105 muted">连通性异常 · 仍可尝试打开首页</span></span></span><span class="vl"><span class="tag wish">异常</span></span></div>
+              <div class="field"><span class="fl"><span class="sstat ok"><svg class="ico"><use href="#i-check"/></svg></span><span><span class="t135 b600">我的 NAS 片库 <span class="tag teal">本地</span></span><br><span class="t105 muted">站内搜索 · 标题自动填入</span></span></span><span class="vl"><span class="tag gold">搜索</span></span></div>
+            </div>
+
+            <div class="section-t"><span>其他</span><span class="link">备用入口</span></div>
+            <div class="group-card">
+              <div class="field"><span class="fl"><span class="sf-ico blue"><svg class="ico"><use href="#i-link"/></svg></span><span>豆瓣条目</span></span><span class="vl">movie.douban.com/… <svg class="ico xs chev"><use href="#i-chev"/></svg></span></div>
+            </div>
+            <div class="note">配置里的 searchUrl 支持 {title} 占位符（会做 URL 编码），有模板就直达结果页；没有模板则打开站点首页，仍可在站内搜索。不会读取或注入浏览器 Cookie。</div>
+          </div>
+        </div>
+      </div>
+      <figcaption><b>资源 · 站点搜索 <span class="tagline">新功能</span></b>从记录详情页的「资源」进入，已看 / 想看共用：有 searchUrl 模板的（如 TMDB、本地 NAS）直接带标题进入站内搜索；没有模板或站点异常时退回打开站点首页。豆瓣条目作为备用入口；书籍同样适用。</figcaption>
+    </figure>
+
+    <figure>
+      <div class="phone">
+        <div class="under">
+          <div class="under-nav"></div>
+          <div class="under-wall">
+            <i></i><i></i><i></i><i></i><i></i><i></i>
+          </div>
+        </div>
+        <div class="sheet-scrim"></div>
+        <div class="sheet" style="height:664px">
+          <div class="grabber"></div>
+          <div style="display:flex;align-items:center;gap:10px;padding:8px 16px 10px">
+            <div class="searchbar" style="flex:1;border:1px solid var(--gold-border);background:var(--surface)">
+              <svg class="ico"><use href="#i-search"/></svg>
+              <span style="color:var(--text);font-size:14px">流</span>
+              <span style="margin-left:auto;width:1px;height:18px;background:var(--gold)"></span>
+              <svg class="ico" style="color:var(--text3)"><use href="#i-close"/></svg>
+            </div>
+            <span style="font-size:14.5px;color:var(--gold)">取消</span>
+          </div>
+          <div class="sheet-body scroll">
+            <div class="chips" style="margin:2px 0 10px">
+              <span class="chip">最近：<b class="hl">流</b>浪地球</span><span class="chip">沙丘</span><span class="chip">小森林</span>
+            </div>
+            <div class="section-t" style="padding-top:4px"><span>标题与短评 · 2 条</span><span class="link">查看全部 8 条</span></div>
+            <div class="wall">
+              <div class="pitem">
+                <div class="poster p-b"><span class="rbadge">8.3</span><span class="pt"><span class="hl">流</span>浪地球 2</span><span class="pb">The Wandering Earth II</span></div>
+                <div class="p-title"><span class="hl">流</span>浪地球 2</div>
+                <div class="p-meta">2 小时 53 分</div>
+                <div class="p-foot"><span class="stars">★★★★<span style="opacity:.28">★</span></span><span class="d">10-25</span></div>
+              </div>
+              <div class="pitem">
+                <div class="poster p-b"><span class="rbadge">7.9</span><span class="pt"><span class="hl">流</span>浪地球</span><span class="pb">The Wandering Earth</span></div>
+                <div class="p-title"><span class="hl">流</span>浪地球</div>
+                <div class="p-meta">2 小时 5 分</div>
+                <div class="p-foot"><span class="stars">★★★★★</span><span class="d">02-11</span></div>
+              </div>
+              <div class="pitem">
+                <div class="poster p-e"><span class="rbadge">8.8</span><span class="pt">瞬息全宇宙</span><span class="pb">Everything Everywhere</span></div>
+                <div class="p-title">瞬息全宇宙</div>
+                <div class="p-meta">短评命中：像一条<span class="hl">流</span>动的河</div>
+                <div class="p-foot"><span class="stars">★★★★<span style="opacity:.28">★</span></span><span class="d">2025</span></div>
+              </div>
+            </div>
+            <div class="section-t"><span>内容匹配 · 3 条</span><span class="link">短评关键词</span></div>
+            <div class="group-card">
+              <div class="field"><span class="fl"><span class="t13">《<span class="hl">流</span>浪地球 2》的短评</span></span><span class="vl muted">10-25</span></div>
+              <div class="field"><span class="fl"><span class="t13">电影资料：太空电梯与行星发动机</span></span><span class="vl muted">简介</span></div>
+            </div>
+            <div class="note">搜索覆盖标题、短评与条目简介，命中词高亮；结果与主列表共用卡片，清空关键词即退出搜索。</div>
+          </div>
+        </div>
+      </div>
+      <figcaption><b>搜索 <span class="tagline">半屏浮层</span></b>搜索不跳页：从顶部下滑出半屏，输入即筛选，标题 / 短评 / 简介一起命中并高亮；点卡片进入详情，关闭后保留原列表位置。</figcaption>
+    </figure>
+
+    <figure>
+      <div class="phone">
+        <div class="under">
+          <div class="under-nav"></div>
+          <div class="under-wall">
+            <i></i><i></i><i></i><i></i><i></i><i></i>
+          </div>
+        </div>
+        <div class="sheet-scrim"></div>
+        <div class="sheet" style="height:788px">
+          <div class="grabber"></div>
+          <div class="sheet-head"><span class="link">关闭</span><span class="st">记录详情</span><span class="link strong">编辑</span></div>
+          <div class="sheet-body scroll">
+            <div class="detail-top">
+              <div class="detail-cover">
+                <div class="poster p-a"><span class="rbadge">8.4</span><span class="pt">大决战<br>辽沈战役</span><span class="pb">The Great Decisive War</span></div>
+              </div>
+              <div class="detail-info">
+                <h4>大决战之辽沈战役</h4>
+                <div class="sub">观影 · 已看 · 豆瓣 8.4</div>
+                <div class="kv mt8"><span class="k">我的评分</span><span class="v gold">★★★★★</span></div>
+                <div class="kv"><span class="k">本地日期</span><span class="v">2026-10-25 <span class="local-dot"></span></span></div>
+                <div class="kv"><span class="k">时长</span><span class="v">3 小时 29 分</span></div>
+                <div class="kv"><span class="k">来源</span><span class="v">豆瓣 · 本地修改</span></div>
+              </div>
+            </div>
+            <div class="resource-entry">
+              <span class="re-ico"><svg class="ico"><use href="#i-compass"/></svg></span>
+              <div class="re-main"><div class="re-t">资源</div><div class="re-s">在豆瓣、TMDB、本地片库中查找</div></div>
+              <span class="re-go">去找 <svg class="ico xs chev"><use href="#i-chev"/></svg></span>
+            </div>
+            <div class="section-t"><span>感想</span><span class="link">复制</span></div>
+            <div class="comment">拍得真稳。辽沈战役从锦州攻坚到黑山阻击，几条线并行推进而不乱，宏观调度与战壕里的具体恐惧都照顾到了。
+
+最喜欢的是攻打配水池那一段：没有喊口号，只有雪、泥、冻僵的手和一张张年轻的脸。战争片最难的是让人记住「代价」，这部做到了。结尾的胜利没有配乐狂欢，反而安静得让人心里发沉。
+
+五星，是给这份克制。</div>
+            <div class="section-t"><span>操作</span><span class="link">长按卡片也可快速操作</span></div>
+            <div style="display:flex;gap:8px">
+              <div class="btn ghost sm" style="flex:1"><svg class="ico"><use href="#i-link"/></svg>豆瓣页面</div>
+              <div class="btn ghost sm" style="flex:1"><svg class="ico"><use href="#i-photo"/></svg>换封面</div>
+              <div class="btn danger sm" style="flex:0 0 74px"><svg class="ico"><use href="#i-trash"/></svg>删除</div>
+            </div>
+            <div class="note">删除会进入回收站，可在「设置 → 回收站」恢复或彻底删除；彻底删除后会留下标记，避免同步时被重新加回。</div>
+          </div>
+        </div>
+      </div>
+      <figcaption><b>记录详情 <span class="tagline">半屏 + 滚动</span></b>桌面是左右双栏弹窗，手机改为半屏：左侧封面、右侧信息，长评在下方滚动；「编辑」进入编辑浮层；详情统一带「资源」入口，已看与想看都能直接找站点；换封面支持相册、刷新豆瓣、粘贴链接与清除。</figcaption>
+    </figure>
+
+    <figure>
+      <div class="phone">
+        <div class="under">
+          <div class="under-nav"></div>
+          <div class="under-wall"><i></i><i></i><i></i><i></i><i></i><i></i></div>
+        </div>
+        <div class="sheet-scrim"></div>
+        <div class="sheet" style="height:744px">
+          <div class="grabber"></div>
+          <div class="sheet-head"><span class="link">关闭</span><span class="st">记录详情</span><span class="link strong">编辑</span></div>
+          <div class="sheet-body scroll">
+            <div class="detail-top">
+              <div class="detail-cover">
+                <div class="poster p-j"><span class="wbadge">想看</span><span class="pt">沙丘 3</span><span class="pb">Dune: Part Three</span></div>
+              </div>
+              <div class="detail-info">
+                <h4>沙丘 3</h4>
+                <div class="sub">观影 · 想看 · 豆瓣 8.9</div>
+                <div class="kv mt8"><span class="k">我的评分</span><span class="v muted">未评分</span></div>
+                <div class="kv"><span class="k">标记日期</span><span class="v">2026-11-18</span></div>
+                <div class="kv"><span class="k">上映日期</span><span class="v">2026-12-20</span></div>
+                <div class="kv"><span class="k">来源</span><span class="v">豆瓣</span></div>
+              </div>
+            </div>
+            <div class="resource-entry">
+              <span class="re-ico"><svg class="ico"><use href="#i-compass"/></svg></span>
+              <div class="re-main"><div class="re-t">资源</div><div class="re-s">在 4 个站点搜索《沙丘 3》</div></div>
+              <span class="re-go">去找 <svg class="ico xs chev"><use href="#i-chev"/></svg></span>
+            </div>
+            <div class="section-t"><span>感想</span><span class="link">编辑</span></div>
+            <div style="text-align:center;padding:18px 0 8px;color:var(--text3);font-size:12px">暂时还没感想</div>
+            <div class="btn primary sm" style="width:126px;margin:0 auto"><svg class="ico"><use href="#i-edit"/></svg>前去添加</div>
+            <div class="section-t"><span>操作</span><span class="link">长按卡片也可快速操作</span></div>
+            <div style="display:flex;gap:8px">
+              <div class="btn ghost sm" style="flex:1"><svg class="ico"><use href="#i-link"/></svg>豆瓣页面</div>
+              <div class="btn ghost sm" style="flex:1"><svg class="ico"><use href="#i-plus"/></svg>加入计划</div>
+              <div class="btn danger sm" style="flex:0 0 74px"><svg class="ico"><use href="#i-trash"/></svg>删除</div>
+            </div>
+            <div class="note">想看详情的「资源」入口与已看一致；看完后切回「已看」补评分与短评。</div>
+          </div>
+        </div>
+      </div>
+      <figcaption><b>详情 · 想看 <span class="tagline">资源入口一致</span></b>未看过的记录也能从详情进入「资源」搜索；保留未评分、标记日期与上映日期，空感想引导补录。已看和想看共用同一套站点与 searchUrl。</figcaption>
+    </figure>
+
+    <figure>
+      <div class="phone">
+        <div class="under">
+          <div class="under-nav"></div>
+          <div class="under-wall"><i></i><i></i><i></i><i></i><i></i><i></i></div>
+        </div>
+        <div class="sheet-scrim"></div>
+        <div class="sheet" style="height:756px">
+          <div class="grabber"></div>
+          <div class="sheet-head"><span class="link">取消</span><span class="st">编辑记录</span><span class="link strong">保存</span></div>
+          <div class="sheet-body scroll">
+            <div style="display:flex;gap:12px;align-items:center;margin-bottom:12px">
+              <div style="width:54px;flex:0 0 54px;aspect-ratio:2/3;border-radius:6px;overflow:hidden">
+                <div class="poster p-a" style="height:100%;aspect-ratio:auto;border-radius:6px;padding:4px"><span class="pt" style="font-size:7px">大决战</span></div>
+              </div>
+              <div style="flex:1;min-width:0">
+                <div class="t14 b600" style="line-height:1.35">大决战之辽沈战役</div>
+                <div class="t11 mt2" style="color:var(--text3)">豆瓣来源 · 8.4</div>
+              </div>
+              <div class="btn ghost xs">换封面</div>
+            </div>
+
+            <div class="group-label">我自己的记录</div>
+            <div class="group-card">
+              <div class="field"><span class="lb">本地日期</span><span class="vl">2026-10-25 <svg class="ico xs chev"><use href="#i-chev"/></svg></span></div>
+              <div class="field"><span class="lb">状态</span><span class="vl"><span class="seg sm" style="width:116px;flex:0 0 116px"><span class="on">已看</span><span>想看</span></span></span></div>
+              <div class="field"><span class="lb">评分</span><span class="vl" style="font-size:17px;color:var(--star);letter-spacing:2px">★★★★★</span></div>
+              <div class="field"><span class="lb">时长（分钟）</span><span class="vl">209</span></div>
+            </div>
+
+            <div class="group-label">短评</div>
+            <div class="textarea">拍得真稳。辽沈战役从锦州攻坚到黑山阻击，几条线并行推进而不乱，宏观调度与战壕里的具体恐惧都照顾到了。五星，是给这份克制。</div>
+            <div class="note" style="padding-top:6px">本地改过的评分、短评与日期不会被豆瓣同步覆盖。</div>
+
+            <div class="group-card mt12">
+              <div class="field"><span class="fl"><span class="lb">恢复豆瓣原始时间</span></span><span class="toggle sm off"></span></div>
+            </div>
+            <div class="note" style="padding-top:6px">打开后，下次同步会允许豆瓣日期覆盖本地日期，并清除「本地修改」标记。</div>
+            <div class="btn danger mt14" style="width:100%">移到回收站</div>
+          </div>
+        </div>
+      </div>
+      <figcaption><b>编辑记录 <span class="tagline">移动端表单</span></b>把桌面的日期、评分、状态、时长与短评分组排列；「恢复豆瓣原始时间」单独成项，关闭时保持「本地优先」；换封面也在本页完成。</figcaption>
+    </figure>
+
+    <figure>
+      <div class="phone">
+        <div class="under">
+          <div class="under-nav"></div>
+          <div class="under-wall"><i></i><i></i><i></i><i></i><i></i><i></i></div>
+        </div>
+        <div class="sheet-scrim"></div>
+        <div class="sheet" style="height:820px">
+          <div class="grabber"></div>
+          <div class="sheet-head"><span class="link">取消</span><span class="st">新增观影记录</span><span class="link strong">保存</span></div>
+          <div class="sheet-body scroll">
+            <div style="display:flex;gap:14px;margin-bottom:12px">
+              <div style="width:92px;flex:0 0 92px">
+                <div style="aspect-ratio:2/3;border:1px dashed var(--border-strong);border-radius:10px;background:var(--subtle);display:grid;place-items:center;text-align:center;color:var(--text3);font-size:10.5px;line-height:1.5">
+                  <div><svg class="ico" style="width:22px;height:22px;margin-bottom:4px"><use href="#i-photo"/></svg><br>选择封面</div>
+                </div>
+                <div class="t10 mt4" style="color:var(--text3);text-align:center">jpg / png / webp</div>
+              </div>
+              <div style="flex:1;min-width:0">
+                <div class="group-label" style="padding-top:0">标题</div>
+                <div class="input on"><span class="ph">输入影视标题</span></div>
+                <div class="seg gold sm mt8" style="width:140px"><span class="on">已看</span><span>想看</span></div>
+                <div class="note" style="padding-top:6px">只有标题必填；保存后参与列表与报告统计。</div>
+              </div>
+            </div>
+
+            <div class="group-label">日期 / 评分 / 时长</div>
+            <div class="group-card">
+              <div class="field"><span class="lb">日期</span><span class="vl">2026-11-22 <svg class="ico xs chev"><use href="#i-chev"/></svg></span></div>
+              <div class="field"><span class="lb">评分</span><span class="vl" style="font-size:17px;color:var(--text4);letter-spacing:2px">未评分</span></div>
+              <div class="field"><span class="lb">时长（分钟）</span><span class="vl muted">可选，例如 122</span></div>
+            </div>
+
+            <div class="group-label">豆瓣链接（可选）</div>
+            <div class="input"><span class="ph">https://movie.douban.com/subject/xxxx/</span></div>
+            <div class="note" style="padding-top:5px">粘贴链接后自动解析标题、年份、时长与封面；解析失败仍可手填。</div>
+
+            <div class="group-label">短评（可选）</div>
+            <div class="textarea" style="min-height:84px"><span class="ph">写点短评…</span></div>
+            <div class="note" style="padding-top:8px">手动新增的记录不会被豆瓣同步删除，可以随时补录没同步到的条目。</div>
+          </div>
+        </div>
+      </div>
+      <figcaption><b>新增记录 <span class="tagline">补录入口</span></b>对应桌面「新增」弹窗：封面、标题、状态、日期、评分、时长、豆瓣链接与短评一屏完成；iOS 从相册/文件选封面，链接解析后可回填。</figcaption>
+    </figure>
+
+    <figure>
+      <div class="phone">
+        <div class="under">
+          <div class="under-nav"></div>
+          <div class="under-wall"><i></i><i></i><i></i><i></i><i></i><i></i></div>
+        </div>
+        <div class="sheet-scrim"></div>
+        <div class="sheet" style="height:726px">
+          <div class="grabber"></div>
+          <div class="sheet-head"><span class="link">关闭</span><span class="st">同步豆瓣</span><span class="link strong">开始同步</span></div>
+          <div class="sheet-body scroll">
+            <div class="group-card">
+              <div class="field"><span class="lb">豆瓣 ID</span><span class="vl">catnine <span class="tag read">已保存</span></span></div>
+              <div class="field"><span class="lb">登录状态</span><span class="vl"><svg class="ico xs" style="color:var(--read)"><use href="#i-lock"/></svg>Keychain 已保存 · 11-18 <svg class="ico xs chev"><use href="#i-chev"/></svg></span></div>
+            </div>
+            <div class="note" style="padding-top:6px">私密收藏与豆列需要登录 Cookie；登录态只存本机 Keychain，可在「设置 → 豆瓣登录」重新登录或清除。</div>
+
+            <div class="group-label">同步方式</div>
+            <div class="group-card">
+              <div class="field"><span class="fl"><span class="radio"></span><span>增量同步（新增并移除）</span></span><span class="vl"><span class="tag gold">推荐</span></span></div>
+              <div class="field"><span class="fl"><span class="radio off"></span><span>增量同步（仅新增）</span></span></div>
+              <div class="field"><span class="fl"><span class="radio off"></span><span>全量同步（远端全局替换）</span></span></div>
+            </div>
+            <div class="note" style="padding-top:6px">增量：补新增条目，远端已移除的条目进回收站；全量：远端列表全局替换。</div>
+
+            <div class="group-label">同步范围</div>
+            <div class="group-card">
+              <div class="field"><span class="fl"><span class="checkbox on"><svg class="ico"><use href="#i-check"/></svg></span><span>观影记录</span></span><span class="vl muted">38 部</span></div>
+              <div class="field"><span class="fl"><span class="checkbox on"><svg class="ico"><use href="#i-check"/></svg></span><span>读书记录</span></span><span class="vl muted">52 本</span></div>
+              <div class="field"><span class="fl"><span class="checkbox on"><svg class="ico"><use href="#i-check"/></svg></span><span>豆列</span></span><span class="vl muted">8 个</span></div>
+            </div>
+            <div class="note" style="padding-top:6px">本地改过的日期、评分与短评始终保留；手动新增的记录不会因远端缺失而被删除。</div>
+
+            <div class="group-label">上次同步</div>
+            <div class="group-card">
+              <div class="field"><span class="lb">11-20 21:06</span><span class="vl">新增 3，更新 1，移除 0</span></div>
+              <div class="field"><span class="lb">同步耗时</span><span class="vl">28 秒 · 下载封面 6 张</span></div>
+            </div>
+            <div class="btn primary mt14" style="width:100%"><svg class="ico"><use href="#i-sync"/></svg>开始同步</div>
+            <div class="note" style="text-align:center">豆瓣可能限流；同步失败会保留本地数据，可稍后重试。</div>
+          </div>
+        </div>
+      </div>
+      <figcaption><b>同步豆瓣 <span class="tagline">核心动作</span></b>同步常驻记录页右上角。移动端把 ID、登录、方式与范围收进半屏，默认「增量 + 新增并移除」，开始后同一浮层显示进度与结果。</figcaption>
+    </figure>
+
+    <figure>
+      <div class="phone">
+        <div class="under">
+          <div class="under-nav"></div>
+          <div class="under-wall"><i></i><i></i><i></i><i></i><i></i><i></i></div>
+        </div>
+        <div class="sheet-scrim"></div>
+        <div class="sheet" style="height:784px">
+          <div class="grabber"></div>
+          <div class="sheet-head"><span class="link">关闭</span><span class="st">登录豆瓣</span><span class="link strong">完成</span></div>
+          <div class="sheet-body scroll">
+            <div class="flexb" style="margin:0 2px 8px"><span class="t12 b600">App 内登录</span><span class="tag gold">推荐</span></div>
+
+            <div class="webview">
+              <div class="wv-bar">
+                <svg class="ico" style="width:14px;height:14px;color:var(--read)"><use href="#i-lock"/></svg>
+                <div class="wv-url"><svg class="ico"><use href="#i-lock"/></svg>accounts.douban.com/passport/login</div>
+                <svg class="ico" style="width:14px;height:14px"><use href="#i-sync"/></svg>
+              </div>
+              <div class="wv-body">
+                <div class="db-logo">豆</div>
+                <div class="t14 b700">登录豆瓣</div>
+                <div class="t105 mt2" style="color:var(--text3)">登录后可同步私密收藏与豆列</div>
+                <div style="display:grid;place-items:center;padding:10px 0 6px"><div class="qr"><i></i></div></div>
+                <div class="t115 b600">使用豆瓣 App 扫码</div>
+                <div class="t105 mt2" style="color:var(--text3)">二维码 5 分钟内有效</div>
+                <div class="divider" style="margin:12px 20px"></div>
+                <div class="t12 gold b600">账号密码登录</div>
+              </div>
+            </div>
+
+            <div class="group-card mt12">
+              <div class="field"><span class="fl"><span class="sf-ico gold"><svg class="ico"><use href="#i-lock"/></svg></span><span>登录态存储</span></span><span class="vl">本机 Keychain</span></div>
+              <div class="field"><span class="fl"><span class="sf-ico teal"><svg class="ico"><use href="#i-cloud"/></svg></span><span>用于同步</span></span><span class="vl">私密收藏 / 豆列</span></div>
+            </div>
+            <div class="note">App 内登录成功后自动读取 Cookie，只保存在本机 Keychain，不上传服务器；不会访问相册或剪贴板。</div>
+
+            <div style="display:flex;gap:8px;margin-top:10px">
+              <div class="btn ghost sm" style="flex:1"><svg class="ico"><use href="#i-link"/></svg>Safari 打开</div>
+              <div class="btn ghost sm" style="flex:1"><svg class="ico"><use href="#i-copy"/></svg>粘贴 Cookie</div>
+            </div>
+            <div class="note">登录被限制时的兜底：Safari 登录后系统不会把 Cookie 交给 App，需要手动复制粘贴；两者都只存本机 Keychain。</div>
+          </div>
+        </div>
+      </div>
+      <figcaption><b>豆瓣登录 <span class="tagline">扫码 / 粘贴</span></b>App 内用 WKWebView 承载豆瓣登录页（扫码 / 账号密码），成功后读取 Cookie 存本机 Keychain；Safari 打开与粘贴 Cookie 仅作兜底。</figcaption>
+    </figure>
+
+  </div>
+</section>
+
+<section class="group" id="g-doulist" data-group="doulist">
+  <div class="group-head">
+    <span class="group-num">02</span>
+    <h2>豆列</h2>
+    <p>片单书单 · 条目信息 · 加入计划</p>
+  </div>
+  <div class="screens">
+
+    <figure>
+      <div class="phone">
+        <div class="page-head">
+        <div class="sb"><span>9:41</span><span class="sb-icons"><svg viewBox="0 0 18 12"><rect x="0" y="8" width="3" height="4" rx="1"/><rect x="5" y="6" width="3" height="6" rx="1"/><rect x="10" y="3.5" width="3" height="8.5" rx="1"/><rect x="15" y="1" width="3" height="11" rx="1"/></svg><svg viewBox="0 0 16 12"><path d="M8 11l2.2-2.6a3.4 3.4 0 0 0-4.4 0L8 11z"/><path d="M8 5.6c1.7 0 3.3.6 4.6 1.7l1.3-1.6A9.5 9.5 0 0 0 8 3.4c-2.2 0-4.3.8-5.9 2.3l1.3 1.6A7 7 0 0 1 8 5.6z" opacity=".9"/></svg><svg class="battery" viewBox="0 0 26 12"><rect x=".5" y="1" width="21" height="10" rx="3" fill="none" stroke="currentColor"/><rect x="2.5" y="3" width="17" height="6" rx="1.6"/><path d="M23.5 4.6v2.8c1-.4 1.5-1 1.5-1.4s-.5-1-1.5-1.4z"/></svg></span></div>
+        <div class="large">
+          <div>
+            <h3>我的豆列</h3>
+            <div class="cap">自己创建与关注的片单 / 书单 · 8 个</div>
+          </div>
+          <div class="icons"><svg class="ico"><use href="#i-search"/></svg><svg class="ico"><use href="#i-sync"/></svg></div>
+        </div>
+        <div class="title-row">
+          <div class="seg gold"><span class="on">影视</span><span>书籍</span></div>
+        </div>
+        <div class="chips hscroll" style="padding:0 16px 4px">
+          <span class="chip on">全部 8</span><span class="chip">自建 3</span><span class="chip">关注 5</span><span class="chip">含待看</span>
+        </div>
+        </div>
+        <div class="body scroll">
+          <div class="dl-card">
+            <div class="mosaic">
+              <div class="poster p-a"><span class="pt">大决战</span></div>
+              <div class="poster p-h"><span class="pt">麦克斯</span></div>
+              <div class="poster p-k"><span class="pt">钢琴师</span></div>
+              <div class="poster p-g"><span class="pt">白日梦</span></div>
+            </div>
+            <div class="dl-main">
+              <h5>黑色电影 · 私人片单</h5>
+              <div class="meta">32 部 · 已看 21 部 · 更新 11-12</div>
+              <div class="tags"><span class="tag gold">自建</span><span class="tag">公开</span><span class="tag wish">待看 11</span></div>
+            </div>
+            <div style="display:flex;align-items:center;color:var(--chevron)"><svg class="ico sm"><use href="#i-chev"/></svg></div>
+          </div>
+
+          <div class="dl-card">
+            <div class="mosaic">
+              <div class="poster p-b"><span class="pt">流浪地球</span></div>
+              <div class="poster p-n"><span class="pt">情书</span></div>
+              <div class="poster p-m"><span class="pt">野餐</span></div>
+              <div class="poster p-d"><span class="pt">小森林</span></div>
+            </div>
+            <div class="dl-main">
+              <h5>想在大银幕重看一遍</h5>
+              <div class="meta">18 部 · 已看 9 部 · 更新 11-03</div>
+              <div class="tags"><span class="tag gold">自建</span><span class="tag">仅自己</span></div>
+            </div>
+            <div style="display:flex;align-items:center;color:var(--chevron)"><svg class="ico sm"><use href="#i-chev"/></svg></div>
+          </div>
+
+          <div class="dl-card">
+            <div class="mosaic">
+              <div class="poster p-e"><span class="pt">可怜</span></div>
+              <div class="poster p-j"><span class="pt">沙丘</span></div>
+              <div class="poster p-k2"><span class="pt">火山</span></div>
+              <div class="poster p-b2"><span class="pt">机器人</span></div>
+            </div>
+            <div class="dl-main">
+              <h5>2026 待映 · 关注豆列</h5>
+              <div class="meta">26 部 · 已看 4 部 · 关注中</div>
+              <div class="tags"><span class="tag teal">关注</span><span class="tag wish">待映 14</span></div>
+            </div>
+            <div style="display:flex;align-items:center;color:var(--chevron)"><svg class="ico sm"><use href="#i-chev"/></svg></div>
+          </div>
+
+          <div class="dl-card">
+            <div class="mosaic">
+              <div class="poster p-a2"><span class="pt">椒麻堂会</span></div>
+              <div class="poster p-m"><span class="pt">路边野餐</span></div>
+              <div class="poster p-g"><span class="pt">完美的日子</span></div>
+              <div class="poster p-k"><span class="pt">海上钢琴师</span></div>
+            </div>
+            <div class="dl-main">
+              <h5>华语作者电影补完计划</h5>
+              <div class="meta">41 部 · 已看 27 部 · 更新 10-28</div>
+              <div class="tags"><span class="tag gold">自建</span><span class="tag">协作</span></div>
+            </div>
+            <div style="display:flex;align-items:center;color:var(--chevron)"><svg class="ico sm"><use href="#i-chev"/></svg></div>
+          </div>
+
+          <div class="dl-card">
+            <div class="mosaic">
+              <div class="poster p-b"><span class="pt">沙丘</span></div>
+              <div class="poster p-j"><span class="pt">沙丘 2</span></div>
+              <div class="poster p-n"><span class="pt">瞬息</span></div>
+              <div class="poster p-h"><span class="pt">麦克斯</span></div>
+            </div>
+            <div class="dl-main">
+              <h5>科幻 · 视觉奇观</h5>
+              <div class="meta">24 部 · 已看 16 部 · 关注中</div>
+              <div class="tags"><span class="tag teal">关注</span><span class="tag">公开</span></div>
+            </div>
+            <div style="display:flex;align-items:center;color:var(--chevron)"><svg class="ico sm"><use href="#i-chev"/></svg></div>
+          </div>
+          <div class="note">豆列按「影视 / 书籍」拆分，封面用 2×2 拼贴；点开可调整条目顺序，或把整列加入某个计划。</div>
+        </div>
+        <div class="tabbar"><div class="tab"><svg class="ico"><use href="#i-record"/></svg><span>记录</span></div><div class="tab on"><svg class="ico"><use href="#i-list"/></svg><span>豆列</span></div><div class="tab"><svg class="ico"><use href="#i-folder"/></svg><span>计划</span></div><div class="tab"><svg class="ico"><use href="#i-report"/></svg><span>报告</span></div><div class="tab"><svg class="ico"><use href="#i-set"/></svg><span>设置</span></div><div class="homebar"></div></div>
+      </div>
+      <figcaption><b>我的豆列 <span class="tagline">列表</span></b>桌面是三列卡片墙，手机改为纵向列表：拼贴封面 + 标题 + 数量 + 状态标签，一屏能看到更多豆列；长按可删除或加入计划。</figcaption>
+    </figure>
+
+    <figure>
+      <div class="phone">
+        <div class="page-head">
+        <div class="sb"><span>9:41</span><span class="sb-icons"><svg viewBox="0 0 18 12"><rect x="0" y="8" width="3" height="4" rx="1"/><rect x="5" y="6" width="3" height="6" rx="1"/><rect x="10" y="3.5" width="3" height="8.5" rx="1"/><rect x="15" y="1" width="3" height="11" rx="1"/></svg><svg viewBox="0 0 16 12"><path d="M8 11l2.2-2.6a3.4 3.4 0 0 0-4.4 0L8 11z"/><path d="M8 5.6c1.7 0 3.3.6 4.6 1.7l1.3-1.6A9.5 9.5 0 0 0 8 3.4c-2.2 0-4.3.8-5.9 2.3l1.3 1.6A7 7 0 0 1 8 5.6z" opacity=".9"/></svg><svg class="battery" viewBox="0 0 26 12"><rect x=".5" y="1" width="21" height="10" rx="3" fill="none" stroke="currentColor"/><rect x="2.5" y="3" width="17" height="6" rx="1.6"/><path d="M23.5 4.6v2.8c1-.4 1.5-1 1.5-1.4s-.5-1-1.5-1.4z"/></svg></span></div>
+        <div class="nav">
+          <span class="back"><svg class="ico"><use href="#i-back"/></svg>豆列</span>
+          <span class="icons"><svg class="ico"><use href="#i-more"/></svg></span>
+        </div>
+        <div style="padding:2px 16px 10px">
+          <div class="t22 b700" style="font-size:23px;line-height:1.3">黑色电影 · 私人片单</div>
+          <div class="t115 mt4" style="color:var(--text3)">32 部 · 已看 21 部 · 豆瓣片单 · 更新于 11-12</div>
+          <div class="chips mt8"><span class="tag gold">自建</span><span class="tag">公开</span><span class="tag wish">待看 11</span></div>
+        </div>
+        <div class="title-row" style="padding-bottom:6px">
+          <div class="seg sm"><span class="on">全部 32</span><span>已看 21</span><span>待看 11</span></div>
+        </div>
+        <div class="chips hscroll" style="padding:0 16px 6px">
+          <span class="chip">默认顺序</span><span class="chip on">豆瓣排序</span><span class="chip">评分</span><span class="chip">年份</span>
+        </div>
+        </div>
+        <div class="body scroll">
+          <div class="row">
+            <div class="thumb"><div class="poster p-a"><span class="pt">大决战</span></div></div>
+            <div class="row-main">
+              <div class="row-title">大决战之辽沈战役 <span class="local-dot"></span></div>
+              <div class="row-sub">1991 · 3 小时 29 分 · 已看</div>
+            </div>
+            <div class="right"><span class="tag read">已看</span><svg class="ico xs" style="color:var(--text3)"><use href="#i-edit"/></svg></div>
+          </div>
+          <div class="row">
+            <div class="thumb"><div class="poster p-h"><span class="pt">麦克斯</span></div></div>
+            <div class="row-main">
+              <div class="row-title">疯狂的麦克斯 4：狂暴之路</div>
+              <div class="row-sub">2015 · 2 小时 · 已看</div>
+            </div>
+            <div class="right"><span class="tag read">已看</span><svg class="ico xs" style="color:var(--text3)"><use href="#i-edit"/></svg></div>
+          </div>
+          <div class="row">
+            <div class="thumb"><div class="poster p-k"><span class="pt">钢琴师</span></div></div>
+            <div class="row-main">
+              <div class="row-title">海上钢琴师</div>
+              <div class="row-sub">1998 · 2 小时 45 分 · 已看</div>
+            </div>
+            <div class="right"><span class="tag read">已看</span><svg class="ico xs" style="color:var(--text3)"><use href="#i-edit"/></svg></div>
+          </div>
+          <div class="row">
+            <div class="thumb"><div class="poster p-g"><span class="pt">白日梦</span></div></div>
+            <div class="row-main">
+              <div class="row-title">白日梦想家</div>
+              <div class="row-sub">2013 · 1 小时 54 分 · 已看</div>
+            </div>
+            <div class="right"><span class="tag read">已看</span><svg class="ico xs" style="color:var(--text3)"><use href="#i-edit"/></svg></div>
+          </div>
+          <div class="row">
+            <div class="thumb"><div class="poster p-n"><span class="pt">情书</span></div></div>
+            <div class="row-main">
+              <div class="row-title">情书</div>
+              <div class="row-sub">1995 · 1 小时 57 分 · 已看</div>
+            </div>
+            <div class="right"><span class="tag read">已看</span><svg class="ico xs" style="color:var(--text3)"><use href="#i-edit"/></svg></div>
+          </div>
+          <div class="row">
+            <div class="thumb"><div class="poster p-m"><span class="pt">野餐</span></div></div>
+            <div class="row-main">
+              <div class="row-title">路边野餐</div>
+              <div class="row-sub">2015 · 1 小时 50 分 · 已看</div>
+            </div>
+            <div class="right"><span class="tag read">已看</span><svg class="ico xs" style="color:var(--text3)"><use href="#i-edit"/></svg></div>
+          </div>
+          <div class="row">
+            <div class="thumb"><div class="poster p-b"><span class="pt">流浪地球</span></div></div>
+            <div class="row-main">
+              <div class="row-title">流浪地球 2</div>
+              <div class="row-sub">2023 · 2 小时 53 分 · 已看</div>
+            </div>
+            <div class="right"><span class="tag read">已看</span><svg class="ico xs" style="color:var(--text3)"><use href="#i-edit"/></svg></div>
+          </div>
+          <div class="row">
+            <div class="thumb"><div class="poster p-d"><span class="pt">小森林</span></div></div>
+            <div class="row-main">
+              <div class="row-title">小森林 夏秋篇</div>
+              <div class="row-sub">2014 · 1 小时 51 分 · 已看</div>
+            </div>
+            <div class="right"><span class="tag read">已看</span><svg class="ico xs" style="color:var(--text3)"><use href="#i-edit"/></svg></div>
+          </div>
+          <div class="note">点条目右侧铅笔可改时长 / 页数 / 字数；长按拖动调整顺序。豆列本身只读时，条目变更只影响本地展示。</div>
+        </div>
+        <div class="homebar"></div>
+      </div>
+      <figcaption><b>豆列详情 <span class="tagline">条目列表</span></b>保留桌面「打开豆列 / 删除豆列 / 排序」能力：顶部排序 chip 切换顺序，右上菜单做删除与整列加入计划；条目右侧铅笔改时长、页数、字数。</figcaption>
+    </figure>
+
+    <figure>
+      <div class="phone">
+        <div class="under">
+          <div class="under-nav"></div>
+          <div class="under-row"></div><div class="under-row"></div><div class="under-row"></div><div class="under-row"></div>
+        </div>
+        <div class="sheet-scrim"></div>
+        <div class="sheet" style="height:560px">
+          <div class="grabber"></div>
+          <div class="sheet-head"><span class="link">取消</span><span class="st">条目信息</span><span class="link strong">保存</span></div>
+          <div class="sheet-body scroll">
+            <div style="display:flex;gap:12px;align-items:center;margin-bottom:12px">
+              <div style="width:56px;flex:0 0 56px;aspect-ratio:2/3;border-radius:6px;overflow:hidden">
+                <div class="poster p-a" style="height:100%;aspect-ratio:auto;border-radius:6px;padding:4px"><span class="pt" style="font-size:7px">大决战</span></div>
+              </div>
+              <div style="flex:1;min-width:0">
+                <div class="t14 b600">大决战之辽沈战役</div>
+                <div class="t11 mt2" style="color:var(--text3)">豆列条目 · 豆瓣来源</div>
+              </div>
+            </div>
+            <div class="group-label">本地补充信息</div>
+            <div class="group-card">
+              <div class="field"><span class="lb">状态</span><span class="vl"><span class="tag read">已看</span></span></div>
+              <div class="field"><span class="lb">时长（分钟）</span><span class="vl">209</span></div>
+              <div class="field"><span class="lb">页数</span><span class="vl muted">书籍条目可填</span></div>
+              <div class="field"><span class="lb">字数</span><span class="vl muted">书籍条目可填</span></div>
+            </div>
+            <div class="note">这些值只写在本地豆列条目上，用于展示与统计；书籍页数会随云备份快照同步，换设备无需重新从豆瓣补全。</div>
+            <div class="group-card mt12">
+              <div class="field"><span class="fl"><span class="checkbox on"><svg class="ico"><use href="#i-check"/></svg></span><span>同步时保留本地修改</span></span><span class="vl"></span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <figcaption><b>条目信息 <span class="tagline">豆列内编辑</span></b>对应桌面豆列条目的「修改时长 / 页数 / 字数」：手机用底部小表单完成，书籍条目同时支持页数与字数，数值随快照备份。</figcaption>
+    </figure>
+
+  </div>
+</section>
+
+<section class="group" id="g-plan" data-group="plan">
+  <div class="group-head">
+    <span class="group-num">03</span>
+    <h2>计划</h2>
+    <p>计划文件夹 · 进度 · 从想读/豆列添加 · 导出分享</p>
+  </div>
+  <div class="screens">
+
+    <figure>
+      <div class="phone">
+        <div class="page-head">
+        <div class="sb"><span>9:41</span><span class="sb-icons"><svg viewBox="0 0 18 12"><rect x="0" y="8" width="3" height="4" rx="1"/><rect x="5" y="6" width="3" height="6" rx="1"/><rect x="10" y="3.5" width="3" height="8.5" rx="1"/><rect x="15" y="1" width="3" height="11" rx="1"/></svg><svg viewBox="0 0 16 12"><path d="M8 11l2.2-2.6a3.4 3.4 0 0 0-4.4 0L8 11z"/><path d="M8 5.6c1.7 0 3.3.6 4.6 1.7l1.3-1.6A9.5 9.5 0 0 0 8 3.4c-2.2 0-4.3.8-5.9 2.3l1.3 1.6A7 7 0 0 1 8 5.6z" opacity=".9"/></svg><svg class="battery" viewBox="0 0 26 12"><rect x=".5" y="1" width="21" height="10" rx="3" fill="none" stroke="currentColor"/><rect x="2.5" y="3" width="17" height="6" rx="1.6"/><path d="M23.5 4.6v2.8c1-.4 1.5-1 1.5-1.4s-.5-1-1.5-1.4z"/></svg></span></div>
+        <div class="large">
+          <div>
+            <h3>我的计划</h3>
+            <div class="cap">观影计划 4 个 · 已看 31/68 部</div>
+          </div>
+          <div class="icons"><svg class="ico" style="color:var(--gold)"><use href="#i-plus"/></svg></div>
+        </div>
+        <div class="title-row">
+          <div class="seg gold"><span class="on">观影计划</span><span>读书计划</span></div>
+        </div>
+        <div class="chips hscroll" style="padding:0 16px 4px">
+          <span class="chip on">全部 4</span><span class="chip">进行中 3</span><span class="chip">已完成 1</span>
+        </div>
+        </div>
+        <div class="body scroll">
+          <div class="folder-grid">
+            <div class="folder">
+              <div class="stack">
+                <div class="poster p-a s1"><span class="pt">大决战</span></div>
+                <div class="poster p-h s2"><span class="pt">麦克斯</span></div>
+              </div>
+              <h6>2026 年补完 · 战争片</h6>
+              <div class="fm"><span>已看 6/12 部</span><span>50%</span></div>
+              <div class="progress"><div class="fill" style="width:50%"></div></div>
+            </div>
+            <div class="folder">
+              <div class="stack">
+                <div class="poster p-b s1"><span class="pt">流浪地球</span></div>
+                <div class="poster p-n s2"><span class="pt">情书</span></div>
+              </div>
+              <h6>想在大银幕重看</h6>
+              <div class="fm"><span>已看 9/18 部</span><span>50%</span></div>
+              <div class="progress"><div class="fill" style="width:50%"></div></div>
+            </div>
+            <div class="folder">
+              <div class="stack">
+                <div class="poster p-j s1"><span class="pt">沙丘</span></div>
+                <div class="poster p-e s2"><span class="pt">可怜</span></div>
+              </div>
+              <h6>科幻 · 视觉奇观</h6>
+              <div class="fm"><span>已看 11/24 部</span><span>46%</span></div>
+              <div class="progress"><div class="fill" style="width:46%"></div></div>
+            </div>
+            <div class="folder">
+              <div class="stack">
+                <div class="poster p-m s1"><span class="pt">野餐</span></div>
+                <div class="poster p-k s2"><span class="pt">钢琴师</span></div>
+              </div>
+              <h6>华语作者电影</h6>
+              <div class="fm"><span>已看 5/14 部</span><span>36%</span></div>
+              <div class="progress"><div class="fill" style="width:36%"></div></div>
+            </div>
+          </div>
+          <div class="group-card mt12">
+            <div class="field"><span class="fl"><span class="sf-ico read"><svg class="ico"><use href="#i-check"/></svg></span><span>已完成计划</span></span><span class="vl muted">1 个 <svg class="ico xs chev"><use href="#i-chev"/></svg></span></div>
+          </div>
+          <div class="note">每个计划是一个文件夹；卡片可用右上菜单上移、下移或删除，进度按已看条目计算。</div>
+        </div>
+        <div class="tabbar"><div class="tab"><svg class="ico"><use href="#i-record"/></svg><span>记录</span></div><div class="tab"><svg class="ico"><use href="#i-list"/></svg><span>豆列</span></div><div class="tab on"><svg class="ico"><use href="#i-folder"/></svg><span>计划</span></div><div class="tab"><svg class="ico"><use href="#i-report"/></svg><span>报告</span></div><div class="tab"><svg class="ico"><use href="#i-set"/></svg><span>设置</span></div><div class="homebar"></div></div>
+      </div>
+      <figcaption><b>计划列表 <span class="tagline">文件夹网格</span></b>桌面横向文件夹卡片墙 → 手机 2 列网格；封面取计划前两本叠放，标题 2 行、进度与百分比在最下方，新建入口在右上角。</figcaption>
+    </figure>
+
+    <figure>
+      <div class="phone">
+        <div class="page-head">
+        <div class="sb"><span>9:41</span><span class="sb-icons"><svg viewBox="0 0 18 12"><rect x="0" y="8" width="3" height="4" rx="1"/><rect x="5" y="6" width="3" height="6" rx="1"/><rect x="10" y="3.5" width="3" height="8.5" rx="1"/><rect x="15" y="1" width="3" height="11" rx="1"/></svg><svg viewBox="0 0 16 12"><path d="M8 11l2.2-2.6a3.4 3.4 0 0 0-4.4 0L8 11z"/><path d="M8 5.6c1.7 0 3.3.6 4.6 1.7l1.3-1.6A9.5 9.5 0 0 0 8 3.4c-2.2 0-4.3.8-5.9 2.3l1.3 1.6A7 7 0 0 1 8 5.6z" opacity=".9"/></svg><svg class="battery" viewBox="0 0 26 12"><rect x=".5" y="1" width="21" height="10" rx="3" fill="none" stroke="currentColor"/><rect x="2.5" y="3" width="17" height="6" rx="1.6"/><path d="M23.5 4.6v2.8c1-.4 1.5-1 1.5-1.4s-.5-1-1.5-1.4z"/></svg></span></div>
+        <div class="nav">
+          <span class="back"><svg class="ico"><use href="#i-back"/></svg>计划</span>
+          <span class="icons"><svg class="ico"><use href="#i-more"/></svg></span>
+        </div>
+        <div style="padding:2px 16px 8px">
+          <div class="t22 b700" style="font-size:23px;line-height:1.3">2026 年补完 · 战争片</div>
+          <div class="t115 mt4" style="color:var(--text3)">已看 6/12 部 · 未看 6 部 · 备注：按时间顺序补</div>
+          <div class="progress mt8" style="height:7px"><div class="fill" style="width:50%"></div></div>
+        </div>
+        <div class="title-row" style="padding-bottom:6px">
+          <div class="seg sm"><span class="on">全部 12</span><span>已看 6</span><span>未看 6</span></div>
+        </div>
+        </div>
+        <div class="body scroll" style="padding-bottom:4px">
+          <div class="row">
+            <span class="pos">1</span>
+            <div class="thumb"><div class="poster p-a"><span class="pt">大决战</span></div></div>
+            <div class="row-main"><div class="row-title">大决战之辽沈战役</div><div class="row-sub">已看 · 3 小时 29 分 · 10-25</div></div>
+            <div class="right"><svg class="ico xs" style="color:var(--text4)"><use href="#i-drag"/></svg></div>
+          </div>
+          <div class="row">
+            <span class="pos">2</span>
+            <div class="thumb"><div class="poster p-a"><span class="pt">大决战</span></div></div>
+            <div class="row-main"><div class="row-title">大决战之淮海战役</div><div class="row-sub">未看 · 3 小时 40 分</div></div>
+            <div class="right"><svg class="ico xs" style="color:var(--text4)"><use href="#i-drag"/></svg></div>
+          </div>
+          <div class="row">
+            <span class="pos">3</span>
+            <div class="thumb"><div class="poster p-a"><span class="pt">大决战</span></div></div>
+            <div class="row-main"><div class="row-title">大决战之平津战役</div><div class="row-sub">未看 · 3 小时 6 分</div></div>
+            <div class="right"><svg class="ico xs" style="color:var(--text4)"><use href="#i-drag"/></svg></div>
+          </div>
+          <div class="row">
+            <span class="pos">4</span>
+            <div class="thumb"><div class="poster p-m"><span class="pt">野餐</span></div></div>
+            <div class="row-main"><div class="row-title">路边野餐</div><div class="row-sub">已看 · 1 小时 50 分 · 10-24</div></div>
+            <div class="right"><svg class="ico xs" style="color:var(--text4)"><use href="#i-drag"/></svg></div>
+          </div>
+          <div class="row">
+            <span class="pos">5</span>
+            <div class="thumb"><div class="poster p-h"><span class="pt">麦克斯</span></div></div>
+            <div class="row-main"><div class="row-title">疯狂的麦克斯 4：狂暴之路</div><div class="row-sub">已看 · 2 小时 · 10-12</div></div>
+            <div class="right"><svg class="ico xs" style="color:var(--text4)"><use href="#i-drag"/></svg></div>
+          </div>
+          <div class="row">
+            <span class="pos">6</span>
+            <div class="thumb"><div class="poster p-k"><span class="pt">钢琴师</span></div></div>
+            <div class="row-main"><div class="row-title">海上钢琴师</div><div class="row-sub">已看 · 2 小时 45 分 · 10-12</div></div>
+            <div class="right"><svg class="ico xs" style="color:var(--text4)"><use href="#i-drag"/></svg></div>
+          </div>
+          <div class="row">
+            <span class="pos">7</span>
+            <div class="thumb"><div class="poster p-g"><span class="pt">白日梦</span></div></div>
+            <div class="row-main"><div class="row-title">白日梦想家</div><div class="row-sub">已看 · 1 小时 54 分 · 10-11</div></div>
+            <div class="right"><svg class="ico xs" style="color:var(--text4)"><use href="#i-drag"/></svg></div>
+          </div>
+          <div class="row">
+            <span class="pos">8</span>
+            <div class="thumb"><div class="poster p-n"><span class="pt">情书</span></div></div>
+            <div class="row-main"><div class="row-title">情书</div><div class="row-sub">已看 · 1 小时 57 分 · 09-30</div></div>
+            <div class="right"><svg class="ico xs" style="color:var(--text4)"><use href="#i-drag"/></svg></div>
+          </div>
+          <div class="note">长按行拖动排序；点条目打开豆瓣页面。已看条目不占「未看」计数，可随时从计划移除。</div>
+        </div>
+        <div class="plan-actions">
+          <div class="pa"><svg class="ico"><use href="#i-plus"/></svg><span>想读 / 想看</span></div>
+          <div class="pa on"><svg class="ico"><use href="#i-list"/></svg><span>从豆列添加</span></div>
+          <div class="pa"><svg class="ico"><use href="#i-share"/></svg><span>导出 PNG</span></div>
+        </div>
+        <div class="homebar"></div>
+      </div>
+      <figcaption><b>计划详情 <span class="tagline">排序与进度</span></b>进入计划后列表可拖动排序，底部固定三个动作：从想读/想看添加、从豆列添加、导出 PNG（调起系统分享）；进度条与已看计数实时联动。</figcaption>
+    </figure>
+
+    <figure>
+      <div class="phone">
+        <div class="under">
+          <div class="under-nav"></div>
+          <div class="under-row"></div><div class="under-row"></div><div class="under-row"></div><div class="under-row"></div>
+        </div>
+        <div class="sheet-scrim"></div>
+        <div class="sheet" style="height:772px">
+          <div class="grabber"></div>
+          <div class="sheet-head"><span class="link">取消</span><span class="st">从想读/想看添加</span><span class="link strong">添加 2 项</span></div>
+          <div class="sheet-body scroll">
+            <div class="searchbar"><svg class="ico"><use href="#i-search"/></svg><span>搜索标题 / 简介</span></div>
+            <div class="chips mt8">
+              <span class="chip on">全部 38</span><span class="chip">电影 28</span><span class="chip">剧集 10</span>
+            </div>
+            <div class="section-t"><span>想读 / 想看 · 未加入计划</span><span class="link">全选</span></div>
+            <div class="row">
+              <div class="thumb"><div class="poster p-j"><span class="pt">沙丘</span></div></div>
+              <div class="row-main"><div class="row-title">沙丘 3</div><div class="row-sub">想看 · 待映 12-20</div></div>
+              <div class="right"><span class="checkbox on"><svg class="ico"><use href="#i-check"/></svg></span></div>
+            </div>
+            <div class="row">
+              <div class="thumb"><div class="poster p-g"><span class="pt">完美的日子</span></div></div>
+              <div class="row-main"><div class="row-title">完美的日子</div><div class="row-sub">想看 · 2 小时 4 分</div></div>
+              <div class="right"><span class="checkbox on"><svg class="ico"><use href="#i-check"/></svg></span></div>
+            </div>
+            <div class="row">
+              <div class="thumb"><div class="poster p-b2"><span class="pt">机器人</span></div></div>
+              <div class="row-main"><div class="row-title">机器人之梦</div><div class="row-sub">想看 · 1 小时 42 分 · 已在「科幻 · 视觉奇观」计划中</div></div>
+              <div class="right"><span class="checkbox lock"><svg class="ico"><use href="#i-lock"/></svg></span></div>
+            </div>
+            <div class="row">
+              <div class="thumb"><div class="poster p-a2"><span class="pt">椒麻堂会</span></div></div>
+              <div class="row-main"><div class="row-title">椒麻堂会</div><div class="row-sub">想看 · 2 小时 59 分</div></div>
+              <div class="right"><span class="checkbox"></span></div>
+            </div>
+            <div class="row">
+              <div class="thumb"><div class="poster p-k2"><span class="pt">火山</span></div></div>
+              <div class="row-main"><div class="row-title">火山挚恋</div><div class="row-sub">想看 · 1 小时 38 分</div></div>
+              <div class="right"><span class="checkbox"></span></div>
+            </div>
+            <div class="row">
+              <div class="thumb"><div class="poster p-e"><span class="pt">可怜</span></div></div>
+              <div class="row-main"><div class="row-title">可怜的东西</div><div class="row-sub">想看 · 2 小时 21 分 · 已在「2026 待映」计划中</div></div>
+              <div class="right"><span class="checkbox lock"><svg class="ico"><use href="#i-lock"/></svg></span></div>
+            </div>
+            <div class="note">已在其他计划中的条目会给出提示；同一计划内不可重复添加。添加后计划内可继续拖动排序。</div>
+          </div>
+        </div>
+      </div>
+      <figcaption><b>从想读/想看添加 <span class="tagline">多选浮层</span></b>桌面是 760px 多选弹窗 → 手机半屏：搜索 + 勾选，已加入当前计划的条目锁定；底部实时显示「添加 N 项」。</figcaption>
+    </figure>
+
+    <figure>
+      <div class="phone">
+        <div class="under">
+          <div class="under-nav"></div>
+          <div class="under-row"></div><div class="under-row"></div><div class="under-row"></div><div class="under-row"></div>
+        </div>
+        <div class="sheet-scrim"></div>
+        <div class="sheet" style="height:734px">
+          <div class="grabber"></div>
+          <div class="sheet-head"><span class="link">取消</span><span class="st">从豆列添加</span><span class="link strong">添加 3 项</span></div>
+          <div class="sheet-body scroll">
+            <div class="group-card">
+              <div class="field"><span class="lb">选择豆列</span><span class="vl">黑色电影 · 私人片单 <svg class="ico xs chev"><use href="#i-chev"/></svg></span></div>
+            </div>
+            <div class="flexb mt10">
+              <div class="searchbar" style="flex:1"><svg class="ico"><use href="#i-search"/></svg><span>搜索标题 / 简介</span></div>
+              <span class="btn ghost xs" style="margin-left:8px">全选</span>
+            </div>
+            <div class="section-t"><span>这个豆列 · 32 部</span><span class="link">已选 3</span></div>
+            <div class="row">
+              <div class="thumb"><div class="poster p-a"><span class="pt">大决战</span></div></div>
+              <div class="row-main"><div class="row-title">大决战之辽沈战役</div><div class="row-sub">已看 · 3 小时 29 分</div></div>
+              <div class="right"><span class="checkbox on"><svg class="ico"><use href="#i-check"/></svg></span></div>
+            </div>
+            <div class="row">
+              <div class="thumb"><div class="poster p-a"><span class="pt">大决战</span></div></div>
+              <div class="row-main"><div class="row-title">大决战之淮海战役</div><div class="row-sub">未看 · 3 小时 40 分</div></div>
+              <div class="right"><span class="checkbox on"><svg class="ico"><use href="#i-check"/></svg></span></div>
+            </div>
+            <div class="row">
+              <div class="thumb"><div class="poster p-a"><span class="pt">大决战</span></div></div>
+              <div class="row-main"><div class="row-title">大决战之平津战役</div><div class="row-sub">未看 · 3 小时 6 分</div></div>
+              <div class="right"><span class="checkbox on"><svg class="ico"><use href="#i-check"/></svg></span></div>
+            </div>
+            <div class="row">
+              <div class="thumb"><div class="poster p-h"><span class="pt">麦克斯</span></div></div>
+              <div class="row-main"><div class="row-title">疯狂的麦克斯 4：狂暴之路</div><div class="row-sub">已看 · 2 小时</div></div>
+              <div class="right"><span class="checkbox"></span></div>
+            </div>
+            <div class="row">
+              <div class="thumb"><div class="poster p-k"><span class="pt">钢琴师</span></div></div>
+              <div class="row-main"><div class="row-title">海上钢琴师</div><div class="row-sub">已看 · 2 小时 45 分</div></div>
+              <div class="right"><span class="checkbox"></span></div>
+            </div>
+            <div class="row">
+              <div class="thumb"><div class="poster p-n"><span class="pt">情书</span></div></div>
+              <div class="row-main"><div class="row-title">情书</div><div class="row-sub">已在「想在大银幕重看」计划中</div></div>
+              <div class="right"><span class="checkbox lock"><svg class="ico"><use href="#i-lock"/></svg></span></div>
+            </div>
+            <div class="note">只显示与当前计划类型一致的条目；已在当前计划中的条目不可重复添加。</div>
+          </div>
+        </div>
+      </div>
+      <figcaption><b>从豆列添加 <span class="tagline">整列挑选</span></b>先选豆列再勾条目，支持关键词与全选；已在当前计划中的条目自动锁定，避免同一计划重复。</figcaption>
+    </figure>
+
+    <figure>
+      <div class="phone">
+        <div class="under">
+          <div class="under-nav"></div>
+          <div class="under-row"></div><div class="under-row"></div><div class="under-row"></div><div class="under-row"></div>
+        </div>
+        <div class="sheet-scrim"></div>
+        <div class="sheet" style="height:470px">
+          <div class="grabber"></div>
+          <div class="sheet-head"><span class="link">取消</span><span class="st">新建计划</span><span class="link strong">创建</span></div>
+          <div class="sheet-body">
+            <div class="seg gold" style="margin-bottom:12px"><span class="on">观影计划</span><span>读书计划</span></div>
+            <div class="group-label" style="padding-top:0">计划名称</div>
+            <div class="input on"><span>2026 年补完 · 战争片</span></div>
+            <div class="group-label">备注（可选）</div>
+            <div class="textarea" style="min-height:84px"><span class="ph">例如：按时间顺序补，先看辽沈战役</span></div>
+            <div class="note">创建后在计划详情里从「想读/想看」或「豆列」添加条目，也可以随时重命名或删除。</div>
+          </div>
+        </div>
+      </div>
+      <figcaption><b>新建计划 <span class="tagline">小表单</span></b>名称 + 类型 + 备注即可创建；计划类型与当前列表分段一致，创建后直接进入空计划引导添加。</figcaption>
+    </figure>
+
+  </div>
+</section>
+
+<section class="group" id="g-report" data-group="report">
+  <div class="group-head">
+    <span class="group-num">04</span>
+    <h2>报告</h2>
+    <p>月报 / 年报 / 自定义 · 预览与分享</p>
+  </div>
+  <div class="screens">
+
+    <figure>
+      <div class="phone">
+        <div class="page-head">
+        <div class="sb"><span>9:41</span><span class="sb-icons"><svg viewBox="0 0 18 12"><rect x="0" y="8" width="3" height="4" rx="1"/><rect x="5" y="6" width="3" height="6" rx="1"/><rect x="10" y="3.5" width="3" height="8.5" rx="1"/><rect x="15" y="1" width="3" height="11" rx="1"/></svg><svg viewBox="0 0 16 12"><path d="M8 11l2.2-2.6a3.4 3.4 0 0 0-4.4 0L8 11z"/><path d="M8 5.6c1.7 0 3.3.6 4.6 1.7l1.3-1.6A9.5 9.5 0 0 0 8 3.4c-2.2 0-4.3.8-5.9 2.3l1.3 1.6A7 7 0 0 1 8 5.6z" opacity=".9"/></svg><svg class="battery" viewBox="0 0 26 12"><rect x=".5" y="1" width="21" height="10" rx="3" fill="none" stroke="currentColor"/><rect x="2.5" y="3" width="17" height="6" rx="1.6"/><path d="M23.5 4.6v2.8c1-.4 1.5-1 1.5-1.4s-.5-1-1.5-1.4z"/></svg></span></div>
+        <div class="large">
+          <div>
+            <h3>报告中心</h3>
+            <div class="cap">复用桌面报告版式 · 支持 HTML 与 PNG 长图</div>
+          </div>
+          <div class="icons"><svg class="ico"><use href="#i-clock"/></svg></div>
+        </div>
+        <div class="title-row">
+          <div class="seg gold"><span class="on">观影</span><span>读书</span></div>
+        </div>
+        <div class="flexb" style="padding:0 16px 4px">
+          <span class="t12" style="color:var(--text3)">已生成 6 份 · 最近 11-01 09:12</span>
+          <span class="tag gold">本月 2 份</span>
+        </div>
+        </div>
+        <div class="body scroll">
+          <div class="report-compose">
+            <div class="chips">
+              <span class="chip on">月报</span><span class="chip">年报</span><span class="chip">自定义</span><span class="chip">全部</span>
+            </div>
+            <div class="compose-row" style="margin-top:4px"><span class="lb">月份</span><span class="vl">2026 年 10 月 <svg class="ico xs chev"><use href="#i-chev"/></svg></span></div>
+            <div class="compose-row"><span class="lb">主题</span><span class="vl"><span class="seg sm" style="width:132px;flex:0 0 132px"><span class="on">暗色</span><span>亮色</span></span></span></div>
+            <div class="compose-row"><span class="lb">同时导出 PNG</span><span class="toggle"></span></div>
+            <div class="btn primary mt12" style="width:100%"><svg class="ico"><use href="#i-report"/></svg>生成报告</div>
+            <div class="note" style="text-align:center;padding-top:8px">报告在 App 内预览，可分享 HTML 与 PNG；封面从本地缓存读取，不依赖网络。</div>
+          </div>
+
+          <div class="section-t"><span>已生成报告 · 6 份</span><span class="link">全部</span></div>
+          <div class="report-file">
+            <div class="rf-ico"><svg class="ico"><use href="#i-doc"/></svg></div>
+            <div class="rf-main">
+              <div class="rf-title">2026 年 10 月 · 观影月报</div>
+              <div class="rf-meta">14 部 · HTML + PNG · 生成于 11-01 09:12</div>
+            </div>
+            <span class="tag gold">最新</span>
+            <svg class="ico sm" style="color:var(--text3)"><use href="#i-more"/></svg>
+          </div>
+          <div class="report-file">
+            <div class="rf-ico"><svg class="ico"><use href="#i-doc"/></svg></div>
+            <div class="rf-main">
+              <div class="rf-title">2026 年 09 月 · 观影月报</div>
+              <div class="rf-meta">9 部 · HTML · 生成于 10-01 08:40</div>
+            </div>
+            <svg class="ico sm" style="color:var(--text3)"><use href="#i-more"/></svg>
+          </div>
+          <div class="report-file">
+            <div class="rf-ico"><svg class="ico"><use href="#i-doc"/></svg></div>
+            <div class="rf-main">
+              <div class="rf-title">2025 年 · 观影年报</div>
+              <div class="rf-meta">86 部 · HTML + PNG · 生成于 01-06 22:18</div>
+            </div>
+            <svg class="ico sm" style="color:var(--text3)"><use href="#i-more"/></svg>
+          </div>
+          <div class="btn ghost mt8" style="width:100%"><svg class="ico"><use href="#i-cal"/></svg>批量生成 2026 年全部月报</div>
+          <div class="note">桌面按「月 / 年 / 自定义 / 全部」四档生成；手机保留同样四档，把「最近生成」做成可打开、分享、删除的清单。</div>
+        </div>
+        <div class="tabbar"><div class="tab"><svg class="ico"><use href="#i-record"/></svg><span>记录</span></div><div class="tab"><svg class="ico"><use href="#i-list"/></svg><span>豆列</span></div><div class="tab"><svg class="ico"><use href="#i-folder"/></svg><span>计划</span></div><div class="tab on"><svg class="ico"><use href="#i-report"/></svg><span>报告</span></div><div class="tab"><svg class="ico"><use href="#i-set"/></svg><span>设置</span></div><div class="homebar"></div></div>
+      </div>
+      <figcaption><b>报告中心 <span class="tagline">唯一生成入口</span></b>桌面的大表单收成一张设置卡：范围 chip、月份、主题、PNG 开关和生成按钮；下方直接列出已生成报告，点开即可预览与分享。</figcaption>
+    </figure>
+
+    <figure>
+      <div class="phone">
+        <div class="page-head">
+        <div class="sb"><span>9:41</span><span class="sb-icons"><svg viewBox="0 0 18 12"><rect x="0" y="8" width="3" height="4" rx="1"/><rect x="5" y="6" width="3" height="6" rx="1"/><rect x="10" y="3.5" width="3" height="8.5" rx="1"/><rect x="15" y="1" width="3" height="11" rx="1"/></svg><svg viewBox="0 0 16 12"><path d="M8 11l2.2-2.6a3.4 3.4 0 0 0-4.4 0L8 11z"/><path d="M8 5.6c1.7 0 3.3.6 4.6 1.7l1.3-1.6A9.5 9.5 0 0 0 8 3.4c-2.2 0-4.3.8-5.9 2.3l1.3 1.6A7 7 0 0 1 8 5.6z" opacity=".9"/></svg><svg class="battery" viewBox="0 0 26 12"><rect x=".5" y="1" width="21" height="10" rx="3" fill="none" stroke="currentColor"/><rect x="2.5" y="3" width="17" height="6" rx="1.6"/><path d="M23.5 4.6v2.8c1-.4 1.5-1 1.5-1.4s-.5-1-1.5-1.4z"/></svg></span></div>
+        <div class="nav">
+          <span class="back"><svg class="ico"><use href="#i-back"/></svg>报告</span>
+          <span class="nav-title">2026 年 10 月 · 观影月报</span>
+          <span class="icons"><svg class="ico" style="color:var(--gold)"><use href="#i-share"/></svg></span>
+        </div>
+          <div class="rpt rpt-cover">
+<div class="rp-top">
+              <div class="rp-brand"><i>书</i><span><b>书影记录</b><br>REPORT</span></div>
+              <div>
+                <div class="rp-num">2026.10</div>
+                <div class="rp-sub">2026 年 10 月 · 14 部观影记录</div>
+              </div>
+            </div>
+<div class="rp-stats">
+              <div class="rp-stat"><span class="k">记录</span><span class="v">14<small>部</small></span></div>
+              <div class="rp-stat"><span class="k">观影天数</span><span class="v">10<small>天</small></span></div>
+              <div class="rp-stat"><span class="k">首看</span><span class="v">12<small>部</small></span></div>
+              <div class="rp-stat"><span class="k">平均评分</span><span class="v">4.2<small>★</small></span></div>
+            </div>
+          </div>
+        </div>
+        <div class="body scroll" style="padding-bottom:18px">
+          <div class="rpt rpt-body">
+            
+            
+
+            <div class="rp-sec">TOP 5 · TOP RATED</div>
+            <div class="rp-hero">
+              <div class="poster p-a"><span class="pt">大决战<br>辽沈战役</span><span class="pb">The Great Decisive War</span></div>
+              <div class="rp-rank">
+                <div class="it"><span class="no">01</span><div><b>大决战之辽沈战役</b><span class="st">★★★★★</span><span class="dt">2026-10-25 · 3 小时 29 分</span></div></div>
+                <div class="it"><span class="no">02</span><div><b>疯狂的麦克斯 4：狂暴之路</b><span class="st">★★★★★</span><span class="dt">2026-10-12 · 2 小时</span></div></div>
+                <div class="it"><span class="no">03</span><div><b>海上钢琴师</b><span class="st">★★★★★</span><span class="dt">2026-10-12 · 2 小时 45 分</span></div></div>
+                <div class="it"><span class="no">04</span><div><b>流浪地球 2</b><span class="st">★★★★</span><span class="dt">2026-10-25 · 2 小时 53 分</span></div></div>
+                <div class="it"><span class="no">05</span><div><b>情书</b><span class="st">★★★★★</span><span class="dt">2026-09-30 · 1 小时 57 分</span></div></div>
+              </div>
+            </div>
+
+            <div class="rp-sec">整合海报 · POSTER WALL</div>
+            <div class="rp-wall">
+              <div class="poster p-a"><span class="pt">大决战</span></div>
+              <div class="poster p-h"><span class="pt">麦克斯</span></div>
+              <div class="poster p-n"><span class="pt">情书</span></div>
+              <div class="poster p-b"><span class="pt">流浪地球</span></div>
+              <div class="poster p-k"><span class="pt">钢琴师</span></div>
+              <div class="poster p-g"><span class="pt">白日梦</span></div>
+              <div class="poster p-d"><span class="pt">小森林</span></div>
+              <div class="poster p-m"><span class="pt">野餐</span></div>
+            </div>
+
+            <div class="rp-sec">观影日历 · CALENDAR</div>
+            <div class="rp-cal">
+              <span class="h">一</span><span class="h">二</span><span class="h">三</span><span class="h">四</span><span class="h">五</span><span class="h">六</span><span class="h">日</span>
+              <span></span><span></span><span></span><span class="l1">1</span><span>2</span><span class="l2">3</span><span>4</span>
+              <span class="l1">5</span><span>6</span><span>7</span><span>8</span><span class="l3">9</span><span class="l1">10</span><span>11</span>
+              <span class="l2">12</span><span>13</span><span>14</span><span>15</span><span>16</span><span class="l1">17</span><span>18</span>
+              <span>19</span><span>20</span><span>21</span><span>22</span><span class="l2">23</span><span>24</span><span class="l3">25</span>
+              <span>26</span><span>27</span><span>28</span><span>29</span><span>30</span><span>31</span><span></span>
+            </div>
+
+            <div class="rp-sec">短评摘录 · NOTES</div>
+            <div class="rp-notes">
+              <div class="rp-note"><b>大决战之辽沈战役</b>拍得真稳。锦州攻坚到黑山阻击，几条线并行不亂。<div class="dt"><span>10.25</span><span>★★★★★</span></div></div>
+              <div class="rp-note"><b>海上钢琴师</b>他最后没有下船，因为城市没有尽头。<div class="dt"><span>10.12</span><span>★★★★★</span></div></div>
+              <div class="rp-note"><b>路边野餐</b>过去心不可得，现在心不可得。<div class="dt"><span>10.24</span><span>★★★★</span></div></div>
+              <div class="rp-note"><b>白日梦想家</b>生活的目的就是生活本身。<div class="dt"><span>10.11</span><span>★★★★</span></div></div>
+            </div>
+
+            <div class="rp-foot"><span>数据来自「书影记录」观影记录 · 共 14 部</span><span>2026-11-01 生成</span></div>
+          </div>
+          <div class="note">报告预览直接用 WKWebView 加载桌面版 HTML（响应式缩窄），PNG 由 WebView 快照生成，版式与桌面完全一致。</div>
+        </div>
+        <div class="homebar"></div>
+      </div>
+      <figcaption><b>报告预览 <span class="tagline">复用桌面版式</span></b>不重写 SwiftUI 图表：直接把桌面生成的 HTML 报告装进 WKWebView，一屏看到金色年份、概览、TOP 5、海报墙、日历与短评；右上角分享。</figcaption>
+    </figure>
+
+    <figure>
+      <div class="phone">
+        <div class="under">
+          <div class="under-nav"></div>
+          <div class="under-row"></div><div class="under-row"></div><div class="under-row"></div><div class="under-row"></div>
+        </div>
+        <div class="sheet-scrim"></div>
+        <div class="sheet" style="height:612px">
+          <div class="grabber"></div>
+          <div class="sheet-head"><span class="link">关闭</span><span class="st">批量生成月报</span><span class="link strong">开始生成</span></div>
+          <div class="sheet-body scroll">
+            <div class="seg gold" style="margin-bottom:10px"><span class="on">2026 年</span><span>2025 年</span><span>2024 年</span></div>
+            <div class="month-grid">
+              <div class="mcell"><span class="m">1 月</span><span class="v">12 部</span></div>
+              <div class="mcell"><span class="m">2 月</span><span class="v">8 部</span></div>
+              <div class="mcell"><span class="m">3 月</span><span class="v">15 部</span></div>
+              <div class="mcell"><span class="m">4 月</span><span class="v">10 部</span></div>
+              <div class="mcell"><span class="m">5 月</span><span class="v">7 部</span></div>
+              <div class="mcell"><span class="m">6 月</span><span class="v">13 部</span></div>
+              <div class="mcell"><span class="m">7 月</span><span class="v">9 部</span></div>
+              <div class="mcell"><span class="m">8 月</span><span class="v">11 部</span></div>
+              <div class="mcell"><span class="m">9 月</span><span class="v">9 部</span></div>
+              <div class="mcell on"><span class="m">10 月</span><span class="v">14 部 · 已生成</span></div>
+              <div class="mcell on"><span class="m">11 月</span><span class="v">生成中 58%</span></div>
+              <div class="mcell dim"><span class="m">12 月</span><span class="v">暂无记录</span></div>
+            </div>
+            <div class="group-card mt12">
+              <div class="field"><span class="lb">生成范围</span><span class="vl">10 月、11 月（有记录）</span></div>
+              <div class="field"><span class="lb">输出</span><span class="vl">HTML + PNG</span></div>
+              <div class="field"><span class="lb">正在生成</span><span class="vl gold">2026-11 月报 · 8/14 部</span></div>
+            </div>
+            <div class="progress mt10" style="height:7px"><div class="fill" style="width:58%"></div></div>
+            <div class="note">批量生成会跳过没有记录的月份；每份完成后写入「已生成报告」，可随时打开或分享。生成中关闭浮层会继续后台执行。</div>
+          </div>
+        </div>
+      </div>
+      <figcaption><b>批量生成 <span class="tagline">进度可见</span></b>桌面支持「生成全部月报」；手机把月份数据量、已生成与生成中状态放进月度网格，进度条 + 当前月份，后台继续执行。</figcaption>
+    </figure>
+
+  </div>
+</section>
+
+<section class="group" id="g-settings" data-group="settings">
+  <div class="group-head">
+    <span class="group-num">05</span>
+    <h2>设置</h2>
+    <p>账号 · 数据与备份 · 字数 · 回收站</p>
+  </div>
+  <div class="screens">
+
+    <figure>
+      <div class="phone">
+        <div class="page-head">
+        <div class="sb"><span>9:41</span><span class="sb-icons"><svg viewBox="0 0 18 12"><rect x="0" y="8" width="3" height="4" rx="1"/><rect x="5" y="6" width="3" height="6" rx="1"/><rect x="10" y="3.5" width="3" height="8.5" rx="1"/><rect x="15" y="1" width="3" height="11" rx="1"/></svg><svg viewBox="0 0 16 12"><path d="M8 11l2.2-2.6a3.4 3.4 0 0 0-4.4 0L8 11z"/><path d="M8 5.6c1.7 0 3.3.6 4.6 1.7l1.3-1.6A9.5 9.5 0 0 0 8 3.4c-2.2 0-4.3.8-5.9 2.3l1.3 1.6A7 7 0 0 1 8 5.6z" opacity=".9"/></svg><svg class="battery" viewBox="0 0 26 12"><rect x=".5" y="1" width="21" height="10" rx="3" fill="none" stroke="currentColor"/><rect x="2.5" y="3" width="17" height="6" rx="1.6"/><path d="M23.5 4.6v2.8c1-.4 1.5-1 1.5-1.4s-.5-1-1.5-1.4z"/></svg></span></div>
+        <div class="large">
+          <div>
+            <h3>设置</h3>
+            <div class="cap">书影记录 v0.1.0 · iOS 18+</div>
+          </div>
+          <div class="icons"><svg class="ico"><use href="#i-search"/></svg></div>
+        </div>
+<div class="profile">
+            <div class="avatar">猫</div>
+            <div class="pm">
+              <div class="pn">猫九</div>
+              <div class="ps">豆瓣 ID catnine · 上次同步 11-20 21:06</div>
+            </div>
+            <span class="pstat">已连接</span>
+          </div>
+          <div class="flexb" style="padding:2px 4px 6px">
+            <span class="t12" style="color:var(--text3)">128 条记录 · 8 个豆列 · 4 个计划</span>
+            <span class="t12" style="color:var(--gold)">数据概览</span>
+          </div>
+        </div>
+        <div class="body scroll">
+          
+
+          <div class="settings-group mt12">
+            <div class="group-label" style="padding-top:4px">外观</div>
+            <div class="group-card">
+              <div class="field"><span class="fl"><span class="sf-ico gold"><svg class="ico"><use href="#i-sun"/></svg></span><span>外观</span></span><span class="vl">跟随系统 <svg class="ico xs chev"><use href="#i-chev"/></svg></span></div>
+            </div>
+          </div>
+
+          <div class="settings-group">
+            <div class="group-label">数据与探索</div>
+            <div class="group-card">
+              <div class="field"><span class="fl"><span class="sf-ico blue"><svg class="ico"><use href="#i-upload"/></svg></span><span>Excel 导入 / 导出</span></span><span class="vl muted">128 条记录 <svg class="ico xs chev"><use href="#i-chev"/></svg></span></div>
+              <div class="field"><span class="fl"><span class="sf-ico gold"><svg class="ico"><use href="#i-cloud"/></svg></span><span>云同步</span></span><span class="vl">iCloud Drive · 11-20 <svg class="ico xs chev"><use href="#i-chev"/></svg></span></div>
+              <div class="field"><span class="fl"><span class="sf-ico violet"><svg class="ico"><use href="#i-doc"/></svg></span><span>书籍字数统计</span></span><span class="vl">1,842.6 万字 <svg class="ico xs chev"><use href="#i-chev"/></svg></span></div>
+              <div class="field"><span class="fl"><span class="sf-ico red"><svg class="ico"><use href="#i-trash"/></svg></span><span>回收站</span></span><span class="vl">3 条 <svg class="ico xs chev"><use href="#i-chev"/></svg></span></div>
+              <div class="field"><span class="fl"><span class="sf-ico teal"><svg class="ico"><use href="#i-compass"/></svg></span><span>探索空间</span></span><span class="vl">电影 4 · 书籍 4 <svg class="ico xs chev"><use href="#i-chev"/></svg></span></div>
+            </div>
+          </div>
+
+          <div class="settings-group">
+            <div class="group-label">账号</div>
+            <div class="group-card">
+              <div class="field"><span class="fl"><span class="sf-ico blue"><svg class="ico"><use href="#i-lock"/></svg></span><span>豆瓣登录与 Cookie</span></span><span class="vl">Keychain 已保存 <svg class="ico xs chev"><use href="#i-chev"/></svg></span></div>
+            </div>
+          </div>
+
+          <div class="note" style="text-align:center;padding:18px 0 6px">书影记录 v0.1.0 · 关于与开源许可</div>
+          <div class="note" style="text-align:center;padding:0 0 6px">把豆瓣上的观影与阅读，整理成一座私人档案馆</div>
+        </div>
+        <div class="tabbar"><div class="tab"><svg class="ico"><use href="#i-record"/></svg><span>记录</span></div><div class="tab"><svg class="ico"><use href="#i-list"/></svg><span>豆列</span></div><div class="tab"><svg class="ico"><use href="#i-folder"/></svg><span>计划</span></div><div class="tab"><svg class="ico"><use href="#i-report"/></svg><span>报告</span></div><div class="tab on"><svg class="ico"><use href="#i-set"/></svg><span>设置</span></div><div class="homebar"></div></div>
+      </div>
+      <figcaption><b>设置首页 <span class="tagline">分组列表</span></b>桌面是纵向卡片流，手机按 iOS 惯例收成分组列表：账号卡 + 外观 / 数据与探索 / 账号三组，云同步、字数、回收站都从这里二次进入。</figcaption>
+    </figure>
+
+    <figure>
+      <div class="phone">
+        <div class="page-head">
+        <div class="sb"><span>9:41</span><span class="sb-icons"><svg viewBox="0 0 18 12"><rect x="0" y="8" width="3" height="4" rx="1"/><rect x="5" y="6" width="3" height="6" rx="1"/><rect x="10" y="3.5" width="3" height="8.5" rx="1"/><rect x="15" y="1" width="3" height="11" rx="1"/></svg><svg viewBox="0 0 16 12"><path d="M8 11l2.2-2.6a3.4 3.4 0 0 0-4.4 0L8 11z"/><path d="M8 5.6c1.7 0 3.3.6 4.6 1.7l1.3-1.6A9.5 9.5 0 0 0 8 3.4c-2.2 0-4.3.8-5.9 2.3l1.3 1.6A7 7 0 0 1 8 5.6z" opacity=".9"/></svg><svg class="battery" viewBox="0 0 26 12"><rect x=".5" y="1" width="21" height="10" rx="3" fill="none" stroke="currentColor"/><rect x="2.5" y="3" width="17" height="6" rx="1.6"/><path d="M23.5 4.6v2.8c1-.4 1.5-1 1.5-1.4s-.5-1-1.5-1.4z"/></svg></span></div>
+        <div class="nav">
+          <span class="back"><svg class="ico"><use href="#i-back"/></svg>设置</span>
+          <span class="nav-title">探索空间</span>
+          <span class="icons" style="color:var(--gold)"><svg class="ico"><use href="#i-compass"/></svg></span>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;padding:2px 16px 10px">
+          <span class="btn primary xs"><svg class="ico"><use href="#i-cloud"/></svg>拉取</span>
+          <span class="btn ghost xs"><svg class="ico"><use href="#i-sync"/></svg>刷新</span>
+          <span class="btn ghost xs" style="margin-left:auto;color:var(--gold-deep)"><svg class="ico"><use href="#i-plus"/></svg>新增</span>
+        </div>
+
+          <div class="group-card">
+            <div class="field"><span class="fl"><span class="sf-ico blue"><svg class="ico"><use href="#i-link"/></svg></span><span>配置来源</span></span><span class="vl t12">GitHub · catnine/bookfilm-sites</span></div>
+            <div class="field"><span class="lb">配置状态</span><span class="vl"><span class="tag gold">v3</span>sites.json · 6/8 可访问 <span class="tag read">已检测</span></span></div>
+          </div>
+          
+        </div>
+        <div class="body scroll explore">
+<div class="note" style="padding-top:6px">「拉取」从 GitHub 更新站点列表；「刷新」逐个检测连通性，不改配置。</div>
+
+
+
+          <div class="section-t"><span>电影</span><span class="link">4 个站点 · 可配置多个</span></div>
+          <div class="group-card">
+            <div class="site-row"><span class="sstat ok"><svg class="ico"><use href="#i-check"/></svg></span><div class="site-main"><div class="site-name">豆瓣电影</div><div class="site-link">movie.douban.com</div></div><span class="copy"><svg class="ico"><use href="#i-copy"/></svg></span></div>
+            <div class="site-row"><span class="sstat ok"><svg class="ico"><use href="#i-check"/></svg></span><div class="site-main"><div class="site-name">TMDB</div><div class="site-link">themoviedb.org</div></div><span class="copy"><svg class="ico"><use href="#i-copy"/></svg></span></div>
+            <div class="site-row"><span class="sstat ok"><svg class="ico"><use href="#i-check"/></svg></span><div class="site-main"><div class="site-name">我的 NAS 片库 <span class="tag teal">本地</span></div><div class="site-link">media.example.com/movies</div></div><span class="copy"><svg class="ico"><use href="#i-copy"/></svg></span></div>
+            <div class="site-row"><span class="sstat bad"><svg class="ico"><use href="#i-close"/></svg></span><div class="site-main"><div class="site-name">爱奇艺</div><div class="site-link">iqiyi.com</div></div><span class="copy"><svg class="ico"><use href="#i-copy"/></svg></span></div>
+                      </div>
+
+          <div class="section-t"><span>书籍</span><span class="link">4 个站点 · 可配置多个</span></div>
+          <div class="group-card">
+            <div class="site-row"><span class="sstat ok"><svg class="ico"><use href="#i-check"/></svg></span><div class="site-main"><div class="site-name">豆瓣读书</div><div class="site-link">book.douban.com</div></div><span class="copy"><svg class="ico"><use href="#i-copy"/></svg></span></div>
+            <div class="site-row"><span class="sstat ok"><svg class="ico"><use href="#i-check"/></svg></span><div class="site-main"><div class="site-name">Goodreads</div><div class="site-link">goodreads.com</div></div><span class="copy"><svg class="ico"><use href="#i-copy"/></svg></span></div>
+            <div class="site-row"><span class="sstat ok"><svg class="ico"><use href="#i-check"/></svg></span><div class="site-main"><div class="site-name">我的 Calibre 书库 <span class="tag teal">本地</span></div><div class="site-link">calibre.example.com/books</div></div><span class="copy"><svg class="ico"><use href="#i-copy"/></svg></span></div>
+            <div class="site-row"><span class="sstat bad"><svg class="ico"><use href="#i-close"/></svg></span><div class="site-main"><div class="site-name">微信读书</div><div class="site-link">weread.qq.com</div></div><span class="copy"><svg class="ico"><use href="#i-copy"/></svg></span></div>
+                      </div>
+          <div class="note">点任意站点复制完整链接；长链接按可用宽度自动省略。拉取远端配置时保留「本地」站点，离线也能查看。</div>
+        </div>
+        <div class="toast"><svg class="ico"><use href="#i-check"/></svg>链接已复制</div>
+        <div class="homebar"></div>
+      </div>
+      <figcaption><b>探索空间 <span class="tagline">新功能</span></b>远端配置由 GitHub 下发，App 只读；本地可新增站点，左上角「拉取」更新站点，「刷新」逐个检测连通性，绿勾 / 红叉对应可达与不可达；「新增」可添加本地站点，拉取不覆盖。点链接复制完整地址并弹出「已复制」，长链接按可用宽度省略。</figcaption>
+    </figure>
+
+    <figure>
+      <div class="phone">
+        <div class="under">
+          <div class="under-nav"></div>
+          <div class="under-row"></div><div class="under-row"></div><div class="under-row"></div><div class="under-row"></div>
+        </div>
+        <div class="sheet-scrim"></div>
+        <div class="sheet" style="height:648px">
+          <div class="grabber"></div>
+          <div class="sheet-head"><span class="link">取消</span><span class="st">新增本地站点</span><span class="link strong">保存</span></div>
+          <div class="sheet-body scroll">
+            <div class="seg gold" style="margin-bottom:10px"><span class="on">电影</span><span>书籍</span></div>
+            <div class="group-label" style="padding-top:4px">站点名称</div>
+            <div class="input on"><span>我的 NAS 片库</span></div>
+            <div class="group-label">站点链接</div>
+            <div class="input on"><span>https://media.example.com/movies</span></div>
+            <div class="group-label">搜索链接（可选）</div>
+            <div class="input"><span>https://media.example.com/search?q={title}</span></div>
+            <div class="note">含 {title} 时，想读 / 想看可直接带标题打开搜索；没有则只作为站点入口。</div>
+            <div class="group-card mt12">
+              <div class="field"><span class="fl"><span class="checkbox on"><svg class="ico"><use href="#i-check"/></svg></span><span>保存后立即检测连通性</span></span><span class="vl"><span class="tag read">推荐</span></span></div>
+              <div class="field"><span class="fl"><span>仅保存在本机</span></span><span class="vl muted">不同步 GitHub</span></div>
+            </div>
+            <div class="note">本地站点会在列表里标记「本地」；拉取远端配置不会覆盖，可在列表左滑删除。</div>
+          </div>
+        </div>
+      </div>
+      <figcaption><b>新增本地站点 <span class="tagline">本地配置</span></b>电影 / 书籍可各加多个本地站点：名称、链接与可选 searchUrl；保存后标记「本地」并立即检测连通性，拉取远端配置不覆盖。长链接按容器宽度自动省略。</figcaption>
+    </figure>
+
+    <figure>
+      <div class="phone">
+        <div class="page-head">
+        <div class="sb"><span>9:41</span><span class="sb-icons"><svg viewBox="0 0 18 12"><rect x="0" y="8" width="3" height="4" rx="1"/><rect x="5" y="6" width="3" height="6" rx="1"/><rect x="10" y="3.5" width="3" height="8.5" rx="1"/><rect x="15" y="1" width="3" height="11" rx="1"/></svg><svg viewBox="0 0 16 12"><path d="M8 11l2.2-2.6a3.4 3.4 0 0 0-4.4 0L8 11z"/><path d="M8 5.6c1.7 0 3.3.6 4.6 1.7l1.3-1.6A9.5 9.5 0 0 0 8 3.4c-2.2 0-4.3.8-5.9 2.3l1.3 1.6A7 7 0 0 1 8 5.6z" opacity=".9"/></svg><svg class="battery" viewBox="0 0 26 12"><rect x=".5" y="1" width="21" height="10" rx="3" fill="none" stroke="currentColor"/><rect x="2.5" y="3" width="17" height="6" rx="1.6"/><path d="M23.5 4.6v2.8c1-.4 1.5-1 1.5-1.4s-.5-1-1.5-1.4z"/></svg></span></div>
+        <div class="nav">
+          <span class="back"><svg class="ico"><use href="#i-back"/></svg>设置</span>
+          <span class="nav-title">云同步</span>
+          <span class="icons" style="color:var(--gold)"><svg class="ico"><use href="#i-cloud"/></svg></span>
+        </div>
+<div class="report-compose" style="padding:14px;margin:0 16px">
+            <div class="flexb">
+              <div class="hstack" style="gap:10px">
+                <span class="sf-ico gold" style="width:36px;height:36px"><svg class="ico"><use href="#i-cloud"/></svg></span>
+                <div>
+                  <div class="t14 b600">iCloud Drive 可用</div>
+                  <div class="t11 mt2" style="color:var(--text3)">同步文件夹：iCloud Drive / 书影记录</div>
+                </div>
+              </div>
+              <span class="tag read">已连接</span>
+            </div>
+            <div class="divider" style="margin:12px 0 10px"></div>
+            <div class="flexb">
+              <div>
+                <div class="t12" style="color:var(--text2)">最近备份</div>
+                <div class="t135 b600 mt2">11-20 22:00 · 128 条记录 · 4.2 MB</div>
+              </div>
+              <span class="tag">自动</span>
+            </div>
+          </div>
+        </div>
+        <div class="body scroll">
+          
+
+          <div class="group-card mt12">
+            <div class="field"><span class="fl"><span>自动备份</span></span><span class="toggle"></span></div>
+            <div class="field" style="align-items:flex-start"><span class="fl" style="align-items:flex-start"><span class="t13">自动同步</span></span><span class="toggle"></span></div>
+          </div>
+          <div class="note" style="padding-top:6px">自动备份：数据变动后生成快照，每台设备保留 3 份自动 + 2 份手动；自动同步：启动时若云端更新且本机没有未备份改动，自动恢复。</div>
+
+          <div class="section-t"><span>云端快照</span><span class="link">选择同步目录</span></div>
+          <div class="report-file">
+            <div class="rf-ico"><svg class="ico"><use href="#i-cloud"/></svg></div>
+            <div class="rf-main"><div class="rf-title">自动快照 · 11-20 22:00</div><div class="rf-meta">128 条记录 · 3 个豆列 · 4 个计划 · 来自「猫九的 iPhone」</div></div>
+            <span class="tag gold">最新</span>
+          </div>
+          <div class="report-file">
+            <div class="rf-ico"><svg class="ico"><use href="#i-download"/></svg></div>
+            <div class="rf-main"><div class="rf-title">手动备份 · 11-18 21:00</div><div class="rf-meta">121 条记录 · 8.1 MB · 来自「MacBook Pro」</div></div>
+            <span class="tag">手动</span>
+          </div>
+          <div class="report-file">
+            <div class="rf-ico"><svg class="ico"><use href="#i-cloud"/></svg></div>
+            <div class="rf-main"><div class="rf-title">自动快照 · 11-17 23:40</div><div class="rf-meta">118 条记录 · 7.9 MB · 来自「猫九的 iPhone」</div></div>
+          </div>
+          <div class="btn ghost sm" style="width:100%"><svg class="ico"><use href="#i-download"/></svg>检查并恢复最新快照</div>
+          <div class="note">快照不含登录 Cookie 与封面图片；恢复前会把当前数据库自动备份到本机 backups 目录，封面可在恢复后按提示补全。</div>
+        </div>
+        <div class="homebar"></div>
+      </div>
+      <figcaption><b>云同步 <span class="tagline">快照列表</span></b>桌面基于 iCloud/OneDrive 目录写 SQLite 快照；iOS 用「文件」里的 iCloud Drive 目录，同样列出自动/手动快照，选择某一份恢复，先本机备份再覆盖。</figcaption>
+    </figure>
+
+    <figure>
+      <div class="phone">
+        <div class="page-head">
+        <div class="sb"><span>9:41</span><span class="sb-icons"><svg viewBox="0 0 18 12"><rect x="0" y="8" width="3" height="4" rx="1"/><rect x="5" y="6" width="3" height="6" rx="1"/><rect x="10" y="3.5" width="3" height="8.5" rx="1"/><rect x="15" y="1" width="3" height="11" rx="1"/></svg><svg viewBox="0 0 16 12"><path d="M8 11l2.2-2.6a3.4 3.4 0 0 0-4.4 0L8 11z"/><path d="M8 5.6c1.7 0 3.3.6 4.6 1.7l1.3-1.6A9.5 9.5 0 0 0 8 3.4c-2.2 0-4.3.8-5.9 2.3l1.3 1.6A7 7 0 0 1 8 5.6z" opacity=".9"/></svg><svg class="battery" viewBox="0 0 26 12"><rect x=".5" y="1" width="21" height="10" rx="3" fill="none" stroke="currentColor"/><rect x="2.5" y="3" width="17" height="6" rx="1.6"/><path d="M23.5 4.6v2.8c1-.4 1.5-1 1.5-1.4s-.5-1-1.5-1.4z"/></svg></span></div>
+        <div class="nav">
+          <span class="back"><svg class="ico"><use href="#i-back"/></svg>设置</span>
+          <span class="nav-title">字数统计</span>
+          <span class="icons" style="color:var(--text3)"><svg class="ico"><use href="#i-doc"/></svg></span>
+        </div>
+<div style="padding:0 16px">
+<div class="group-card">
+            <div class="field"><span class="lb">本地书库目录</span><span class="vl">iCloud Drive / Books <svg class="ico xs chev"><use href="#i-chev"/></svg></span></div>
+            <div class="field"><span class="lb">支持格式</span><span class="vl">EPUB · TXT · DOCX</span></div>
+            <div class="field"><span class="lb">匹配方式</span><span class="vl">书名 + 作者</span></div>
+          </div>
+        </div>
+        </div>
+        <div class="body scroll">
+          
+          <div class="note">iOS 版直接读取「文件」中的电子书，不再依赖 Calibre；MOBI / AZW3 需先转换格式。</div>
+
+          <div class="report-compose mt12">
+            <div class="flexb"><span class="t13 b600">正在统计 · 第 128 / 134 本</span><span class="t115 gold">62%</span></div>
+            <div class="progress teal mt8" style="height:7px"><div class="fill" style="width:62%"></div></div>
+            <div class="flexb mt10">
+              <div><div class="t11" style="color:var(--text3)">已统计字数</div><div class="t18 b700 mt2 nums">1,842.6 万字</div></div>
+              <div style="text-align:right"><div class="t11" style="color:var(--text3)">已匹配书籍</div><div class="t18 b700 mt2 nums">128 / 134</div></div>
+            </div>
+          </div>
+
+          <div class="section-t"><span>最近统计</span><span class="link">重新统计</span></div>
+          <div class="group-card">
+            <div class="field"><span class="fl"><span class="t13">百年孤独</span></span><span class="vl muted">26.2 万字</span></div>
+            <div class="field"><span class="fl"><span class="t13">献给阿尔吉侬的花束</span></span><span class="vl muted">22.4 万字</span></div>
+            <div class="field"><span class="fl"><span class="t13">杀死一只知更鸟</span></span><span class="vl muted">18.6 万字</span></div>
+            <div class="field"><span class="fl"><span class="t13">人类简史</span></span><span class="vl muted">32.5 万字</span></div>
+          </div>
+          <div class="note">字数随记录显示在读书海报的统计行；手动填写的字数优先于本地统计结果。</div>
+          <div class="btn ghost sm mt12" style="width:100%">清除字数缓存并重新匹配</div>
+        </div>
+        <div class="homebar"></div>
+      </div>
+      <figcaption><b>字数统计 <span class="tagline">文件 App 书库</span></b>桌面用 Calibre / 本地目录统计；手机改为选择「文件」里的书库文件夹，直接解析 EPUB / TXT / DOCX，进度与已匹配数量一屏可见。</figcaption>
+    </figure>
+
+    <figure>
+      <div class="phone">
+        <div class="page-head">
+        <div class="sb"><span>9:41</span><span class="sb-icons"><svg viewBox="0 0 18 12"><rect x="0" y="8" width="3" height="4" rx="1"/><rect x="5" y="6" width="3" height="6" rx="1"/><rect x="10" y="3.5" width="3" height="8.5" rx="1"/><rect x="15" y="1" width="3" height="11" rx="1"/></svg><svg viewBox="0 0 16 12"><path d="M8 11l2.2-2.6a3.4 3.4 0 0 0-4.4 0L8 11z"/><path d="M8 5.6c1.7 0 3.3.6 4.6 1.7l1.3-1.6A9.5 9.5 0 0 0 8 3.4c-2.2 0-4.3.8-5.9 2.3l1.3 1.6A7 7 0 0 1 8 5.6z" opacity=".9"/></svg><svg class="battery" viewBox="0 0 26 12"><rect x=".5" y="1" width="21" height="10" rx="3" fill="none" stroke="currentColor"/><rect x="2.5" y="3" width="17" height="6" rx="1.6"/><path d="M23.5 4.6v2.8c1-.4 1.5-1 1.5-1.4s-.5-1-1.5-1.4z"/></svg></span></div>
+        <div class="nav">
+          <span class="back"><svg class="ico"><use href="#i-back"/></svg>设置</span>
+          <span class="nav-title">回收站</span>
+          <span class="icons" style="color:var(--danger)"><svg class="ico"><use href="#i-trash"/></svg></span>
+        </div>
+                <div class="title-row" style="padding-top:2px;padding-bottom:8px">
+          <div class="seg sm"><span class="on">记录 3</span><span>豆列 1</span><span>计划 1</span></div>
+        </div>
+        <div class="flexb" style="padding:0 16px 6px">
+          <span class="t12" style="color:var(--text3)">3 条记录 · 1 个豆列 · 1 个计划</span>
+          <span class="tag">永久保留</span>
+        </div>
+        <div class="group-card" style="margin:0 16px 4px">
+          <div class="field"><span class="lb">同步移除</span><span class="vl muted">豆瓣重新出现时自动恢复</span></div>
+          <div class="field"><span class="lb">彻底删除</span><span class="vl muted">留标记，不再被加回</span></div>
+        </div>
+        </div>
+        <div class="body scroll">
+          <div class="row">
+            <div class="thumb"><div class="poster p-j"><span class="pt">沙丘</span></div></div>
+            <div class="row-main">
+              <div class="row-title">沙丘 2</div>
+              <div class="row-sub">观影 · 手动删除 · 11-20 18:22</div>
+            </div>
+            <div class="right"><span class="btn ghost xs">恢复</span><span class="btn danger xs">删除</span></div>
+          </div>
+          <div class="row">
+            <div class="thumb"><div class="poster book p-i"><span class="pt">我与地坛</span></div></div>
+            <div class="row-main">
+              <div class="row-title">我与地坛</div>
+              <div class="row-sub">读书 · 手动删除 · 11-18 09:40</div>
+            </div>
+            <div class="right"><span class="btn ghost xs">恢复</span><span class="btn danger xs">删除</span></div>
+          </div>
+          <div class="row">
+            <div class="thumb"><div class="poster p-d"><span class="pt">小森林</span></div></div>
+            <div class="row-main">
+              <div class="row-title">小森林 夏秋篇</div>
+              <div class="row-sub">观影 · 豆瓣同步移除 · 11-12 21:06</div>
+            </div>
+            <div class="right"><span class="btn ghost xs">恢复</span><span class="btn danger xs">删除</span></div>
+          </div>
+          <div class="note">「同步移除」的记录在豆瓣条目重新出现时会自动恢复；「彻底删除」会留下删除标记，导入 Excel 到其他设备时同步删除，且不会被同步重新加回。</div>
+
+          <div class="group-card mt12">
+            <div class="field"><span class="fl"><span class="t13">回收站保留策略</span></span><span class="vl muted">永久保留</span></div>
+            <div class="field"><span class="fl"><span class="t13">豆列</span></span><span class="vl muted">1 个</span></div>
+            <div class="field"><span class="fl"><span class="t13">计划文件夹</span></span><span class="vl muted">1 个</span></div>
+          </div>
+          <div class="btn danger mt14" style="width:100%"><svg class="ico"><use href="#i-trash"/></svg>清空回收站</div>
+          <div class="note" style="text-align:center">清空后不可恢复；彻底删除的条目不会再参与统计与同步。</div>
+        </div>
+        <div class="homebar"></div>
+      </div>
+      <figcaption><b>回收站 <span class="tagline">设置内的二级页</span></b>记录、豆列、计划共用回收站，按类型分段；每行直接给「恢复 / 删除」两个动作，底部一键清空。彻底删除留标记，跨设备导入后仍保持删除。</figcaption>
+    </figure>
+
+  </div>
+</section>
+
+</main>
+
+<section class="decisions" id="g-decisions">
+  <h2>方案已确认</h2>
+  <p class="lead">桌面版有 7 个侧边栏页面，手机按「使用频率 + 上下文」重排为 5 个 Tab。下面记录已经落定的结构、移动端取舍与全部已确认方案。</p>
+
+  <div class="group-label" style="font-size:13px;color:var(--text2);padding:0 0 10px">信息架构</div>
+  <div class="decision" style="margin-bottom:22px">
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px 28px;font-size:12.5px;line-height:1.9;color:var(--text2)">
+      <div>
+        <b style="color:var(--text)">TabView（5 Tab）</b><br>
+        ├─ 记录 <span class="muted">观影 / 读书 · 已看 / 想看 · 搜索 · 详情（资源）· 补录 · 同步</span><br>
+        ├─ 豆列 <span class="muted">影视 / 书籍 · 详情 · 条目信息</span><br>
+        ├─ 计划 <span class="muted">观影 / 读书 · 文件夹 · 详情 · 从想读/豆列添加</span><br>
+        ├─ 报告 <span class="muted">月报 / 年报 / 自定义 / 全部 · 预览 · 批量</span><br>
+        └─ 设置 <span class="muted">外观 · Excel · 云同步 · 字数 · 登录 · 探索空间 · 回收站</span>
+      </div>
+      <div>
+        <b style="color:var(--text)">从桌面映射</b><br>
+        观影记录 + 读书记录 → 记录（分段切换）<br>
+        我的豆列 → 豆列<br>
+        我的计划 → 计划<br>
+        报告中心 → 报告<br>
+        应用设置 + 回收站 → 设置（回收站二级页）
+      </div>
+    </div>
+  </div>
+
+  <div class="group-label" style="font-size:13px;color:var(--text2);padding:0 0 10px">已确认的设计决策</div>
+  <div class="decision-grid">
+    <div class="decision">
+      <h3><span class="idx">01</span>5 Tab，不做中央「＋」</h3>
+      <p>唯一需要「新建」的是记录，但同步豆瓣才是核心动作；中央按钮会误导成记账式唯一入口。新增放在记录页标题栏，同步固定在记录页右上。</p>
+      <div class="rec">记录 / 豆列 / 计划 / 报告 / 设置，与桌面 7 个页面的信息层级一一对应。</div>
+    </div>
+    <div class="decision">
+      <h3><span class="idx">02</span>海报墙 3 列</h3>
+      <p>桌面 5 列在 390pt 宽度下只能显示 2 列半；3 列能同时保留日期分组、标题两行与星级，接近豆瓣 App 的浏览手感。</p>
+      <div class="rec">封面 2:3，卡片内显示评分角标、标题 2 行、时长/字数与星级。</div>
+    </div>
+    <div class="decision">
+      <h3><span class="idx">03</span>详情与编辑用半屏浮层</h3>
+      <p>浏览时点卡片先看详情，不离开海报墙；详情里再进编辑。浮层可下拉关闭，返回时保留列表滚动位置。</p>
+      <div class="rec">长评在浮层内滚动，操作固定为豆瓣页面 / 换封面 / 删除。</div>
+    </div>
+    <div class="decision">
+      <h3><span class="idx">04</span>本地优先规则显式呈现</h3>
+      <p>桌面「本地改过的日期、评分、短评不被覆盖」在手机上容易被忽略。用封面右上金点 + 编辑页说明 + 「恢复豆瓣原始时间」开关把规则讲清楚。</p>
+      <div class="rec">金点 = 本地修改；开关关闭时同步不会覆盖本地值。</div>
+    </div>
+    <div class="decision">
+      <h3><span class="idx">05</span>同步方式与范围一次选择</h3>
+      <p>三种同步方式在手机上用单选行呈现，默认「增量 + 新增并移除」；观影 / 读书 / 豆列可分别勾选，避免每次全量。</p>
+      <div class="rec">同步结果在同一浮层展示新增 / 更新 / 移除与耗时。</div>
+    </div>
+    <div class="decision">
+      <h3><span class="idx">06</span>报告复用桌面 HTML</h3>
+      <p>报告版式复杂（TOP 5、整合海报、日历、短评），用 SwiftUI 重写成本高且容易走样。iOS 生成同一份 HTML，用 WKWebView 预览，PNG 由 WebView 快照导出。</p>
+      <div class="rec">已确认：PNG 用 WebView 快照，超过 12000px 自动分段；HTML 始终保留。</div>
+    </div>
+    <div class="decision">
+      <h3><span class="idx">07</span>云同步走「文件」里的 iCloud Drive</h3>
+      <p>不接 CloudKit：快照是整库 SQLite，与桌面共用同一套「同步目录 + latest.json + 多份快照」逻辑，Mac 与 iPhone 可互相恢复。</p>
+      <div class="rec">每台设备 3 份自动 + 2 份手动；恢复前先备份本机数据库。</div>
+    </div>
+    <div class="decision">
+      <h3><span class="idx">08</span>字数统计不依赖 Calibre</h3>
+      <p>iOS 无法运行 Calibre。直接解析「文件」中的 EPUB / TXT / DOCX；MOBI / AZW3 提示先转换格式。手动字数始终优先。</p>
+      <div class="rec">统计结果写回记录，并随快照同步到其他设备。</div>
+    </div>
+    <div class="decision">
+      <h3><span class="idx">09</span>回收站与彻底删除</h3>
+      <p>回收站放在设置内（低频但重要），记录 / 豆列 / 计划共用。彻底删除留标记，避免下次同步被加回，也能随 Excel 导入到其他设备。</p>
+      <div class="rec">已确认：留在设置内，不做一级入口；删除 Toast 提供「撤销」。</div>
+    </div>
+    <div class="decision">
+      <h3><span class="idx">10</span>深色优先，但跟随系统</h3>
+      <p>桌面主打暗色 + 金色；移动端默认跟随系统，设置里可强制浅色 / 深色。海报本身是彩色，暗色模式只换界面与描边，不改变封面。</p>
+      <div class="rec">主色 #E8B65C；已读 #688A4A，想看 #B86F30，统计 #2E8775；深色为墨蓝 + 香槟金。</div>
+    </div>
+    <div class="decision">
+      <h3><span class="idx">11</span>登录：WKWebView + Keychain</h3>
+      <p>豆瓣没有 OAuth 回调，Safari 登录后的 Cookie 也无法交给 App。改为 App 内 WKWebView 承载豆瓣登录页，成功后读取 Cookie 存本机 Keychain；Safari 打开与粘贴 Cookie 仅作兜底。</p>
+      <div class="rec">默认 App 内扫码/账号登录；Safari 兜底需手动复制 Cookie，两者都不上传服务器。</div>
+    </div>
+    <div class="decision">
+      <h3><span class="idx">12</span>探索空间：GitHub 下发 + 连通性</h3>
+      <p>远端站点列表由 GitHub 的 sites.json 下发；本地可新增站点并标「本地」，拉取不覆盖。左上角「拉取」更新列表，「刷新」并发探测连通性，绿勾 / 红叉对应可达与不可达。点链接复制完整地址并 Toast。</p>
+      <div class="rec">远端配置只读 + 本地缓存；拉取失败沿用旧配置；长链接按可用宽度自动省略。</div>
+    </div>
+    <div class="decision">
+      <h3><span class="idx">13</span>详情页「资源」：searchUrl 直达</h3>
+      <p>已看与想看的记录详情都放同一个「资源」入口。配置里的 searchUrl 支持 {title}，有模板就带标题打开站内结果页；没有模板或站点异常则打开首页，豆瓣条目兜底。</p>
+      <div class="rec">只做 URL 模板跳转，不注入 Cookie、不模拟站内表单。</div>
+    </div>
+    <div class="decision">
+      <h3><span class="idx">14</span>布局与字号范式</h3>
+      <p>全屏页固定头 250pt（约 30%）：状态栏、标题、筛选、摘要不滚动；下方滚动区约 70%，底部统一 24pt。正文 16，行标题 16，辅助 14，元信息 12.5，标签 10.5–12；3 列海报标题 13.5 为密度例外。</p>
+      <div class="rec">新页面统一 .page-head + .body.scroll；浮层统一 .sheet-head + .sheet-body；不要把筛选器或摘要放进滚动区。</div>
+    </div>
+  </div>
+
+  <div class="group-label" style="font-size:13px;color:var(--text2);padding:26px 0 10px">数据模型建议</div>
+  <div class="decision" style="margin-bottom:22px">
+    <table class="map-table">
+      <thead><tr><th>桌面 SQLite</th><th>iOS SwiftData</th><th>说明</th></tr></thead>
+      <tbody>
+        <tr><td>records</td><td>@Model Record</td><td>mediaType、status、subjectId、markedDate、effectiveDate、rating、comment、coverPath、wordCount、bookFile、各类 overridden 标记</td></tr>
+        <tr><td>doulists / doulist_items</td><td>Doulist / DoulistItem</td><td>条目按 mediaType 过滤；本地时长、页数、字数写在 item 上</td></tr>
+        <tr><td>plan_folders / plan_items</td><td>PlanFolder / PlanItem</td><td>folder 带 note 与 sort；item 带 position、source（wish / doulist / manual）</td></tr>
+        <tr><td>settings</td><td>@AppStorage + Settings</td><td>豆瓣 ID、Cookie、同步方式、外观等；Cookie 存 Keychain 更合适</td></tr>
+        <tr><td>ignored_subjects / book_meta / book_words</td><td>同表或 Record 字段</td><td>换源忽略、页数固化、豆列字数，随快照与 Excel 一起迁移</td></tr>
+        <tr><td>SQLite 快照 + latest.json</td><td>文件包快照</td><td>导出为 zip / 单文件快照，写入用户选择的 iCloud Drive 目录</td></tr>
+        <tr><td>GitHub sites.json</td><td>ExploreConfig / ExploreSite / LocalExploreSite</td><td>version、movie / book 分组、name / url / searchUrl；远端缓存只读，本地站点合并展示</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="board-foot" style="padding:38px 0 0">静态原型 · 数据均为示意 · 交互说明见每屏下方注释 · 2026-11-22</div>
+</section>
+
+
+<button class="theme-toggle" id="themeToggle" type="button" aria-label="切换深浅色">
+  <svg><use href="#i-sun"/></svg>
+  <span>深色</span>
+</button>
+
+<script>
+  const only = new URLSearchParams(location.search).get('only');
+  if (only) {
+    document.body.classList.add('only');
+    document.querySelectorAll('.group').forEach(function (g) {
+      if (g.dataset.group !== only) g.remove();
+    });
+    const header = document.querySelector('.board-header');
+    if (header) header.remove();
+    const nav = document.querySelector('.board-nav');
+    if (nav) nav.remove();
+    const d = document.querySelector('.decisions');
+    if (only === 'decisions') {
+      const main = document.querySelector('main');
+      if (main) main.remove();
+    } else if (d) {
+      d.remove();
+    }
+  }
+
+  (function () {
+    var artFor = {
+      'p-a': 'art-war', 'p-a2': 'art-stage', 'p-b': 'art-space', 'p-b2': 'art-anime', 'p-d': 'art-forest',
+      'p-e': 'art-nebula', 'p-g': 'art-city', 'p-h': 'art-road', 'p-j': 'art-dunes',
+      'p-k': 'art-sea', 'p-k2': 'art-volcano', 'p-m': 'art-mountains', 'p-n': 'art-bokeh'
+    };
+    document.querySelectorAll('.poster').forEach(function (poster) {
+      if (poster.classList.contains('book')) return;
+      for (var key in artFor) {
+        if (poster.classList.contains(key)) {
+          poster.insertAdjacentHTML('afterbegin',
+            '<svg class="art" viewBox="0 0 100 150" preserveAspectRatio="xMidYMid slice"><use href="#' + artFor[key] + '"/></svg>');
+          break;
+        }
+      }
+    });
+  })();
+
+  (function () {
+    const root = document.documentElement;
+    const button = document.getElementById('themeToggle');
+    const label = button.querySelector('span');
+
+    function paint() {
+      label.textContent = root.dataset.theme === 'dark' ? '浅色' : '深色';
+    }
+
+    button.addEventListener('click', function () {
+      const next = root.dataset.theme === 'dark' ? 'light' : 'dark';
+      root.dataset.theme = next;
+      localStorage.setItem('bookfilm-theme', next);
+      paint();
+    });
+
+    paint();
+  })();
+</script>
+</body>
+</html>
