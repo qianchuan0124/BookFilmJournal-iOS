@@ -187,6 +187,12 @@ enum ReportExportService {
         let teal = dark ? "#55b7a5" : "#2e8775"
         let blue = dark ? "#5f92d8" : "#4c7ed6"
         let purple = dark ? "#9d7ed8" : "#7d62b3"
+        let ownerName = L10n.Settings.brandName
+        let ownerMark = L10n.Settings.brandMark
+        let avatarURL = UserDefaults.standard.string(forKey: "bookfilm.doubanAvatarURL") ?? ""
+        let avatarHTML = avatarURL.isEmpty
+            ? "<div class='avatar'>\(escape(ownerMark))</div>"
+            : "<div class='avatar'><span>\(escape(ownerMark))</span><img src='\(escape(avatarURL))' alt=''></div>"
 
         let sorted = records.sorted { $0.effectiveDate > $1.effectiveDate }
         let ranked = records.sorted {
@@ -223,12 +229,12 @@ enum ReportExportService {
         kpis += kpiHTML(label: "平均评分", value: rated.isEmpty ? "—" : String(format: "%.1f", average), unit: "★", sub: "\(rated.count) \(noun)已评分")
         kpis += kpiHTML(label: "短评", value: "\(comments.count)", unit: "条", sub: records.isEmpty ? "" : String(format: "占记录 %.0f%%", Double(comments.count) / Double(records.count) * 100))
         if query.mediaType == .movie {
-            kpis += kpiHTML(label: "总片长", value: minutes > 0 ? "\(minutes / 60)" : "—", unit: minutes > 0 ? "小时 \(minutes % 60) 分" : "", sub: "")
+            kpis += kpiHTML(label: "总片长", value: minutes > 0 ? "\(minutes / 60)" : "—", unit: minutes > 0 ? "小时 \(minutes % 60) 分" : "", sub: "\(records.count) 部合计")
             let averageMinutes = durations.isEmpty ? 0 : Int((Double(minutes) / Double(durations.count)).rounded())
             kpis += kpiHTML(label: "平均片长", value: averageMinutes > 0 ? "\(averageMinutes)" : "—", unit: averageMinutes > 0 ? "分钟" : "", sub: "")
         } else {
-            kpis += kpiHTML(label: "总页数", value: pages > 0 ? "\(pages)" : "—", unit: pages > 0 ? "页" : "", sub: "")
-            kpis += kpiHTML(label: "总字数", value: words > 0 ? String(format: "%.1f", Double(words) / 10_000) : "—", unit: words > 0 ? "万字" : "", sub: "")
+            kpis += kpiHTML(label: "总页数", value: pages > 0 ? "\(pages)" : "—", unit: pages > 0 ? "页" : "", sub: "\(records.count) 本合计")
+            kpis += kpiHTML(label: "总字数", value: words > 0 ? String(format: "%.1f", Double(words) / 10_000) : "—", unit: words > 0 ? "万字" : "", sub: "\(records.count) 本合计")
         }
         kpis += kpiHTML(label: "年代", value: "\(typeCount)", unit: "个", sub: "按记录年份统计")
 
@@ -345,7 +351,7 @@ enum ReportExportService {
                 let column = (firstWeekday + day - 1) % 7
                 let weekend = column >= 5
                 if let first = dayItems.first {
-                    cells += "<div class='cal-cell has-items\(weekend ? " is-weekend" : "")'><span class='cal-day'>\(day)</span><span class='cal-count'>\(dayItems.count)</span><div class='cal-strip' style='--n:1'><img src='\(image(first.art))' alt=''></div></div>"
+                    cells += "<div class='cal-cell has-items\(weekend ? " is-weekend" : "")'><span class='cal-day'>\(day)</span><div class='cal-strip' style='--n:1'><img src='\(image(first.art))' alt=''></div></div>"
                 } else {
                     cells += "<div class='cal-cell is-quiet\(weekend ? " is-weekend" : "")'><span class='cal-day'>\(day)</span></div>"
                 }
@@ -440,7 +446,9 @@ enum ReportExportService {
         .wrap { max-width:1180px; margin:0 auto; padding:0 24px 64px; }
         .hero { display:flex; justify-content:space-between; align-items:flex-end; gap:24px; padding:44px 0 26px; border-bottom:1px solid var(--line); }
         .brand { display:flex; align-items:center; gap:14px; }
-        .avatar { width:48px; height:48px; border-radius:50%; display:flex; align-items:center; justify-content:center; overflow:hidden; font-family:Georgia,serif; font-size:22px; color:var(--gold); background:linear-gradient(145deg, rgba(229,180,95,.22), rgba(223,96,83,.16)); border:1px solid rgba(229,180,95,.45); }
+        .avatar { position:relative; width:48px; height:48px; border-radius:50%; display:flex; align-items:center; justify-content:center; overflow:hidden; font-family:Georgia,serif; font-size:22px; color:var(--gold); background:linear-gradient(145deg, rgba(229,180,95,.22), rgba(223,96,83,.16)); border:1px solid rgba(229,180,95,.45); }
+        .avatar span { position:relative; z-index:1; }
+        .avatar img { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; }
         .brand-name { font-size:16px; font-weight:600; }
         .brand-line { font-size:10px; letter-spacing:.22em; color:var(--gold); text-transform:uppercase; }
         .period-block { text-align:right; }
@@ -498,13 +506,13 @@ enum ReportExportService {
         .cal-cell { position:relative; min-height:68px; overflow:hidden; border:1px solid var(--line); border-radius:9px; background:rgba(255,255,255,.015); }
         .cal-cell.is-weekend { background:rgba(223,96,83,.045); border-color:rgba(223,96,83,.14); }
         .cal-cell.is-blank { border-color:transparent; background:transparent; }
-        .cal-cell.is-quiet { padding:6px; } .cal-cell.is-quiet .cal-day { position:static; color:var(--dim); text-shadow:none; }
-        .cal-day { position:absolute; top:5px; left:7px; z-index:3; font-size:10px; color:#e4e1d8; text-shadow:0 1px 4px rgba(0,0,0,.85); }
-        .cal-cell.has-items .cal-day { padding:1px 5px; border-radius:4px; background:rgba(5,7,11,.62); }
+        .cal-cell.is-quiet { padding:6px; } .cal-cell.is-quiet .cal-day { position:absolute; top:3px; right:5px; left:auto; color:var(--dim); text-shadow:none; }
+        .cal-day { position:absolute; top:3px; right:5px; left:auto; z-index:3; font-size:9px; color:#e4e1d8; opacity:.55; text-shadow:0 1px 4px rgba(0,0,0,.85); }
+        .cal-cell.has-items .cal-day { padding:0; background:none; }
         .cal-strip { position:absolute; inset:0; display:grid; grid-template-columns:repeat(var(--n),1fr); gap:1px; }
         .cal-strip img { width:100%; height:100%; object-fit:cover; opacity:.92; }
         .cal-cell.has-items::after { content:''; position:absolute; inset:0; z-index:1; pointer-events:none; background:linear-gradient(180deg, rgba(5,7,11,.6), transparent 42%, transparent 68%, rgba(5,7,11,.3)); }
-        .cal-count { position:absolute; right:5px; top:5px; z-index:3; font-size:9px; padding:1px 5px; border-radius:4px; background:rgba(5,7,11,.7); color:var(--muted); }
+        .cal-count, .ym-count { display:none; }
         .years-scroll { overflow-x:auto; }
         .years-calendar { min-width:720px; background:var(--panel); border:1px solid var(--line); border-radius:16px; padding:14px 18px; }
         .years-head, .year-row { display:grid; grid-template-columns:88px repeat(12,minmax(0,1fr)); gap:6px; }
@@ -550,8 +558,8 @@ enum ReportExportService {
         </style></head>
         <body><div class="wrap">
         <header class="hero">
-          <div class="brand"><div class="avatar">书</div><div><div class="brand-name">书影记录</div><div class="brand-line">PRIVATE ARCHIVE · REPORT</div></div></div>
-          <div class="period-block"><div class="big-period">\(escape(period.big))</div><p class="period-sub">\(escape(period.sub))</p></div>
+          <div class="brand">\(avatarHTML)<div><div class="brand-name">\(escape(ownerName))</div><div class="brand-line">PRIVATE ARCHIVE · REPORT</div></div></div>
+          <div class="period-block"><div class="big-period">\(escape(period.big))</div></div>
         </header>
         <section class="kpis">\(kpis)</section>
         \(empty)

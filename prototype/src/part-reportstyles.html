@@ -1,0 +1,60 @@
+<section class="group" id="g-reportstyles" data-group="reportstyles">
+  <div class="group-head">
+    <span class="group-num">04B</span>
+    <h2>报告样式</h2>
+    <p>同一份报告内容 · 五种移动端样式 · 页内切换</p>
+  </div>
+  <div class="report-style-lab">
+    <div class="report-style-panel">
+      <div class="eyebrow">REPORT / MOBILE</div>
+      <h3>同一份内容，换一种阅读节奏</h3>
+      <p>报告仍由桌面端数据生成，只调整移动端 CSS。切换不会离开当前原型，也不需要重新导出一份文件。</p>
+      <div class="report-style-tabs" role="tablist" aria-label="报告样式">
+        <button class="report-style-tab on" type="button" data-file="v1-noir.html" role="tab" aria-selected="true">
+          <span class="style-dot dark"></span><b>V1 · Noir</b><small>深色延续 · 推荐默认</small>
+        </button>
+        <button class="report-style-tab" type="button" data-file="v2-paper.html" role="tab" aria-selected="false">
+          <span class="style-dot paper"></span><b>V2 · Paper</b><small>暖白纸感 · 亮色主题</small>
+        </button>
+        <button class="report-style-tab" type="button" data-file="v3-compact.html" role="tab" aria-selected="false">
+          <span class="style-dot compact"></span><b>V3 · Compact</b><small>高密度 · 长报告</small>
+        </button>
+        <button class="report-style-tab" type="button" data-file="v4-book-dark.html" role="tab" aria-selected="false">
+          <span class="style-dot dark"></span><b>V4 · Book Dark</b><small>书籍年报 · 深色</small>
+        </button>
+        <button class="report-style-tab" type="button" data-file="v5-book-light.html" role="tab" aria-selected="false">
+          <span class="style-dot paper"></span><b>V5 · Book Light</b><small>书籍年报 · 亮色</small>
+        </button>
+      </div>
+      <div class="report-style-note"><span class="tag gold">建议</span>移动端用 V1 Noir / V2 Paper；书籍年报用 V4 Book Dark / V5 Book Light；V3 保留为高密度备选。</div>
+      <div class="report-style-meta">
+        <span>390pt 宽</span><span>电影 / 书籍</span><span>可滚动预览</span>
+      </div>
+    </div>
+    <figure class="report-style-figure">
+      <div class="phone report-preview-phone">
+        <iframe id="reportStyleFrame" class="report-style-frame" src="report-styles/v1-noir.html" title="移动端报告预览"></iframe>
+      </div>
+      <figcaption><b>报告样式预览 <span class="tagline" id="reportStyleLabel">V1 · Noir</span></b>在手机壳内直接滚动查看；切换上面的样式只是替换 iframe 的 HTML，不会改变原型其它屏幕。</figcaption>
+    </figure>
+  </div>
+</section>
+<script>
+  (function () {
+    var frame = document.getElementById('reportStyleFrame');
+    var label = document.getElementById('reportStyleLabel');
+    if (!frame) return;
+    document.querySelectorAll('.report-style-tab').forEach(function (tab) {
+      tab.addEventListener('click', function () {
+        document.querySelectorAll('.report-style-tab').forEach(function (item) {
+          item.classList.remove('on');
+          item.setAttribute('aria-selected', 'false');
+        });
+        tab.classList.add('on');
+        tab.setAttribute('aria-selected', 'true');
+        frame.src = 'report-styles/' + tab.dataset.file;
+        if (label) label.textContent = tab.querySelector('b').textContent;
+      });
+    });
+  })();
+</script>

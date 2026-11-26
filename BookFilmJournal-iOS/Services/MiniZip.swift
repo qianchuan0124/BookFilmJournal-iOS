@@ -21,12 +21,12 @@ enum MiniZipError: LocalizedError {
 }
 
 enum MiniZip {
-    static func entries(at url: URL, suffixes: [String]) throws -> [MiniZipEntry] {
+    static func entries(at url: URL, suffixes: [String], includeExtensionless: Bool = false) throws -> [MiniZipEntry] {
         let data = try Data(contentsOf: url)
-        return try entries(in: data, suffixes: suffixes)
+        return try entries(in: data, suffixes: suffixes, includeExtensionless: includeExtensionless)
     }
 
-    static func entries(in data: Data, suffixes: [String]) throws -> [MiniZipEntry] {
+    static func entries(in data: Data, suffixes: [String], includeExtensionless: Bool = false) throws -> [MiniZipEntry] {
         let bytes = [UInt8](data)
         guard let eocd = findEOCD(bytes) else { throw MiniZipError.invalidArchive }
         let count = Int(readUInt16(bytes, eocd + 10))
@@ -55,7 +55,11 @@ enum MiniZip {
                 ?? ""
 
             let lower = name.lowercased()
-            if suffixes.contains(where: { lower.hasSuffix($0) }) {
+            let fileName = (name as NSString).lastPathComponent
+            let extensionless = !name.hasSuffix("/") && !fileName.isEmpty
+                && (fileName as NSString).pathExtension.isEmpty
+            if suffixes.contains(where: { lower.hasSuffix($0) })
+                || (includeExtensionless && extensionless) {
                 let content = try extract(
                     bytes: bytes,
                     localOffset: localOffset,

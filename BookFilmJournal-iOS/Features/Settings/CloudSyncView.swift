@@ -18,7 +18,7 @@ struct CloudSyncView: View {
     @State private var snapshots: [SyncSnapshotInfo] = []
     @State private var isWorking = false
     @State private var showPicker = false
-    @State private var showRestoreList = false
+    @State private var showSyncPicker = false
     @State private var showClearConfirm = false
     @State private var pendingRestore: SyncSnapshotInfo?
     @State private var notice: SyncNotice?
@@ -65,27 +65,14 @@ struct CloudSyncView: View {
                     }
                     .frame(maxWidth: .infinity)
                 } else {
-                    VStack(spacing: 10) {
-                        Button {
-                            backup()
-                        } label: {
-                            Label(L10n.Cloud.backupNow, systemImage: "arrow.up.doc")
-                        }
-                        .buttonStyle(GoldButtonStyle(height: 44, radius: 12, font: .system(size: 15, weight: .semibold)))
-                        .disabled(isWorking)
-
-                        Button {
-                            guard !snapshots.isEmpty else {
-                                toast = L10n.Cloud.noRestorableBackup
-                                return
-                            }
-                            showRestoreList = true
-                        } label: {
-                            Label(L10n.Cloud.restoreFromFolder, systemImage: "arrow.down.doc")
-                        }
-                        .buttonStyle(OutlineButtonStyle(height: 44, radius: 12, foreground: Theme.gold, font: .system(size: 15, weight: .semibold)))
-                        .disabled(isWorking)
+                    Button {
+                        refresh()
+                        showSyncPicker = true
+                    } label: {
+                        Label(L10n.Cloud.syncNow, systemImage: "arrow.triangle.2.circlepath")
                     }
+                    .buttonStyle(GoldButtonStyle(height: 46, radius: 12, font: .system(size: 15, weight: .semibold)))
+                    .disabled(isWorking)
 
                     HStack(spacing: 10) {
                         Button {
@@ -148,20 +135,28 @@ struct CloudSyncView: View {
                 notice = SyncNotice(title: L10n.Cloud.cannotChooseFolder, message: error.localizedDescription)
             }
         }
-        .sheet(isPresented: $showRestoreList) {
-            SyncSnapshotListView(snapshots: snapshots) { snapshot in
-                if snapshot.isDownloaded {
-                    pendingRestore = snapshot
-                } else if CloudSyncService.requestDownload(at: snapshot.url) {
-                    refresh()
-                    toast = L10n.Cloud.downloadStarted
-                } else {
-                    notice = SyncNotice(
-                        title: L10n.Cloud.snapshotNotDownloaded,
-                        message: L10n.Cloud.desktopBackupHint
-                    )
+        .sheet(isPresented: $showSyncPicker) {
+            SyncSnapshotListView(
+                snapshots: snapshots,
+                localRecordCount: store.activeRecords().count,
+                localDoulistCount: store.activeDoulists.count,
+                onBackup: {
+                    backup()
+                },
+                onSelect: { snapshot in
+                    if snapshot.isDownloaded {
+                        pendingRestore = snapshot
+                    } else if CloudSyncService.requestDownload(at: snapshot.url) {
+                        refresh()
+                        toast = L10n.Cloud.downloadStarted
+                    } else {
+                        notice = SyncNotice(
+                            title: L10n.Cloud.snapshotNotDownloaded,
+                            message: L10n.Cloud.desktopBackupHint
+                        )
+                    }
                 }
-            }
+            )
             .presentationDetents([.large])
         }
         .alert(Text(L10n.Cloud.restoreConfirm), isPresented: Binding(
@@ -305,6 +300,9 @@ struct CloudSyncView: View {
 
 private struct SyncSnapshotListView: View {
     let snapshots: [SyncSnapshotInfo]
+    let localRecordCount: Int
+    let localDoulistCount: Int
+    let onBackup: () -> Void
     let onSelect: (SyncSnapshotInfo) -> Void
     @Environment(\.dismiss) private var dismiss
 
@@ -312,10 +310,21 @@ private struct SyncSnapshotListView: View {
         SheetScaffold {
             VStack(spacing: 0) {
                 SheetGrabber()
-                SheetHeader(title: L10n.Cloud.selectBackup, leftTitle: L10n.Common.close, onLeft: { dismiss() })
+                SheetHeader(title: L10n.Cloud.syncVersionTitle, leftTitle: L10n.Common.close, onLeft: { dismiss() })
             }
         } content: {
             VStack(spacing: 8) {
+                localCard
+
+                HStack {
+                    Text(L10n.Cloud.cloudBackup)
+                        .font(.appCaptionMedium)
+                        .foregroundStyle(Theme.text3)
+                    Spacer()
+                }
+                .padding(.horizontal, 2)
+                .padding(.top, 4)
+
                 if snapshots.isEmpty {
                     EmptyStateView(icon: "icloud", title: L10n.Cloud.folderHasNoBackup, detail: L10n.Cloud.backupLocallyFirst)
                 } else {
@@ -371,7 +380,7 @@ private struct SyncSnapshotListView: View {
                     }
                 }
 
-                Text(L10n.Cloud.desktopBackupHint)
+                Text(L10n.Cloud.syncVersionNote)
                     .font(.appCaption)
                     .foregroundStyle(Theme.text3)
                     .lineSpacing(3)
@@ -379,5 +388,45 @@ private struct SyncSnapshotListView: View {
             }
             .padding(.horizontal, 16)
         }
+    }
+
+    private var localCard: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            HStack(spacing: 9) {
+                Image(systemName: "iphone")
+                    .font(.system(size: 16, weight: .semibold))
+                    .foregroundStyle(Theme.gold)
+                    .frame(width: 32, height: 32)
+                    .background(Theme.goldSoft)
+                    .clipShape(RoundedRectangle(cornerRadius: 9, style: .continuous))
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(L10n.Cloud.localData)
+                        .font(.appBodySmall)
+                        .fontWeight(.semibold)
+                        .foregroundStyle(Theme.text)
+                    Text(L10n.Cloud.localCounts(String(describing: localRecordCount), String(describing: localDoulistCount)))
+                        .font(.appCaption)
+                        .foregroundStyle(Theme.text3)
+                }
+                Spacer(minLength: 0)
+            }
+
+            Button {
+                onBackup()
+                dismiss()
+            } label: {
+                Label(L10n.Cloud.localBackup, systemImage: "arrow.up.doc")
+                    .font(.system(size: 14, weight: .semibold))
+                    .foregroundStyle(.white)
+                    .frame(maxWidth: .infinity)
+                    .frame(height: 42)
+                    .background(Theme.gold, in: RoundedRectangle(cornerRadius: 11, style: .continuous))
+            }
+            .buttonStyle(.plain)
+        }
+        .padding(12)
+        .background(Theme.surface)
+        .clipShape(RoundedRectangle(cornerRadius: 13, style: .continuous))
+        .overlay(RoundedRectangle(cornerRadius: 13, style: .continuous).stroke(Theme.border, lineWidth: 1))
     }
 }

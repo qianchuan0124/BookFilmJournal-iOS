@@ -7,6 +7,8 @@ struct SettingsView: View {
     @AppStorage("bookfilm.appearance") private var appearanceRaw = AppAppearance.system.rawValue
     @AppStorage("bookfilm.doubanID") private var doubanID = "catnine"
     @AppStorage("bookfilm.doubanAvatarURL") private var doubanAvatarURL = ""
+    @AppStorage(CloudSyncService.folderNameKey) private var cloudFolderName = ""
+    @AppStorage(CloudSyncService.lastTimeKey) private var cloudLastBackup = ""
     @State private var showLogin = false
     @State private var showAppearance = false
     @State private var showSearch = false
@@ -109,7 +111,7 @@ struct SettingsView: View {
                     }
                     .buttonStyle(.plain)
                     Button { router.push(.cloudSync) } label: {
-                        settingsRow(icon: "icloud.fill", color: Theme.goldBright, title: L10n.Settings.cloudSync, value: "iCloud Drive · 11-20")
+                        settingsRow(icon: "icloud.fill", color: Theme.goldBright, title: L10n.Settings.cloudSync, value: cloudSyncValue)
                     }
                     .buttonStyle(.plain)
                     Button { router.push(.wordCount) } label: {
@@ -235,8 +237,14 @@ struct SettingsView: View {
         }
     }
 
+    private var cloudSyncValue: String {
+        guard !cloudFolderName.isEmpty else { return L10n.Common.notSet }
+        guard !cloudLastBackup.isEmpty else { return cloudFolderName }
+        return "\(cloudFolderName) · \(CloudSyncService.lastBackupText())"
+    }
+
     private var wordsText: String {
-        let total = store.wordTotal(media: .book)
+        let total = store.wordCountSummary().total
         guard total > 0 else { return L10n.Settings.notCounted }
         return L10n.Stats.tenThousandFormat(Double(total) / 10_000)
     }

@@ -50,6 +50,7 @@ private struct WordCountBook {
 
 enum WordCountService {
     static let supportedExtensions: Set<String> = ["txt", "text", "md", "epub", "docx"]
+    static let minimumReasonableWords = 10_000
 
     static var supportedTypes: [UTType] {
         var types: [UTType] = [.plainText]
@@ -89,6 +90,13 @@ enum WordCountService {
                 result.attempts.append(WordCountAttempt(fileName: url.lastPathComponent, title: book.title, words: nil, failure: reason))
                 return
             }
+            guard words >= minimumReasonableWords else {
+                let reason = L10n.Error.lowWordCount(words)
+                result.failures.append("\(url.lastPathComponent)：\(reason)")
+                result.attempts.append(WordCountAttempt(fileName: url.lastPathComponent, title: book.title, words: nil, failure: reason))
+                log("low-word file=\(url.lastPathComponent) title=\(book.title) words=\(words)")
+                return
+            }
             for id in book.recordIDs {
                 guard var record = store.record(id: id) else { continue }
                 record.wordCount = words
@@ -122,7 +130,13 @@ enum WordCountService {
         ) else { return 0 }
         var count = 0
         while let file = enumerator.nextObject() as? URL {
-            if supportedExtensions.contains(file.pathExtension.lowercased()) { count += 1 }
+            let ext = file.pathExtension.lowercased()
+            if ext == "epub", isDirectory(file) {
+                count += 1
+                enumerator.skipDescendants()
+            } else if supportedExtensions.contains(ext) {
+                count += 1
+            }
         }
         return count
     }
@@ -150,8 +164,14 @@ enum WordCountService {
             var files: [URL] = []
             var allNames: [String] = []
             while let file = enumerator.nextObject() as? URL {
-                allNames.append(file.lastPathComponent)
                 let ext = file.pathExtension.lowercased()
+                if ext == "epub", isDirectory(file) {
+                    allNames.append(file.lastPathComponent)
+                    files.append(file)
+                    enumerator.skipDescendants()
+                    continue
+                }
+                allNames.append(file.lastPathComponent)
                 guard allowed.contains(ext) else {
                     unsupported.append((file.lastPathComponent, ext))
                     continue
@@ -328,6 +348,12 @@ enum WordCountService {
     }
 
     private static func plainText(from url: URL) throws -> String {
+        if isDirectory(url) {
+            guard url.pathExtension.lowercased() == "epub" else {
+                throw WordCountError.unsupported
+            }
+            return try epubDirectoryText(url)
+        }
         switch url.pathExtension.lowercased() {
         case "txt", "md", "text":
             return try decodeText(Data(contentsOf: url))
@@ -363,19 +389,67 @@ enum WordCountService {
         return stripMarkup(String(decoding: document.data, as: UTF8.self))
     }
 
-    private static func epubText(_ url: URL) throws -> String {
-        let all = try MiniZip.entries(at: url, suffixes: [".xhtml", ".html", ".htm", ".opf", ".xml"])
-        let htmlEntries = all.filter {
-            let lower = $0.name.lowercased()
-            return lower.hasSuffix(".xhtml") || lower.hasSuffix(".html") || lower.hasSuffix(".htm")
-        }
-        guard !htmlEntries.isEmpty else { throw WordCountError.missingContent }
+    private static func isDirectory(_ url: URL) -> Bool {
+        (try? url.resourceValues(forKeys: [.isDirectoryKey]).isDirectory) ?? false
+    }
 
+    private static func epubDirectoryText(_ url: URL) throws -> String {
+        let all = try directoryEntries(at: url, suffixes: [".xhtml", ".html", ".htm", ".opf", ".xml"])
+        return try epubText(from: all)
+    }
+
+    private static func directoryEntries(at url: URL, suffixes: [String]) throws -> [MiniZipEntry] {
+        guard let enumerator = FileManager.default.enumerator(
+            at: url,
+            includingPropertiesForKeys: [.isRegularFileKey, .isDirectoryKey],
+            options: [.skipsHiddenFiles]
+        ) else { throw WordCountError.missingContent }
+
+        let basePath = url.standardizedFileURL.path
+        var result: [MiniZipEntry] = []
+        while let file = enumerator.nextObject() as? URL {
+            let values = try? file.resourceValues(forKeys: [.isRegularFileKey])
+            guard values?.isRegularFile == true else { continue }
+            let lower = file.path.lowercased()
+            let fileName = file.lastPathComponent
+            let extensionless = !fileName.isEmpty && (fileName as NSString).pathExtension.isEmpty
+            guard suffixes.contains(where: { lower.hasSuffix($0) }) || extensionless,
+                  let data = try? Data(contentsOf: file) else { continue }
+            let absolute = file.standardizedFileURL.path
+            let relative = String(absolute.dropFirst(basePath.count))
+                .trimmingCharacters(in: CharacterSet(charactersIn: "/"))
+            result.append(MiniZipEntry(name: relative, data: data))
+        }
+        return result
+    }
+
+    private static func epubText(_ url: URL) throws -> String {
+        let all = try MiniZip.entries(
+            at: url,
+            suffixes: [".xhtml", ".html", ".htm", ".opf", ".xml"],
+            includeExtensionless: true
+        )
+        return try epubText(from: all)
+    }
+
+    private static func epubText(from all: [MiniZipEntry]) throws -> String {
         let spine = try epubSpine(all: all)
-        let selected = spine.isEmpty
-            ? htmlEntries
-            : htmlEntries.filter { entry in spine.contains { matches(path: $0, entry: entry.name) } }
-        let content = selected.isEmpty ? htmlEntries : selected
+        let content: [MiniZipEntry]
+        if spine.isEmpty {
+            content = all.filter { entry in
+                let lower = entry.name.lowercased()
+                let fileName = (entry.name as NSString).lastPathComponent
+                return lower.hasSuffix(".xhtml")
+                    || lower.hasSuffix(".html")
+                    || lower.hasSuffix(".htm")
+                    || (fileName as NSString).pathExtension.isEmpty
+            }
+        } else {
+            content = all.filter { entry in
+                spine.contains { matches(path: $0, entry: entry.name) }
+            }
+        }
+        guard !content.isEmpty else { throw WordCountError.missingContent }
         return content.map { stripMarkup(String(decoding: $0.data, as: UTF8.self)) }.joined(separator: "\n")
     }
 
@@ -401,7 +475,8 @@ enum WordCountService {
         return refs.compactMap { ref in
             guard let idref = firstMatch(in: ref, pattern: #"idref="([^"]+)""#),
                   let href = manifest[idref] else { return nil }
-            return base.isEmpty ? href : "\(base)/\(href)"
+            let path = href.split(separator: "#", maxSplits: 1).first.map(String.init) ?? href
+            return base.isEmpty ? path : "\(base)/\(path)"
         }
     }
 

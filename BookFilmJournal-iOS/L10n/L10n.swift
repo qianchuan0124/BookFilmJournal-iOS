@@ -76,6 +76,10 @@ enum L10n {
         static let folderUnreadable = L10nCore.string("error_folder_unreadable")
         /// 请填写有效的豆瓣条目链接
         static let invalidLink = L10nCore.string("error_invalid_link")
+        /// 统计结果仅 %d 字，低于 1 万字，可能未读取到正文，未写入
+        static func lowWordCount(_ p1: Int) -> String {
+            L10nCore.string("error_low_word_count", p1)
+        }
         /// 文件里没有找到正文
         static let missingContent = L10nCore.string("error_missing_content")
         /// 没有统计到正文
@@ -1456,6 +1460,14 @@ enum L10n {
         static let lastBackup = L10nCore.string("cloud_lastBackup")
         /// 最新
         static let latest = L10nCore.string("cloud_latest")
+        /// 备份本机数据到云端
+        static let localBackup = L10nCore.string("cloud_localBackup")
+        /// %@ 条记录 · %@ 个豆列
+        static func localCounts(_ p1: Any, _ p2: Any) -> String {
+            L10nCore.string("cloud_localCounts", String(describing: p1), String(describing: p2))
+        }
+        /// 本机数据
+        static let localData = L10nCore.string("cloud_localData")
         /// 本机
         static let localDevice = L10nCore.string("cloud_local_device")
         /// 本机记录
@@ -1538,6 +1550,12 @@ enum L10n {
         static let syncFolderCleared = L10nCore.string("cloud_syncFolderCleared")
         /// 已选择同步文件夹
         static let syncFolderSelected = L10nCore.string("cloud_syncFolderSelected")
+        /// 同步数据
+        static let syncNow = L10nCore.string("cloud_syncNow")
+        /// 选择云端备份可恢复到本机；本机数据不会自动覆盖。
+        static let syncVersionNote = L10nCore.string("cloud_syncVersionNote")
+        /// 选择要同步到的版本
+        static let syncVersionTitle = L10nCore.string("cloud_syncVersionTitle")
         /// 未选择
         static let unselected = L10nCore.string("cloud_unselected")
         /// 写入快照失败：%@

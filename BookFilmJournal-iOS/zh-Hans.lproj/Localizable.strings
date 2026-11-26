@@ -380,6 +380,12 @@
 "cloud_chooseSyncFolder" = "选择同步文件夹";
 "cloud_chooseFolderFirst" = "先选择 iCloud Drive（或「我的 iPhone」）里的一个文件夹，备份与恢复按钮才会启用。";
 "cloud_backupNow" = "立即备份到文件夹";
+"cloud_syncNow" = "同步数据";
+"cloud_syncVersionTitle" = "选择要同步到的版本";
+"cloud_localData" = "本机数据";
+"cloud_localBackup" = "备份本机数据到云端";
+"cloud_syncVersionNote" = "选择云端备份可恢复到本机；本机数据不会自动覆盖。";
+"cloud_localCounts" = "%@ 条记录 · %@ 个豆列";
 "cloud_noRestorableBackup" = "还没有可恢复的备份";
 "cloud_restoreFromFolder" = "从文件夹恢复";
 "cloud_changeFolder" = "更换文件夹";
@@ -763,6 +769,7 @@
 "error_parse_douban" = "无法解析豆瓣条目";
 "error_no_file_match" = "没有匹配到书名为「%@」的书籍";
 "error_no_body" = "没有统计到正文";
+"error_low_word_count" = "统计结果仅 %d 字，低于 1 万字，可能未读取到正文，未写入";
 "error_folder_unreadable" = "无法读取文件夹";
 "error_no_extension" = "文件没有扩展名，无法判断格式";
 "error_unsupported_extension" = "不支持 .%@ 格式，仅支持 EPUB / TXT / MD / DOCX";

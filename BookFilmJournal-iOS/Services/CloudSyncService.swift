@@ -27,6 +27,7 @@ struct SyncCounts: Hashable {
     var planItems = 0
     var bookWords = 0
     var bookMeta = 0
+    var movieMeta = 0
     var ignoredSubjects = 0
     var purgedRecords = 0
 
@@ -42,6 +43,7 @@ struct SyncCounts: Hashable {
         planItems = values["plan_items"] ?? 0
         bookWords = values["book_words"] ?? 0
         bookMeta = values["book_meta"] ?? 0
+        movieMeta = values["movie_meta"] ?? 0
         ignoredSubjects = values["ignored_subjects"] ?? 0
         purgedRecords = values["purged_records"] ?? 0
     }
@@ -57,6 +59,7 @@ struct SyncCounts: Hashable {
             "plan_items": planItems,
             "book_words": bookWords,
             "book_meta": bookMeta,
+            "movie_meta": movieMeta,
             "ignored_subjects": ignoredSubjects,
             "purged_records": purgedRecords
         ]
@@ -171,9 +174,9 @@ private struct IOSSnapshotSidecar: Codable {
 
 enum CloudSyncService {
     static let subdirectory = "书影记录"
-    static let snapshotPrefix = "douban_trace_"
-    static let snapshotSuffix = ".db"
-    static let manifestName = "latest.json"
+    nonisolated static let snapshotPrefix = "douban_trace_"
+    nonisolated static let snapshotSuffix = ".db"
+    nonisolated static let manifestName = "latest.json"
     static let keepAuto = 3
     static let keepManual = 2
     static let bookmarkKey = "bookfilm.sync.folderBookmark"
@@ -299,9 +302,9 @@ enum CloudSyncService {
 
     static func snapshotsDirectory(create: Bool) throws -> URL? {
         guard let root = resolveRoot() else { return nil }
-        let directory = root.lastPathComponent == subdirectory
-            ? root
-            : root.appendingPathComponent(subdirectory, isDirectory: true)
+        let candidates = snapshotDirectoryCandidates(root: root)
+        let directory = candidates.first(where: hasSnapshotData)
+            ?? candidates[0]
         if create {
             do {
                 try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
@@ -310,6 +313,24 @@ enum CloudSyncService {
             }
         }
         return directory
+    }
+
+    private static func snapshotDirectoryCandidates(root: URL) -> [URL] {
+        let nested = root.appendingPathComponent(subdirectory, isDirectory: true)
+        return root.lastPathComponent == subdirectory
+            ? [root, nested]
+            : [nested, root]
+    }
+
+    nonisolated private static func hasSnapshotData(in directory: URL) -> Bool {
+        guard let entries = try? FileManager.default.contentsOfDirectory(atPath: directory.path) else {
+            return false
+        }
+        return entries.contains {
+            $0 == manifestName || $0 == "devices.json"
+                || $0.hasPrefix(snapshotPrefix)
+                || ($0.hasPrefix(".") && $0.contains(snapshotPrefix))
+        }
     }
 
     static func lastBackupText() -> String {
@@ -371,10 +392,7 @@ enum CloudSyncService {
 
     private static func loadManifest() -> Manifest? {
         guard let root = resolveRoot() else { return nil }
-        let candidates = [
-            root.lastPathComponent == subdirectory ? root : root.appendingPathComponent(subdirectory, isDirectory: true),
-            root
-        ]
+        let candidates = snapshotDirectoryCandidates(root: root)
         for directory in candidates {
             let url = directory.appendingPathComponent(manifestName)
             guard let data = try? Data(contentsOf: url),
@@ -388,10 +406,7 @@ enum CloudSyncService {
     static func listSnapshots() -> [SyncSnapshotInfo] {
         guard let root = resolveRoot() else { return [] }
         let manifest = loadManifest()
-        let directories = [
-            root.lastPathComponent == subdirectory ? root : root.appendingPathComponent(subdirectory, isDirectory: true),
-            root
-        ]
+        let directories = snapshotDirectoryCandidates(root: root)
         let deviceProfiles = loadDeviceProfiles(from: directories)
         var candidates: [String: (url: URL, isDownloaded: Bool)] = [:]
         for directory in directories {
@@ -737,7 +752,7 @@ enum CloudSyncService {
         return url
     }
 
-    private static func sidecarListKey(_ list: Doulist) -> String {
+    nonisolated private static func sidecarListKey(_ list: Doulist) -> String {
         if let id = list.doubanID, !id.isEmpty { return "douban:\(id)" }
         let title = list.title
             .trimmingCharacters(in: .whitespacesAndNewlines)
@@ -745,7 +760,7 @@ enum CloudSyncService {
         return "local:\(list.mediaType.rawValue):\(title)"
     }
 
-    private static func sidecarFolderKey(_ folder: PlanFolder) -> String {
+    nonisolated private static func sidecarFolderKey(_ folder: PlanFolder) -> String {
         let title = folder.title
             .trimmingCharacters(in: .whitespacesAndNewlines)
             .replacingOccurrences(of: "\\s+", with: " ", options: .regularExpression)
@@ -1037,6 +1052,12 @@ enum DesktopSnapshotBridge {
         intro TEXT NOT NULL DEFAULT '',
         position INTEGER NOT NULL DEFAULT 0,
         create_time TEXT NOT NULL DEFAULT '',
+        status TEXT NOT NULL DEFAULT 'done',
+        duration_minutes INTEGER NOT NULL DEFAULT 0,
+        pages INTEGER NOT NULL DEFAULT 0,
+        word_count INTEGER NOT NULL DEFAULT 0,
+        year TEXT NOT NULL DEFAULT '',
+        release_date TEXT NOT NULL DEFAULT '',
         UNIQUE(doulist_id, media_type, subject_id)
     );
     CREATE TABLE IF NOT EXISTS plan_folders (
@@ -1078,6 +1099,12 @@ enum DesktopSnapshotBridge {
         subject_id TEXT PRIMARY KEY,
         pages INTEGER NOT NULL DEFAULT 0,
         pages_manual INTEGER NOT NULL DEFAULT 0,
+        updated_at TEXT NOT NULL DEFAULT ''
+    );
+    CREATE TABLE IF NOT EXISTS movie_meta (
+        subject_id TEXT PRIMARY KEY,
+        duration_minutes INTEGER NOT NULL DEFAULT 0,
+        duration_manual INTEGER NOT NULL DEFAULT 0,
         updated_at TEXT NOT NULL DEFAULT ''
     );
     CREATE TABLE IF NOT EXISTS settings (
@@ -1173,6 +1200,14 @@ enum DesktopSnapshotBridge {
                 if let pages = record.pages, pages > 0 {
                     try insertBookMeta(db, record: record, now: now)
                 }
+            }
+            var movieDurations: [String: Int] = [:]
+            for record in snapshot.records where record.mediaType == .movie && record.isHidden != true {
+                guard let duration = record.durationMinutes, duration > 0 else { continue }
+                movieDurations[record.subjectID] = max(movieDurations[record.subjectID] ?? 0, duration)
+            }
+            for (subjectID, duration) in movieDurations {
+                try insertMovieMeta(db, subjectID: subjectID, duration: duration, now: now)
             }
 
             try exec(db, "COMMIT")
@@ -1277,8 +1312,9 @@ enum DesktopSnapshotBridge {
         let stmt = try prepare(db, """
         INSERT OR REPLACE INTO doulist_items
         (doulist_id, media_type, subject_id, title, url, cover_url, cover_path, rating,
-         comment, intro, position, create_time)
-        VALUES (?,?,?,?,?,?,?,?,?,?,?,?)
+         comment, intro, position, create_time, status, duration_minutes, pages,
+         word_count, year, release_date)
+        VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
         """)
         defer { sqlite3_finalize(stmt) }
         bind(stmt, 1, doulistID)
@@ -1286,13 +1322,19 @@ enum DesktopSnapshotBridge {
         bind(stmt, 3, item.subjectID)
         bind(stmt, 4, item.title)
         bind(stmt, 5, doubanURL(for: item.mediaType, subjectID: item.subjectID))
-        bind(stmt, 6, "")
+        bind(stmt, 6, item.coverURL ?? "")
         bind(stmt, 7, "")
         bind(stmt, 8, Int64(item.rating ?? 0))
         bind(stmt, 9, item.comment ?? "")
         bind(stmt, 10, item.intro ?? "")
         bind(stmt, 11, Int64(position))
         bind(stmt, 12, item.createdAt.map { secondFormatter.string(from: $0) } ?? now)
+        bind(stmt, 13, item.isRead ? "done" : "wish")
+        bind(stmt, 14, Int64(item.durationMinutes ?? 0))
+        bind(stmt, 15, Int64(item.pages ?? 0))
+        bind(stmt, 16, Int64(item.wordCount ?? 0))
+        bind(stmt, 17, item.year ?? "")
+        bind(stmt, 18, item.releaseDate ?? "")
         guard sqlite3_step(stmt) == SQLITE_DONE else { throw dbError(db) }
     }
 
@@ -1360,6 +1402,19 @@ enum DesktopSnapshotBridge {
         guard sqlite3_step(stmt) == SQLITE_DONE else { throw dbError(db) }
     }
 
+    private static func insertMovieMeta(_ db: OpaquePointer, subjectID: String, duration: Int, now: String) throws {
+        let stmt = try prepare(db, """
+        INSERT OR REPLACE INTO movie_meta (subject_id, duration_minutes, duration_manual, updated_at)
+        VALUES (?,?,?,?)
+        """)
+        defer { sqlite3_finalize(stmt) }
+        bind(stmt, 1, subjectID)
+        bind(stmt, 2, Int64(duration))
+        bind(stmt, 3, 0)
+        bind(stmt, 4, now)
+        guard sqlite3_step(stmt) == SQLITE_DONE else { throw dbError(db) }
+    }
+
     private static func insertBookMeta(_ db: OpaquePointer, record: MediaRecord, now: String) throws {
         let stmt = try prepare(db, """
         INSERT OR REPLACE INTO book_meta (subject_id, pages, pages_manual, updated_at)
@@ -1413,6 +1468,7 @@ enum DesktopSnapshotBridge {
         counts.planItems = scalar(db, "SELECT COUNT(*) FROM plan_items")
         counts.bookWords = scalar(db, "SELECT COUNT(*) FROM book_words")
         counts.bookMeta = scalar(db, "SELECT COUNT(*) FROM book_meta")
+        counts.movieMeta = scalar(db, "SELECT COUNT(*) FROM movie_meta")
         counts.ignoredSubjects = scalar(db, "SELECT COUNT(*) FROM ignored_subjects")
         counts.purgedRecords = scalar(db, "SELECT COUNT(*) FROM purged_records")
         return counts
@@ -1432,10 +1488,14 @@ enum DesktopSnapshotBridge {
         var records = try readRecords(db)
         let wordCounts = try readBookWords(db)
         let pages = try readBookMeta(db)
+        let movieDurations = try readMovieMeta(db)
         records = records.map { record in
             var value = record
             if let words = wordCounts[record.subjectID] { value.wordCount = words }
             if let page = pages[record.subjectID] { value.pages = page }
+            if record.mediaType == .movie, let duration = movieDurations[record.subjectID] {
+                value.durationMinutes = duration
+            }
             return value
         }
         let recordLookup = Dictionary(records.map { ($0.subjectID, $0) }, uniquingKeysWith: { first, _ in first })
@@ -1581,6 +1641,18 @@ enum DesktopSnapshotBridge {
         return result
     }
 
+    private static func readMovieMeta(_ db: OpaquePointer) throws -> [String: Int] {
+        guard hasTable(db, "movie_meta") else { return [:] }
+        let stmt = try prepare(db, "SELECT subject_id, duration_minutes FROM movie_meta")
+        defer { sqlite3_finalize(stmt) }
+        var result: [String: Int] = [:]
+        while sqlite3_step(stmt) == SQLITE_ROW {
+            let value = Int(sqlite3_column_int64(stmt, 1))
+            if value > 0 { result[text(stmt, 0)] = value }
+        }
+        return result
+    }
+
     private static func readBookWords(_ db: OpaquePointer) throws -> [String: Int] {
         guard hasTable(db, "book_words") else { return [:] }
         let stmt = try prepare(db, "SELECT subject_id, word_count FROM book_words")
@@ -1644,8 +1716,24 @@ enum DesktopSnapshotBridge {
     }
 
     private static func readDoulistItems(_ db: OpaquePointer, records: [String: MediaRecord]) throws -> [DoulistItem] {
+        let hasStatus = hasColumn(db, "doulist_items", "status")
+        let hasDuration = hasColumn(db, "doulist_items", "duration_minutes")
+        let hasPages = hasColumn(db, "doulist_items", "pages")
+        let hasWords = hasColumn(db, "doulist_items", "word_count")
+        let hasYear = hasColumn(db, "doulist_items", "year")
+        let hasRelease = hasColumn(db, "doulist_items", "release_date")
+        let hasCover = hasColumn(db, "doulist_items", "cover_url")
+        let extraColumns = [
+            (hasStatus, "status"),
+            (hasDuration, "duration_minutes"),
+            (hasPages, "pages"),
+            (hasWords, "word_count"),
+            (hasYear, "year"),
+            (hasRelease, "release_date"),
+            (hasCover, "cover_url")
+        ].filter { $0.0 }.map { ", \($0.1)" }.joined()
         let stmt = try prepare(db, """
-        SELECT doulist_id, media_type, subject_id, title, position, rating, comment, intro, create_time
+        SELECT doulist_id, media_type, subject_id, title, position, rating, comment, intro, create_time\(extraColumns)
         FROM doulist_items ORDER BY doulist_id, position, id
         """)
         defer { sqlite3_finalize(stmt) }
@@ -1665,6 +1753,21 @@ enum DesktopSnapshotBridge {
                 ?? stableUUID(prefix: "1", index: index)
         }
 
+        var extraIndex = 9
+        let statusIndex: Int32? = hasStatus ? Int32(extraIndex) : nil
+        if hasStatus { extraIndex += 1 }
+        let durationIndex: Int32? = hasDuration ? Int32(extraIndex) : nil
+        if hasDuration { extraIndex += 1 }
+        let pagesIndex: Int32? = hasPages ? Int32(extraIndex) : nil
+        if hasPages { extraIndex += 1 }
+        let wordsIndex: Int32? = hasWords ? Int32(extraIndex) : nil
+        if hasWords { extraIndex += 1 }
+        let yearIndex: Int32? = hasYear ? Int32(extraIndex) : nil
+        if hasYear { extraIndex += 1 }
+        let releaseIndex: Int32? = hasRelease ? Int32(extraIndex) : nil
+        if hasRelease { extraIndex += 1 }
+        let coverIndex: Int32? = hasCover ? Int32(extraIndex) : nil
+
         while sqlite3_step(stmt) == SQLITE_ROW {
             let mapIndex = listIDs[sqlite3_column_int64(stmt, 0)]
             guard let mapIndex else { continue }
@@ -1672,19 +1775,38 @@ enum DesktopSnapshotBridge {
             let subject = text(stmt, 2)
             let record = records[subject]
             let title = text(stmt, 3)
+            let itemIsRead: Bool
+            if let statusIndex {
+                itemIsRead = text(stmt, statusIndex) == "done"
+            } else {
+                itemIsRead = record?.status == .done
+            }
+            let duration: Int? = durationIndex.map { Int(sqlite3_column_int64(stmt, $0)) }.flatMap { value in
+                value > 0 ? value : nil
+            } ?? record?.durationMinutes
+            let pages: Int? = pagesIndex.map { Int(sqlite3_column_int64(stmt, $0)) }.flatMap { value in
+                value > 0 ? value : nil
+            } ?? record?.pages
+            let words: Int? = wordsIndex.map { Int(sqlite3_column_int64(stmt, $0)) }.flatMap { value in
+                value > 0 ? value : nil
+            } ?? record?.wordCount
+            let year: String? = yearIndex.map { text(stmt, $0) }.flatMap { $0.isEmpty ? nil : $0 } ?? record?.year
+            let releaseDate: String? = releaseIndex.map { text(stmt, $0) }.flatMap { $0.isEmpty ? nil : $0 } ?? record?.releaseDate
+            let coverURL = coverIndex.map { text(stmt, $0) }.flatMap { $0.isEmpty ? nil : $0 } ?? record?.coverURL
             result.append(
                 DoulistItem(
                     doulistID: mapIndex,
                     mediaType: media,
                     title: title,
                     subjectID: subject,
-                    isRead: record?.status == .done,
+                    isRead: itemIsRead,
                     art: record?.art ?? art(for: media, subjectID: subject, title: title),
-                    durationMinutes: record?.durationMinutes,
-                    pages: record?.pages,
-                    wordCount: record?.wordCount,
-                    year: record?.year,
-                    coverURL: record?.coverURL,
+                    durationMinutes: duration,
+                    pages: pages,
+                    wordCount: words,
+                    year: year,
+                    releaseDate: releaseDate,
+                    coverURL: coverURL,
                     rating: Int(sqlite3_column_int64(stmt, 5)),
                     comment: text(stmt, 6).isEmpty ? nil : text(stmt, 6),
                     intro: text(stmt, 7).isEmpty ? nil : text(stmt, 7),

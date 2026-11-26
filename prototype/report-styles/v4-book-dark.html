@@ -1,0 +1,394 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><style>
+* { box-sizing:border-box; }
+html, body { overflow-x:hidden; }
+body { margin:0; line-height:1.55; font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans GB",sans-serif; }
+a { color:inherit; text-decoration:none; }
+img { display:block; }
+.wrap { margin:0 auto; padding:0 16px 48px; width:100%; max-width:390px; }
+.brand { display:flex; align-items:center; gap:10px; }
+.avatar { width:38px; height:38px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-family:Georgia,serif; font-size:17px; }
+.brand-name { font-size:14px; font-weight:600; }
+.brand-line { font-size:8px; letter-spacing:.18em; text-transform:uppercase; }
+.period-block { min-width:0; text-align:right; }
+.big-period { white-space:nowrap; line-height:.82; letter-spacing:-.055em; font-weight:800; font-size:58px; font-variant-numeric:tabular-nums; }
+.period-sub { margin:7px 0 0; font-size:10.5px; }
+.kpis { display:grid; grid-template-columns:repeat(2,1fr); }
+.kpi { min-width:0; padding:10px 11px 11px; border-left:1px solid var(--line); }
+.kpi:nth-child(2n+1) { border-left:none; }
+.kpi:nth-child(n+3) { border-top:1px solid var(--line); }
+.kpi-label { display:block; font-size:8.5px; letter-spacing:.12em; color:var(--dim); text-transform:uppercase; }
+.kpi-value { display:block; margin-top:3px; font-size:18px; font-weight:700; font-variant-numeric:tabular-nums; }
+.kpi-value small { font-size:9px; color:var(--muted); font-weight:400; margin-left:2px; }
+.kpi-sub { display:block; margin-top:2px; font-size:9px; color:var(--dim); }
+.feature { margin-top:20px; }
+.top-panel { min-width:0; margin-top:12px; background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:13px 14px 8px; }
+.panel-head { display:flex; align-items:baseline; gap:7px; margin-bottom:3px; }
+.panel-head h3 { margin:0; font-size:13px; }
+.panel-head .en { font-size:8px; letter-spacing:.16em; color:var(--dim); text-transform:uppercase; }
+.featured-card { min-width:0; position:relative; display:grid; grid-template-columns:112px minmax(0,1fr); gap:7px 12px; padding:12px; border:1px solid rgba(229,180,95,.32); border-radius:14px; background:var(--feature); }
+.featured-tag { position:static; grid-column:1/-1; justify-self:start; font-size:8.5px; letter-spacing:.12em; color:var(--gold); background:rgba(8,11,17,.62); border:1px solid rgba(229,180,95,.5); border-radius:4px; padding:2px 6px; text-transform:uppercase; }
+.featured-card > a { display:block; grid-column:1; grid-row:2 / span 2; }
+.featured-card > .featured-poster { grid-column:1; grid-row:2 / span 2; width:112px; }
+.featured-title { grid-column:2; }
+.featured-poster { width:112px; aspect-ratio:2/3; object-fit:cover; border-radius:7px; background:rgba(255,255,255,.04); }
+.featured-title { grid-column:2; align-self:end; margin:0; font-size:16px; font-weight:700; line-height:1.35; }
+.featured-meta { grid-column:2; display:flex; gap:5px; flex-wrap:wrap; align-items:center; font-size:9.5px; color:var(--muted); }
+.featured-comment { grid-column:1/-1; margin:2px 0 0; font-size:11px; line-height:1.65; color:var(--muted); display:-webkit-box; -webkit-line-clamp:4; -webkit-box-orient:vertical; overflow:hidden; }
+.top-row { min-width:0; display:grid; grid-template-columns:25px 30px minmax(0,1fr) auto; gap:8px; align-items:center; padding:8px 0; border-top:1px solid var(--line-soft); }
+.top-row:first-child { border-top:none; }
+.rank { font-size:15px; font-weight:800; color:var(--gold); font-variant-numeric:tabular-nums; }
+.top-thumb { width:30px; height:42px; object-fit:cover; border-radius:4px; }
+.top-main { min-width:0; display:flex; flex-direction:column; gap:2px; }
+.top-title { font-size:11.5px; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.top-meta { font-size:9px; color:var(--muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.top-stars { font-size:9px; white-space:nowrap; }
+.stars, .gold { color:var(--gold); }
+.highlights { display:grid; grid-template-columns:1fr; gap:7px; margin-top:12px; }
+.highlight { display:grid; grid-template-columns:48px minmax(0,1fr); gap:9px; padding:10px; background:var(--panel); border:1px solid var(--line); border-radius:11px; }
+.highlight img { width:48px; height:68px; object-fit:cover; border-radius:4px; }
+.highlight-main { min-width:0; display:flex; flex-direction:column; gap:2px; }
+.highlight-kind { font-size:7.5px; letter-spacing:.12em; color:var(--gold); text-transform:uppercase; }
+.highlight h4 { margin:1px 0; font-size:11.5px; line-height:1.35; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.highlight-meta { font-size:8.5px; color:var(--muted); }
+.highlight p { margin:1px 0 0; font-size:9px; line-height:1.5; color:var(--muted); display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
+.section { margin-top:24px; }
+.section-head { display:flex; align-items:baseline; gap:7px; margin-bottom:10px; }
+.section-head::before { content:''; width:6px; height:6px; border-radius:2px; background:var(--gold); display:inline-block; }
+.section-head h3 { margin:0; font-size:16px; font-weight:700; }
+.section-head .en { font-size:8px; letter-spacing:.16em; color:var(--dim); text-transform:uppercase; }
+.section-head .count { margin-left:auto; font-size:9px; color:var(--muted); }
+.poster-wall-image-wrap { width:100%; overflow:hidden; background:var(--panel); border:1px solid var(--line); border-radius:13px; }
+.poster-wall-image { display:block; width:100%; max-width:100%; height:auto; }
+.poster-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:7px; }
+.poster { position:relative; overflow:hidden; border:1px solid var(--line); border-radius:7px; background:rgba(255,255,255,.035); }
+.poster img { width:100%; aspect-ratio:2/3; object-fit:cover; }
+.poster-caption { position:absolute; inset:auto 0 0; padding:18px 5px 5px; font-size:8px; line-height:1.35; background:linear-gradient(transparent, rgba(5,7,11,.94)); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.poster-caption small { display:block; color:var(--muted); font-size:7px; }
+.years-scroll { overflow-x:auto; }
+.years-calendar { min-width:0; background:var(--panel); border:1px solid var(--line); border-radius:13px; padding:10px 9px; }
+.years-head, .year-row { display:grid; grid-template-columns:52px repeat(12,minmax(0,1fr)); gap:2px; }
+.years-head { padding:3px 0 6px; border-bottom:1px solid var(--line-soft); font-size:7px; color:var(--dim); text-align:center; }
+.years-head span:first-child { text-align:left; }
+.year-row { padding:6px 0; border-top:1px solid var(--line-soft); }
+.year-label { display:flex; flex-direction:column; justify-content:center; }
+.year-label b { font-size:11px; color:var(--gold); }
+.year-label span { font-size:7px; color:var(--muted); }
+.year-month { position:relative; min-height:48px; overflow:hidden; padding:3px; border:1px solid var(--line-soft); border-radius:5px; background:rgba(255,255,255,.015); }
+.year-month.is-quiet { color:var(--dim); }
+.ym-month { font-size:7px; color:var(--muted); }
+.ym-count { position:absolute; top:3px; right:4px; font-size:7px; color:var(--gold); }
+.ym-thumbs { position:absolute; left:3px; right:3px; bottom:3px; display:flex; gap:1px; }
+.ym-thumbs img { width:13px; height:18px; object-fit:cover; border-radius:2px; opacity:.9; }
+.year-calendar-block { background:var(--panel); border:1px solid var(--line); border-radius:13px; padding:10px; }
+.year-calendar-head { display:flex; align-items:baseline; gap:6px; margin-bottom:8px; font-size:9px; color:var(--muted); }
+.year-calendar-head b { font-size:16px; color:var(--gold); }
+.year-calendar-head span { display:none; }
+.year-months { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:7px; }
+.mini-month { border:1px solid var(--line-soft); border-radius:7px; padding:5px; background:rgba(255,255,255,.015); overflow:hidden; }
+.mini-month-head { display:flex; justify-content:space-between; align-items:baseline; margin-bottom:3px; font-size:8px; color:var(--muted); }
+.mini-month-head b { font-size:9px; color:var(--text); }
+.mini-month-head span { display:none; }
+.mini-weekhead { display:grid; grid-template-columns:repeat(7,1fr); gap:1px; margin-bottom:2px; font-size:5.5px; color:var(--dim); text-align:center; }
+.mini-grid { display:grid; grid-template-columns:repeat(7,1fr); gap:1px; }
+.mini-day { position:relative; overflow:hidden; aspect-ratio:1; border-radius:2px; background:rgba(255,255,255,.02); }
+.mini-day.is-blank { background:transparent; }
+.mini-day.is-weekend { background:rgba(223,96,83,.06); }
+.mini-day img { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; opacity:.82; }
+.mini-num { position:absolute; top:1px; right:2px; left:auto; z-index:2; font-size:5.5px; color:#e4e1d8; opacity:.5; text-shadow:0 1px 2px #000; }
+.mini-day.is-quiet .mini-num { color:var(--dim); text-shadow:none; }
+.mini-count { display:none; }
+.calendar-card { background:var(--panel); border:1px solid var(--line); border-radius:13px; padding:12px 10px; }
+.cal-weekhead { display:grid; grid-template-columns:repeat(7,1fr); gap:3px; margin-bottom:5px; font-size:8px; color:var(--dim); text-align:center; }
+.cal-grid { display:grid; grid-template-columns:repeat(7,1fr); gap:3px; }
+.cal-cell { position:relative; min-height:43px; overflow:hidden; border:1px solid var(--line); border-radius:6px; background:rgba(255,255,255,.015); }
+.cal-cell.is-weekend { background:rgba(223,96,83,.045); border-color:rgba(223,96,83,.14); }
+.cal-cell.is-blank { border-color:transparent; background:transparent; }
+.cal-cell.is-quiet { padding:4px; }
+.cal-cell.is-quiet .cal-day { position:absolute; top:3px; right:5px; left:auto; color:var(--dim); text-shadow:none; }
+.cal-day { position:absolute; top:3px; right:5px; left:auto; z-index:3; font-size:8px; color:#e4e1d8; opacity:.62; text-shadow:0 1px 4px #000; }
+.cal-cell.has-items .cal-day { padding:0; background:none; }
+.cal-strip { position:absolute; inset:0; display:grid; grid-template-columns:repeat(var(--n),1fr); gap:1px; }
+.cal-strip img { width:100%; height:100%; object-fit:cover; opacity:.92; }
+.cal-cell.has-items::after { content:''; position:absolute; inset:0; z-index:1; background:linear-gradient(180deg, rgba(5,7,11,.6), transparent 42%, transparent 68%, rgba(5,7,11,.3)); }
+.cal-count, .ym-count { display:none; }
+.prefs { margin-top:24px; padding:16px 0 18px; border-top:1px solid var(--line); border-bottom:1px solid var(--line); }
+.prefs-block + .prefs-block { margin-top:16px; }
+.prefs-block h3 { margin:0 0 9px; font-size:13px; font-weight:600; }
+.prefs-block h3 .en { margin-left:6px; font-size:8px; letter-spacing:.14em; color:var(--dim); text-transform:uppercase; }
+.decade-bar { display:flex; height:20px; border-radius:5px; overflow:hidden; background:rgba(255,255,255,.05); margin-bottom:8px; }
+.decade-seg { display:flex; align-items:center; justify-content:center; height:100%; min-width:0; }
+.decade-seg em { font-style:normal; font-size:8px; font-weight:600; color:rgba(8,11,17,.82); }
+.decade-legend { display:flex; flex-wrap:wrap; gap:5px 10px; }
+.decade-item { display:flex; align-items:center; gap:4px; font-size:9px; color:var(--muted); }
+.decade-item b { color:var(--text); font-weight:600; }
+.decade-dot { width:7px; height:7px; border-radius:2px; display:inline-block; flex:none; }
+.d2020 { background:var(--gold); } .d2010 { background:#d98a4a; } .d2000 { background:var(--purple); } .d1990 { background:var(--blue); } .d1980 { background:var(--teal); } .d1970 { background:#6b7a99; } .dother { background:#4b5262; }
+.prefs-note { margin:7px 0 0; font-size:9px; color:var(--dim); line-height:1.5; }
+.genre-tags { display:flex; flex-wrap:wrap; gap:6px 10px; }
+.genre-tag { font-size:12px; font-weight:600; color:var(--gold); }
+.genre-tag sup { margin-left:2px; font-size:7px; opacity:.7; vertical-align:super; }
+.genre-tag.g0 { color:var(--gold); } .genre-tag.g1 { color:var(--red); } .genre-tag.g2 { color:var(--teal); } .genre-tag.g3 { color:var(--blue); } .genre-tag.g4 { color:var(--purple); } .genre-tag.g5 { color:#d98a4a; } .genre-tag.g6 { color:#7fae68; } .genre-tag.g7 { color:#c76c9a; }
+.quotes-grid { display:grid; grid-template-columns:1fr; gap:9px; }
+.quote-card { display:flex; flex-direction:column; gap:6px; padding:12px; background:var(--panel); border:1px solid var(--line); border-radius:11px; }
+.quote-mark { font-family:Georgia,serif; font-size:26px; line-height:.55; color:var(--gold); opacity:.55; }
+.quote-text { margin:0; font-size:10px; line-height:1.65; color:var(--muted); display:-webkit-box; -webkit-line-clamp:5; -webkit-box-orient:vertical; overflow:hidden; }
+.quote-foot { display:grid; grid-template-columns:minmax(0,1fr) auto auto; align-items:center; gap:5px; margin-top:auto; padding-top:6px; border-top:1px solid var(--line-soft); font-size:8.5px; color:var(--muted); }
+.quote-source { min-width:0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.quote-date, .quote-stars { white-space:nowrap; }
+.muted { color:var(--muted); }
+.panel-empty { margin:0; font-size:10px; color:var(--dim); }
+footer { margin-top:28px; padding-top:12px; border-top:1px solid var(--line); font-size:8.5px; color:var(--dim); display:flex; justify-content:space-between; gap:10px; flex-wrap:wrap; }
+
+:root { --bg:#080b11; --panel:#121722; --panel2:#151b27; --line:rgba(255,255,255,.08); --line-soft:rgba(255,255,255,.04); --text:#eae7de; --muted:#8d95a5; --dim:#5d6474; --gold:#e5b45f; --red:#df6053; --teal:#55b7a5; --blue:#5f92d8; --purple:#9d7ed8; --feature:linear-gradient(180deg, rgba(229,180,95,.08), rgba(18,23,34,.96) 46%); }
+body { color:var(--text); background:radial-gradient(600px 300px at 8% -6%, rgba(229,180,95,.12), transparent 58%), radial-gradient(500px 280px at 96% -4%, rgba(223,96,83,.09), transparent 58%), var(--bg); }
+.wrap { padding-top:24px; }
+.hero { display:flex; flex-wrap:wrap; justify-content:space-between; align-items:flex-end; gap:10px; padding:6px 0 16px; border-bottom:1px solid var(--line); }
+.avatar { width:42px; height:42px; border-radius:14px; color:#241804; font-size:20px; font-weight:700; background:linear-gradient(135deg, #F4D083, #BC7C1D); border:none; }
+.brand-line { color:var(--gold); }
+.big-period { color:var(--gold); font-family:Georgia,"Songti SC",serif; font-size:54px; }
+.kpis { border-bottom:1px solid var(--line); }
+.kpi { background:var(--panel); }
+.section-head h3, .prefs-block h3 { color:var(--text); }
+</style></head>
+<body>
+<div class="wrap">
+  <header class="hero">
+    <div class="brand">
+      <div class="avatar">猫</div>
+      <div><div class="brand-name">猫九</div><div class="brand-line">书影记录 · Report</div></div>
+    </div>
+    <div class="period-block">
+      <div class="big-period">2026</div>
+      
+    </div>
+  </header>
+  <section class="kpis"><div class="kpi"><span class="kpi-label">记录</span><span class="kpi-value">30 <small>本</small></span><span class="kpi-sub">本年记录</span></div><div class="kpi"><span class="kpi-label">有记录月份</span><span class="kpi-value">7 <small>个月</small></span><span class="kpi-sub">覆盖 7 个月</span></div><div class="kpi"><span class="kpi-label">五星</span><span class="kpi-value">22 <small>本</small></span><span class="kpi-sub">占已评分 81%</span></div><div class="kpi"><span class="kpi-label">平均评分</span><span class="kpi-value">4.7 <small>★</small></span><span class="kpi-sub">27 本已评分</span></div><div class="kpi"><span class="kpi-label">短评</span><span class="kpi-value">18 <small>条</small></span><span class="kpi-sub">占记录 60%</span></div><div class="kpi"><span class="kpi-label">总页数</span><span class="kpi-value">16,450 <small>页</small></span><span class="kpi-sub">30 本合计</span></div><div class="kpi"><span class="kpi-label">总字数</span><span class="kpi-value">978.2 <small>万字</small></span><span class="kpi-sub">30 本合计</span></div><div class="kpi"><span class="kpi-label">类型</span><span class="kpi-value">7 <small>类</small></span></div></section>
+  <section class="feature">
+      <div class="featured-card">
+        <span class="featured-tag">5 STAR · 本期最佳</span>
+        <a href="https://book.douban.com/subject/36157472/" target="_blank" rel="noopener">
+          <img class="featured-poster" src="../assets/covers/book-36157472.jpg" alt="1007天的战争：抗美援朝：战略和历次战役（1-3卷）">
+        </a>
+        <h3 class="featured-title" title="1007天的战争：抗美援朝：战略和历次战役（1-3卷）">1007天的战争：抗美援朝：战略和历次战役（1-3卷）</h3>
+        <div class="featured-meta"><span class="gold">★★★★★</span> <span>2026.10.30</span> <span>127 万字</span></div>
+        <p class="featured-comment">从战前的国内状况，军事布局，政治打算，到战争开始的顶层运筹帷幄，战略隐蔽，初入朝鲜半岛的前三次战役以极限运动战的方式疯狂围堵联合国军的退路，一路将其从鸭绿江边击退至37线附近，成功收复平壤、汉城。取得了前期的伟大胜利，然而因为打的太好了，上上下下都有了骄兵心理，而且美军缓过神来，…</p>
+      </div>
+    <div class="top-panel">
+      <div class="panel-head"><h3>TOP 5</h3><span class="en">Top Rated</span></div>
+<div class="top-list">
+        <div class="top-row">
+          <span class="rank">01</span>
+          <img class="top-thumb" src="../assets/covers/book-36157472.jpg" alt="1007天的战争：抗美援朝：战略和历次战役（1-3卷）">
+          <div class="top-main">
+            <a class="top-title" href="https://book.douban.com/subject/36157472/" target="_blank" rel="noopener" title="1007天的战争：抗美援朝：战略和历次战役（1-3卷）">1007天的战争：抗美援朝：战略和历次战役（1-3卷）</a>
+            <span class="top-meta">2026.10.30 · 127 万字 · 从战前的国内状况，军事布局，政治打算，到战争开始的顶层运筹帷幄，战略隐蔽，初入朝鲜半…</span>
+          </div>
+          <span class="top-stars"><span class="gold">★★★★★</span></span>
+        </div>
+        <div class="top-row">
+          <span class="rank">02</span>
+          <img class="top-thumb" src="../assets/covers/book-26389895.jpg" alt="银河帝国：基地七部曲">
+          <div class="top-main">
+            <a class="top-title" href="https://book.douban.com/subject/26389895/" target="_blank" rel="noopener" title="银河帝国：基地七部曲">银河帝国：基地七部曲</a>
+            <span class="top-meta">2026.09.06 · 123 万字 · 前三部 基地、基地与帝国、第二基地 很不错，打造了一个全新的科幻世界，从谢顿的心理史…</span>
+          </div>
+          <span class="top-stars"><span class="gold">★★★★★</span></span>
+        </div>
+        <div class="top-row">
+          <span class="rank">03</span>
+          <img class="top-thumb" src="../assets/covers/book-26752026.jpg" alt="聪明的投资者（第4版注疏点评版）">
+          <div class="top-main">
+            <a class="top-title" href="https://book.douban.com/subject/26752026/" target="_blank" rel="noopener" title="聪明的投资者（第4版注疏点评版）">聪明的投资者（第4版注疏点评版）</a>
+            <span class="top-meta">2026.06.02 · 30.8 万字 · 可能是因为年代久远的原因，格雷厄姆写的很难看懂和理解，不过大体上能体会到，每一章后面…</span>
+          </div>
+          <span class="top-stars"><span class="gold">★★★★★</span></span>
+        </div>
+        <div class="top-row">
+          <span class="rank">04</span>
+          <img class="top-thumb" src="../../cache/covers/sync_book_1418776.jpg" alt="美国反对美国">
+          <div class="top-main">
+            <a class="top-title" href="https://book.douban.com/subject/1418776/" target="_blank" rel="noopener" title="美国反对美国">美国反对美国</a>
+            <span class="top-meta">2026.11.10 · 20.2 万字 · 作者以访问学者的身份，切身实地的深入观察研究美国本身，包括美国的制度、文化、习俗、民…</span>
+          </div>
+          <span class="top-stars"><span class="gold">★★★★★</span></span>
+        </div>
+        <div class="top-row">
+          <span class="rank">05</span>
+          <img class="top-thumb" src="../assets/covers/book-24737829.jpg" alt="金赛性学报告">
+          <div class="top-main">
+            <a class="top-title" href="https://book.douban.com/subject/24737829/" target="_blank" rel="noopener" title="金赛性学报告">金赛性学报告</a>
+            <span class="top-meta">2026.11.05 · 27.3 万字 · 关于性的非常值得一看的社会学科普读物，全文抛弃了自己的猜测、医学上的少数的临床现象、…</span>
+          </div>
+          <span class="top-stars"><span class="gold">★★★★★</span></span>
+        </div>
+    </div>
+    </div>
+  </section>
+  <section class="highlights">      <article class="highlight">
+        <img src="../assets/covers/book-10471333.jpg" alt="叫魂：1768年中国妖术大恐慌">
+        <div class="highlight-main">
+          <span class="highlight-kind">年度首看</span>
+          <h4 title="叫魂：1768年中国妖术大恐慌">叫魂：1768年中国妖术大恐慌</h4>
+          <span class="highlight-meta">2026.03.06 · 16.8 万字 · <span class="gold">★★★★★</span></span>
+          <p></p>
+        </div>
+      </article>
+      <article class="highlight">
+        <img src="../assets/covers/book-25887924.jpg" alt="卡拉马佐夫兄弟">
+        <div class="highlight-main">
+          <span class="highlight-kind">年度收官</span>
+          <h4 title="卡拉马佐夫兄弟">卡拉马佐夫兄弟</h4>
+          <span class="highlight-meta">2026.11.18 · 59.5 万字 · <span class="gold">★★★★★</span></span>
+          <p>一家人的爱恨情仇，一局破朔迷离的杀父案，一场酣畅淋漓的盛大审判。感觉里面的每一个角色都歇斯底里，游走在精神崩溃的边缘，里面大篇幅大篇幅的心理描写，将每一个人物的内心世界都刻画的相当传神，而夹杂着许多的…</p>
+        </div>
+      </article>
+      <article class="highlight">
+        <img src="../assets/covers/book-26389895.jpg" alt="银河帝国：基地七部曲">
+        <div class="highlight-main">
+          <span class="highlight-kind">最长短评</span>
+          <h4 title="银河帝国：基地七部曲">银河帝国：基地七部曲</h4>
+          <span class="highlight-meta">2026.09.06 · 123 万字 · <span class="gold">★★★★★</span></span>
+          <p>前三部 基地、基地与帝国、第二基地 很不错，打造了一个全新的科幻世界，从谢顿的心理史学，到第一基地的超发达的科技实力，再到第二基地神奇的心灵能力，以及川陀神奇的未来都市面貌，深刻吸引着读者以及后来的一…</p>
+        </div>
+      </article></section>
+  <section class="section">
+    <div class="section-head"><h3>整合海报</h3><span class="en">Poster</span><span class="count">30 本</span></div>
+    <div class="poster-wall-image-wrap"><a href="./book_year_2026_light_wall.jpg" target="_blank" rel="noopener"><img class="poster-wall-image" src="./book_year_2026_light_wall.jpg" alt="整合海报" width="2197" height="2784"></a></div>
+  </section>
+
+  <section class="section">
+    <div class="section-head"><h3>阅读月历</h3><span class="en">Year Calendar</span></div>
+    <div class="year-calendar-block">
+      <div class="year-calendar-head"><b>2026</b> 年<span>30 条记录</span></div>
+      <div class="year-months">
+      <div class="mini-month">
+        <div class="mini-month-head"><b>1 月</b><span>0 条</span></div>
+        <div class="mini-weekhead"><span>一</span><span>二</span><span>三</span><span>四</span><span>五</span><span>六</span><span>日</span></div>
+        <div class="mini-grid"><div class="mini-day is-blank"></div><div class="mini-day is-blank"></div><div class="mini-day is-blank"></div><div class="mini-day is-quiet"><span class="mini-num">1</span></div><div class="mini-day is-quiet"><span class="mini-num">2</span></div><div class="mini-day is-weekend is-quiet"><span class="mini-num">3</span></div><div class="mini-day is-weekend is-quiet"><span class="mini-num">4</span></div><div class="mini-day is-quiet"><span class="mini-num">5</span></div><div class="mini-day is-quiet"><span class="mini-num">6</span></div><div class="mini-day is-quiet"><span class="mini-num">7</span></div><div class="mini-day is-quiet"><span class="mini-num">8</span></div><div class="mini-day is-quiet"><span class="mini-num">9</span></div><div class="mini-day is-weekend is-quiet"><span class="mini-num">10</span></div><div class="mini-day is-weekend is-quiet"><span class="mini-num">11</span></div><div class="mini-day is-quiet"><span class="mini-num">12</span></div><div class="mini-day is-quiet"><span class="mini-num">13</span></div><div class="mini-day is-quiet"><span class="mini-num">14</span></div><div class="mini-day is-quiet"><span class="mini-num">15</span></div><div class="mini-day is-quiet"><span class="mini-num">16</span></div><div class="mini-day is-weekend is-quiet"><span class="mini-num">17</span></div><div class="mini-day is-weekend is-quiet"><span class="mini-num">18</span></div><div class="mini-day is-quiet"><span class="mini-num">19</span></div><div class="mini-day is-quiet"><span class="mini-num">20</span></div><div class="mini-day is-quiet"><span class="mini-num">21</span></div><div class="mini-day is-quiet"><span class="mini-num">22</span></div><div class="mini-day is-quiet"><span class="mini-num">23</span></div><div class="mini-day is-weekend is-quiet"><span class="mini-num">24</span></div><div class="mini-day is-weekend is-quiet"><span class="mini-num">25</span></div><div class="mini-day is-quiet"><span class="mini-num">26</span></div><div class="mini-day is-quiet"><span class="mini-num">27</span></div><div class="mini-day is-quiet"><span class="mini-num">28</span></div><div class="mini-day is-quiet"><span class="mini-num">29</span></div><div class="mini-day is-quiet"><span class="mini-num">30</span></div><div class="mini-day is-weekend is-quiet"><span class="mini-num">31</span></div><div class="mini-day is-blank"></div></div>
+      </div>
+      <div class="mini-month">
+        <div class="mini-month-head"><b>2 月</b><span>0 条</span></div>
+        <div class="mini-weekhead"><span>一</span><span>二</span><span>三</span><span>四</span><span>五</span><span>六</span><span>日</span></div>
+        <div class="mini-grid"><div class="mini-day is-blank"></div><div class="mini-day is-blank"></div><div class="mini-day is-blank"></div><div class="mini-day is-blank"></div><div class="mini-day is-blank"></div><div class="mini-day is-blank"></div><div class="mini-day is-weekend is-quiet"><span class="mini-num">1</span></div><div class="mini-day is-quiet"><span class="mini-num">2</span></div><div class="mini-day is-quiet"><span class="mini-num">3</span></div><div class="mini-day is-quiet"><span class="mini-num">4</span></div><div class="mini-day is-quiet"><span class="mini-num">5</span></div><div class="mini-day is-quiet"><span class="mini-num">6</span></div><div class="mini-day is-weekend is-quiet"><span class="mini-num">7</span></div><div class="mini-day is-weekend is-quiet"><span class="mini-num">8</span></div><div class="mini-day is-quiet"><span class="mini-num">9</span></div><div class="mini-day is-quiet"><span class="mini-num">10</span></div><div class="mini-day is-quiet"><span class="mini-num">11</span></div><div class="mini-day is-quiet"><span class="mini-num">12</span></div><div class="mini-day is-quiet"><span class="mini-num">13</span></div><div class="mini-day is-weekend is-quiet"><span class="mini-num">14</span></div><div class="mini-day is-weekend is-quiet"><span class="mini-num">15</span></div><div class="mini-day is-quiet"><span class="mini-num">16</span></div><div class="mini-day is-quiet"><span class="mini-num">17</span></div><div class="mini-day is-quiet"><span class="mini-num">18</span></div><div class="mini-day is-quiet"><span class="mini-num">19</span></div><div class="mini-day is-quiet"><span class="mini-num">20</span></div><div class="mini-day is-weekend is-quiet"><span class="mini-num">21</span></div><div class="mini-day is-weekend is-quiet"><span class="mini-num">22</span></div><div class="mini-day is-quiet"><span class="mini-num">23</span></div><div class="mini-day is-quiet"><span class="mini-num">24</span></div><div class="mini-day is-quiet"><span class="mini-num">25</span></div><div class="mini-day is-quiet"><span class="mini-num">26</span></div><div class="mini-day is-quiet"><span class="mini-num">27</span></div><div class="mini-day is-weekend is-quiet"><span class="mini-num">28</span></div><div class="mini-day is-blank"></div></div>
+      </div>
+      <div class="mini-month">
+        <div class="mini-month-head"><b>3 月</b><span>2 条</span></div>
+        <div class="mini-weekhead"><span>一</span><span>二</span><span>三</span><span>四</span><span>五</span><span>六</span><span>日</span></div>
+        <div class="mini-grid"><div class="mini-day is-blank"></div><div class="mini-day is-blank"></div><div class="mini-day is-blank"></div><div class="mini-day is-blank"></div><div class="mini-day is-blank"></div><div class="mini-day is-blank"></div><div class="mini-day is-weekend is-quiet"><span class="mini-num">1</span></div><div class="mini-day is-quiet"><span class="mini-num">2</span></div><div class="mini-day is-quiet"><span class="mini-num">3</span></div><div class="mini-day is-quiet"><span class="mini-num">4</span></div><div class="mini-day is-quiet"><span class="mini-num">5</span></div><div class="mini-day has-items" title="叫魂：1768年中国妖术大恐慌"><img src="../assets/covers/book-10471333.jpg" alt="叫魂：1768年中国妖术大恐慌"><span class="mini-num">6</span><span class="mini-count">1</span></div><div class="mini-day is-weekend is-quiet"><span class="mini-num">7</span></div><div class="mini-day is-weekend is-quiet"><span class="mini-num">8</span></div><div class="mini-day is-quiet"><span class="mini-num">9</span></div><div class="mini-day is-quiet"><span class="mini-num">10</span></div><div class="mini-day is-quiet"><span class="mini-num">11</span></div><div class="mini-day is-quiet"><span class="mini-num">12</span></div><div class="mini-day is-quiet"><span class="mini-num">13</span></div><div class="mini-day is-weekend is-quiet"><span class="mini-num">14</span></div><div class="mini-day is-weekend is-quiet"><span class="mini-num">15</span></div><div class="mini-day is-quiet"><span class="mini-num">16</span></div><div class="mini-day has-items" title="经济学原理（第7版）：微观经济学分册"><img src="../assets/covers/book-26388289.jpg" alt="经济学原理（第7版）：微观经济学分册"><span class="mini-num">17</span><span class="mini-count">1</span></div><div class="mini-day is-quiet"><span class="mini-num">18</span></div><div class="mini-day is-quiet"><span class="mini-num">19</span></div><div class="mini-day is-quiet"><span class="mini-num">20</span></div><div class="mini-day is-weekend is-quiet"><span class="mini-num">21</span></div><div class="mini-day is-weekend is-quiet"><span class="mini-num">22</span></div><div class="mini-day is-quiet"><span class="mini-num">23</span></div><div class="mini-day is-quiet"><span class="mini-num">24</span></div><div class="mini-day is-quiet"><span class="mini-num">25</span></div><div class="mini-day is-quiet"><span class="mini-num">26</span></div><div class="mini-day is-quiet"><span class="mini-num">27</span></div><div class="mini-day is-weekend is-quiet"><span class="mini-num">28</span></div><div class="mini-day is-weekend is-quiet"><span class="mini-num">29</span></div><div class="mini-day is-quiet"><span class="mini-num">30</span></div><div class="mini-day is-quiet"><span class="mini-num">31</span></div><div class="mini-day is-blank"></div><div class="mini-day is-blank"></div><div class="mini-day is-blank"></div><div class="mini-day is-blank"></div><div class="mini-day is-blank"></div></div>
+      </div>
+      <div class="mini-month">
+        <div class="mini-month-head"><b>4 月</b><span>4 条</span></div>
+        <div class="mini-weekhead"><span>一</span><span>二</span><span>三</span><span>四</span><span>五</span><span>六</span><span>日</span></div>
+        <div class="mini-grid"><div class="mini-day is-blank"></div><div class="mini-day is-blank"></div><div class="mini-day has-items" title="经济学原理（第7版）：宏观经济学分册"><img src="../assets/covers/book-26388291.jpg" alt="经济学原理（第7版）：宏观经济学分册"><span class="mini-num">1</span><span class="mini-count">1</span></div><div class="mini-day is-quiet"><span class="mini-num">2</span></div><div class="mini-day is-quiet"><span class="mini-num">3</span></div><div class="mini-day is-weekend is-quiet"><span class="mini-num">4</span></div><div class="mini-day is-weekend is-quiet"><span class="mini-num">5</span></div><div class="mini-day has-items" title="静静的顿河"><img src="../assets/covers/book-25897651.jpg" alt="静静的顿河"><span class="mini-num">6</span><span class="mini-count">1</span></div><div class="mini-day is-quiet"><span class="mini-num">7</span></div><div class="mini-day is-quiet"><span class="mini-num">8</span></div><div class="mini-day is-quiet"><span class="mini-num">9</span></div><div class="mini-day is-quiet"><span class="mini-num">10</span></div><div class="mini-day is-weekend is-quiet"><span class="mini-num">11</span></div><div class="mini-day is-weekend is-quiet"><span class="mini-num">12</span></div><div class="mini-day is-quiet"><span class="mini-num">13</span></div><div class="mini-day has-items" title="永恒的终结：关于时间旅行的终极奥秘和恢宏构想"><img src="../assets/covers/book-25829693.jpg" alt="永恒的终结：关于时间旅行的终极奥秘和恢宏构想"><span class="mini-num">14</span><span class="mini-count">1</span></div><div class="mini-day is-quiet"><span class="mini-num">15</span></div><div class="mini-day is-quiet"><span class="mini-num">16</span></div><div class="mini-day is-quiet"><span class="mini-num">17</span></div><div class="mini-day is-weekend is-quiet"><span class="mini-num">18</span></div><div class="mini-day is-weekend is-quiet"><span class="mini-num">19</span></div><div class="mini-day is-quiet"><span class="mini-num">20</span></div><div class="mini-day is-quiet"><span class="mini-num">21</span></div><div class="mini-day is-quiet"><span class="mini-num">22</span></div><div class="mini-day is-quiet"><span class="mini-num">23</span></div><div class="mini-day is-quiet"><span class="mini-num">24</span></div><div class="mini-day is-weekend is-quiet"><span class="mini-num">25</span></div><div class="mini-day is-weekend has-items" title="国富论"><img src="../assets/covers/book-1261560.jpg" alt="国富论"><span class="mini-num">26</span><span class="mini-count">1</span></div><div class="mini-day is-quiet"><span class="mini-num">27</span></div><div class="mini-day is-quiet"><span class="mini-num">28</span></div><div class="mini-day is-quiet"><span class="mini-num">29</span></div><div class="mini-day is-quiet"><span class="mini-num">30</span></div><div class="mini-day is-blank"></div><div class="mini-day is-blank"></div><div class="mini-day is-blank"></div></div>
+      </div>
+      <div class="mini-month">
+        <div class="mini-month-head"><b>5 月</b><span>2 条</span></div>
+        <div class="mini-weekhead"><span>一</span><span>二</span><span>三</span><span>四</span><span>五</span><span>六</span><span>日</span></div>
+        <div class="mini-grid"><div class="mini-day is-blank"></div><div class="mini-day is-blank"></div><div class="mini-day is-blank"></div><div class="mini-day is-blank"></div><div class="mini-day is-quiet"><span class="mini-num">1</span></div><div class="mini-day is-weekend is-quiet"><span class="mini-num">2</span></div><div class="mini-day is-weekend is-quiet"><span class="mini-num">3</span></div><div class="mini-day is-quiet"><span class="mini-num">4</span></div><div class="mini-day is-quiet"><span class="mini-num">5</span></div><div class="mini-day is-quiet"><span class="mini-num">6</span></div><div class="mini-day is-quiet"><span class="mini-num">7</span></div><div class="mini-day is-quiet"><span class="mini-num">8</span></div><div class="mini-day is-weekend is-quiet"><span class="mini-num">9</span></div><div class="mini-day is-weekend is-quiet"><span class="mini-num">10</span></div><div class="mini-day is-quiet"><span class="mini-num">11</span></div><div class="mini-day is-quiet"><span class="mini-num">12</span></div><div class="mini-day has-items" title="白痴"><img src="../assets/covers/book-25887933.jpg" alt="白痴"><span class="mini-num">13</span><span class="mini-count">1</span></div><div class="mini-day is-quiet"><span class="mini-num">14</span></div><div class="mini-day is-quiet"><span class="mini-num">15</span></div><div class="mini-day is-weekend is-quiet"><span class="mini-num">16</span></div><div class="mini-day is-weekend is-quiet"><span class="mini-num">17</span></div><div class="mini-day is-quiet"><span class="mini-num">18</span></div><div class="mini-day is-quiet"><span class="mini-num">19</span></div><div class="mini-day is-quiet"><span class="mini-num">20</span></div><div class="mini-day is-quiet"><span class="mini-num">21</span></div><div class="mini-day is-quiet"><span class="mini-num">22</span></div><div class="mini-day is-weekend is-quiet"><span class="mini-num">23</span></div><div class="mini-day is-weekend has-items" title="神们自己：关于平行宇宙的一切"><img src="../assets/covers/book-26264967.jpg" alt="神们自己：关于平行宇宙的一切"><span class="mini-num">24</span><span class="mini-count">1</span></div><div class="mini-day is-quiet"><span class="mini-num">25</span></div><div class="mini-day is-quiet"><span class="mini-num">26</span></div><div class="mini-day is-quiet"><span class="mini-num">27</span></div><div class="mini-day is-quiet"><span class="mini-num">28</span></div><div class="mini-day is-quiet"><span class="mini-num">29</span></div><div class="mini-day is-weekend is-quiet"><span class="mini-num">30</span></div><div class="mini-day is-weekend is-quiet"><span class="mini-num">31</span></div></div>
+      </div>
+      <div class="mini-month">
+        <div class="mini-month-head"><b>6 月</b><span>6 条</span></div>
+        <div class="mini-weekhead"><span>一</span><span>二</span><span>三</span><span>四</span><span>五</span><span>六</span><span>日</span></div>
+        <div class="mini-grid"><div class="mini-day is-quiet"><span class="mini-num">1</span></div><div class="mini-day has-items" title="聪明的投资者（第4版注疏点评版）"><img src="../assets/covers/book-26752026.jpg" alt="聪明的投资者（第4版注疏点评版）"><span class="mini-num">2</span><span class="mini-count">1</span></div><div class="mini-day is-quiet"><span class="mini-num">3</span></div><div class="mini-day has-items" title="傲慢与偏见"><img src="../assets/covers/book-1401841.jpg" alt="傲慢与偏见"><span class="mini-num">4</span><span class="mini-count">1</span></div><div class="mini-day is-quiet"><span class="mini-num">5</span></div><div class="mini-day is-weekend is-quiet"><span class="mini-num">6</span></div><div class="mini-day is-weekend is-quiet"><span class="mini-num">7</span></div><div class="mini-day is-quiet"><span class="mini-num">8</span></div><div class="mini-day is-quiet"><span class="mini-num">9</span></div><div class="mini-day is-quiet"><span class="mini-num">10</span></div><div class="mini-day has-items" title="撒哈拉的故事 / 君主论"><img src="../assets/covers/book-1060068.jpg" alt="撒哈拉的故事"><span class="mini-num">11</span><span class="mini-count">2</span></div><div class="mini-day is-quiet"><span class="mini-num">12</span></div><div class="mini-day is-weekend is-quiet"><span class="mini-num">13</span></div><div class="mini-day is-weekend has-items" title="政治的人生"><img src="../assets/covers/book-2125296.jpg" alt="政治的人生"><span class="mini-num">14</span><span class="mini-count">1</span></div><div class="mini-day is-quiet"><span class="mini-num">15</span></div><div class="mini-day is-quiet"><span class="mini-num">16</span></div><div class="mini-day is-quiet"><span class="mini-num">17</span></div><div class="mini-day is-quiet"><span class="mini-num">18</span></div><div class="mini-day is-quiet"><span class="mini-num">19</span></div><div class="mini-day is-weekend is-quiet"><span class="mini-num">20</span></div><div class="mini-day is-weekend is-quiet"><span class="mini-num">21</span></div><div class="mini-day is-quiet"><span class="mini-num">22</span></div><div class="mini-day is-quiet"><span class="mini-num">23</span></div><div class="mini-day is-quiet"><span class="mini-num">24</span></div><div class="mini-day is-quiet"><span class="mini-num">25</span></div><div class="mini-day is-quiet"><span class="mini-num">26</span></div><div class="mini-day is-weekend is-quiet"><span class="mini-num">27</span></div><div class="mini-day is-weekend is-quiet"><span class="mini-num">28</span></div><div class="mini-day is-quiet"><span class="mini-num">29</span></div><div class="mini-day has-items" title="筚路维艰"><img src="../assets/covers/book-26171466.jpg" alt="筚路维艰"><span class="mini-num">30</span><span class="mini-count">1</span></div><div class="mini-day is-blank"></div><div class="mini-day is-blank"></div><div class="mini-day is-blank"></div><div class="mini-day is-blank"></div><div class="mini-day is-blank"></div></div>
+      </div>
+      <div class="mini-month">
+        <div class="mini-month-head"><b>7 月</b><span>0 条</span></div>
+        <div class="mini-weekhead"><span>一</span><span>二</span><span>三</span><span>四</span><span>五</span><span>六</span><span>日</span></div>
+        <div class="mini-grid"><div class="mini-day is-blank"></div><div class="mini-day is-blank"></div><div class="mini-day is-quiet"><span class="mini-num">1</span></div><div class="mini-day is-quiet"><span class="mini-num">2</span></div><div class="mini-day is-quiet"><span class="mini-num">3</span></div><div class="mini-day is-weekend is-quiet"><span class="mini-num">4</span></div><div class="mini-day is-weekend is-quiet"><span class="mini-num">5</span></div><div class="mini-day is-quiet"><span class="mini-num">6</span></div><div class="mini-day is-quiet"><span class="mini-num">7</span></div><div class="mini-day is-quiet"><span class="mini-num">8</span></div><div class="mini-day is-quiet"><span class="mini-num">9</span></div><div class="mini-day is-quiet"><span class="mini-num">10</span></div><div class="mini-day is-weekend is-quiet"><span class="mini-num">11</span></div><div class="mini-day is-weekend is-quiet"><span class="mini-num">12</span></div><div class="mini-day is-quiet"><span class="mini-num">13</span></div><div class="mini-day is-quiet"><span class="mini-num">14</span></div><div class="mini-day is-quiet"><span class="mini-num">15</span></div><div class="mini-day is-quiet"><span class="mini-num">16</span></div><div class="mini-day is-quiet"><span class="mini-num">17</span></div><div class="mini-day is-weekend is-quiet"><span class="mini-num">18</span></div><div class="mini-day is-weekend is-quiet"><span class="mini-num">19</span></div><div class="mini-day is-quiet"><span class="mini-num">20</span></div><div class="mini-day is-quiet"><span class="mini-num">21</span></div><div class="mini-day is-quiet"><span class="mini-num">22</span></div><div class="mini-day is-quiet"><span class="mini-num">23</span></div><div class="mini-day is-quiet"><span class="mini-num">24</span></div><div class="mini-day is-weekend is-quiet"><span class="mini-num">25</span></div><div class="mini-day is-weekend is-quiet"><span class="mini-num">26</span></div><div class="mini-day is-quiet"><span class="mini-num">27</span></div><div class="mini-day is-quiet"><span class="mini-num">28</span></div><div class="mini-day is-quiet"><span class="mini-num">29</span></div><div class="mini-day is-quiet"><span class="mini-num">30</span></div><div class="mini-day is-quiet"><span class="mini-num">31</span></div><div class="mini-day is-blank"></div><div class="mini-day is-blank"></div></div>
+      </div>
+      <div class="mini-month">
+        <div class="mini-month-head"><b>8 月</b><span>0 条</span></div>
+        <div class="mini-weekhead"><span>一</span><span>二</span><span>三</span><span>四</span><span>五</span><span>六</span><span>日</span></div>
+        <div class="mini-grid"><div class="mini-day is-blank"></div><div class="mini-day is-blank"></div><div class="mini-day is-blank"></div><div class="mini-day is-blank"></div><div class="mini-day is-blank"></div><div class="mini-day is-weekend is-quiet"><span class="mini-num">1</span></div><div class="mini-day is-weekend is-quiet"><span class="mini-num">2</span></div><div class="mini-day is-quiet"><span class="mini-num">3</span></div><div class="mini-day is-quiet"><span class="mini-num">4</span></div><div class="mini-day is-quiet"><span class="mini-num">5</span></div><div class="mini-day is-quiet"><span class="mini-num">6</span></div><div class="mini-day is-quiet"><span class="mini-num">7</span></div><div class="mini-day is-weekend is-quiet"><span class="mini-num">8</span></div><div class="mini-day is-weekend is-quiet"><span class="mini-num">9</span></div><div class="mini-day is-quiet"><span class="mini-num">10</span></div><div class="mini-day is-quiet"><span class="mini-num">11</span></div><div class="mini-day is-quiet"><span class="mini-num">12</span></div><div class="mini-day is-quiet"><span class="mini-num">13</span></div><div class="mini-day is-quiet"><span class="mini-num">14</span></div><div class="mini-day is-weekend is-quiet"><span class="mini-num">15</span></div><div class="mini-day is-weekend is-quiet"><span class="mini-num">16</span></div><div class="mini-day is-quiet"><span class="mini-num">17</span></div><div class="mini-day is-quiet"><span class="mini-num">18</span></div><div class="mini-day is-quiet"><span class="mini-num">19</span></div><div class="mini-day is-quiet"><span class="mini-num">20</span></div><div class="mini-day is-quiet"><span class="mini-num">21</span></div><div class="mini-day is-weekend is-quiet"><span class="mini-num">22</span></div><div class="mini-day is-weekend is-quiet"><span class="mini-num">23</span></div><div class="mini-day is-quiet"><span class="mini-num">24</span></div><div class="mini-day is-quiet"><span class="mini-num">25</span></div><div class="mini-day is-quiet"><span class="mini-num">26</span></div><div class="mini-day is-quiet"><span class="mini-num">27</span></div><div class="mini-day is-quiet"><span class="mini-num">28</span></div><div class="mini-day is-weekend is-quiet"><span class="mini-num">29</span></div><div class="mini-day is-weekend is-quiet"><span class="mini-num">30</span></div><div class="mini-day is-quiet"><span class="mini-num">31</span></div><div class="mini-day is-blank"></div><div class="mini-day is-blank"></div><div class="mini-day is-blank"></div><div class="mini-day is-blank"></div><div class="mini-day is-blank"></div><div class="mini-day is-blank"></div></div>
+      </div>
+      <div class="mini-month">
+        <div class="mini-month-head"><b>9 月</b><span>7 条</span></div>
+        <div class="mini-weekhead"><span>一</span><span>二</span><span>三</span><span>四</span><span>五</span><span>六</span><span>日</span></div>
+        <div class="mini-grid"><div class="mini-day is-blank"></div><div class="mini-day has-items" title="货币金融学（第十三版）"><img src="../assets/covers/book-36892732.jpg" alt="货币金融学（第十三版）"><span class="mini-num">1</span><span class="mini-count">1</span></div><div class="mini-day is-quiet"><span class="mini-num">2</span></div><div class="mini-day is-quiet"><span class="mini-num">3</span></div><div class="mini-day is-quiet"><span class="mini-num">4</span></div><div class="mini-day is-weekend is-quiet"><span class="mini-num">5</span></div><div class="mini-day is-weekend has-items" title="银河帝国：基地七部曲"><img src="../assets/covers/book-26389895.jpg" alt="银河帝国：基地七部曲"><span class="mini-num">6</span><span class="mini-count">1</span></div><div class="mini-day is-quiet"><span class="mini-num">7</span></div><div class="mini-day is-quiet"><span class="mini-num">8</span></div><div class="mini-day has-items" title="动物农场"><img src="../assets/covers/book-2035179.jpg" alt="动物农场"><span class="mini-num">9</span><span class="mini-count">1</span></div><div class="mini-day is-quiet"><span class="mini-num">10</span></div><div class="mini-day is-quiet"><span class="mini-num">11</span></div><div class="mini-day is-weekend is-quiet"><span class="mini-num">12</span></div><div class="mini-day is-weekend has-items" title="黑天鹅"><img src="../assets/covers/book-30422558.jpg" alt="黑天鹅"><span class="mini-num">13</span><span class="mini-count">1</span></div><div class="mini-day is-quiet"><span class="mini-num">14</span></div><div class="mini-day is-quiet"><span class="mini-num">15</span></div><div class="mini-day has-items" title="梦里花落知多少"><img src="../assets/covers/book-2070844.jpg" alt="梦里花落知多少"><span class="mini-num">16</span><span class="mini-count">1</span></div><div class="mini-day has-items" title="社会契约论"><img src="../assets/covers/book-1277981.jpg" alt="社会契约论"><span class="mini-num">17</span><span class="mini-count">1</span></div><div class="mini-day is-quiet"><span class="mini-num">18</span></div><div class="mini-day is-weekend is-quiet"><span class="mini-num">19</span></div><div class="mini-day is-weekend is-quiet"><span class="mini-num">20</span></div><div class="mini-day is-quiet"><span class="mini-num">21</span></div><div class="mini-day is-quiet"><span class="mini-num">22</span></div><div class="mini-day has-items" title="菊与刀：日本文化的类型"><img src="../assets/covers/book-1022238.jpg" alt="菊与刀：日本文化的类型"><span class="mini-num">23</span><span class="mini-count">1</span></div><div class="mini-day is-quiet"><span class="mini-num">24</span></div><div class="mini-day is-quiet"><span class="mini-num">25</span></div><div class="mini-day is-weekend is-quiet"><span class="mini-num">26</span></div><div class="mini-day is-weekend is-quiet"><span class="mini-num">27</span></div><div class="mini-day is-quiet"><span class="mini-num">28</span></div><div class="mini-day is-quiet"><span class="mini-num">29</span></div><div class="mini-day is-quiet"><span class="mini-num">30</span></div><div class="mini-day is-blank"></div><div class="mini-day is-blank"></div><div class="mini-day is-blank"></div><div class="mini-day is-blank"></div></div>
+      </div>
+      <div class="mini-month">
+        <div class="mini-month-head"><b>10 月</b><span>6 条</span></div>
+        <div class="mini-weekhead"><span>一</span><span>二</span><span>三</span><span>四</span><span>五</span><span>六</span><span>日</span></div>
+        <div class="mini-grid"><div class="mini-day is-blank"></div><div class="mini-day is-blank"></div><div class="mini-day is-blank"></div><div class="mini-day is-quiet"><span class="mini-num">1</span></div><div class="mini-day is-quiet"><span class="mini-num">2</span></div><div class="mini-day is-weekend is-quiet"><span class="mini-num">3</span></div><div class="mini-day is-weekend is-quiet"><span class="mini-num">4</span></div><div class="mini-day is-quiet"><span class="mini-num">5</span></div><div class="mini-day is-quiet"><span class="mini-num">6</span></div><div class="mini-day is-quiet"><span class="mini-num">7</span></div><div class="mini-day is-quiet"><span class="mini-num">8</span></div><div class="mini-day is-quiet"><span class="mini-num">9</span></div><div class="mini-day is-weekend is-quiet"><span class="mini-num">10</span></div><div class="mini-day is-weekend has-items" title="巴菲特致股东的信 (第4版)：投资者和公司高管教程"><img src="../assets/covers/book-30164963.jpg" alt="巴菲特致股东的信 (第4版)：投资者和公司高管教程"><span class="mini-num">11</span><span class="mini-count">1</span></div><div class="mini-day is-quiet"><span class="mini-num">12</span></div><div class="mini-day has-items" title="领袖们"><img src="../assets/covers/book-3071811.jpg" alt="领袖们"><span class="mini-num">13</span><span class="mini-count">1</span></div><div class="mini-day is-quiet"><span class="mini-num">14</span></div><div class="mini-day is-quiet"><span class="mini-num">15</span></div><div class="mini-day is-quiet"><span class="mini-num">16</span></div><div class="mini-day is-weekend is-quiet"><span class="mini-num">17</span></div><div class="mini-day is-weekend is-quiet"><span class="mini-num">18</span></div><div class="mini-day is-quiet"><span class="mini-num">19</span></div><div class="mini-day has-items" title="比较政治分析"><img src="../assets/covers/book-3198397.jpg" alt="比较政治分析"><span class="mini-num">20</span><span class="mini-count">1</span></div><div class="mini-day is-quiet"><span class="mini-num">21</span></div><div class="mini-day is-quiet"><span class="mini-num">22</span></div><div class="mini-day is-quiet"><span class="mini-num">23</span></div><div class="mini-day is-weekend has-items" title="小狗钱钱 / 小狗钱钱2"><img src="../assets/covers/book-35295592.jpg" alt="小狗钱钱"><span class="mini-num">24</span><span class="mini-count">2</span></div><div class="mini-day is-weekend is-quiet"><span class="mini-num">25</span></div><div class="mini-day is-quiet"><span class="mini-num">26</span></div><div class="mini-day is-quiet"><span class="mini-num">27</span></div><div class="mini-day is-quiet"><span class="mini-num">28</span></div><div class="mini-day is-quiet"><span class="mini-num">29</span></div><div class="mini-day has-items" title="1007天的战争：抗美援朝：战略和历次战役（1-3卷）"><img src="../assets/covers/book-36157472.jpg" alt="1007天的战争：抗美援朝：战略和历次战役（1-3卷）"><span class="mini-num">30</span><span class="mini-count">1</span></div><div class="mini-day is-weekend is-quiet"><span class="mini-num">31</span></div><div class="mini-day is-blank"></div></div>
+      </div>
+      <div class="mini-month">
+        <div class="mini-month-head"><b>11 月</b><span>3 条</span></div>
+        <div class="mini-weekhead"><span>一</span><span>二</span><span>三</span><span>四</span><span>五</span><span>六</span><span>日</span></div>
+        <div class="mini-grid"><div class="mini-day is-blank"></div><div class="mini-day is-blank"></div><div class="mini-day is-blank"></div><div class="mini-day is-blank"></div><div class="mini-day is-blank"></div><div class="mini-day is-blank"></div><div class="mini-day is-weekend is-quiet"><span class="mini-num">1</span></div><div class="mini-day is-quiet"><span class="mini-num">2</span></div><div class="mini-day is-quiet"><span class="mini-num">3</span></div><div class="mini-day is-quiet"><span class="mini-num">4</span></div><div class="mini-day has-items" title="金赛性学报告"><img src="../assets/covers/book-24737829.jpg" alt="金赛性学报告"><span class="mini-num">5</span><span class="mini-count">1</span></div><div class="mini-day is-quiet"><span class="mini-num">6</span></div><div class="mini-day is-weekend is-quiet"><span class="mini-num">7</span></div><div class="mini-day is-weekend is-quiet"><span class="mini-num">8</span></div><div class="mini-day is-quiet"><span class="mini-num">9</span></div><div class="mini-day has-items" title="美国反对美国"><img src="../../cache/covers/sync_book_1418776.jpg" alt="美国反对美国"><span class="mini-num">10</span><span class="mini-count">1</span></div><div class="mini-day is-quiet"><span class="mini-num">11</span></div><div class="mini-day is-quiet"><span class="mini-num">12</span></div><div class="mini-day is-quiet"><span class="mini-num">13</span></div><div class="mini-day is-weekend is-quiet"><span class="mini-num">14</span></div><div class="mini-day is-weekend is-quiet"><span class="mini-num">15</span></div><div class="mini-day is-quiet"><span class="mini-num">16</span></div><div class="mini-day is-quiet"><span class="mini-num">17</span></div><div class="mini-day has-items" title="卡拉马佐夫兄弟"><img src="../assets/covers/book-25887924.jpg" alt="卡拉马佐夫兄弟"><span class="mini-num">18</span><span class="mini-count">1</span></div><div class="mini-day is-quiet"><span class="mini-num">19</span></div><div class="mini-day is-quiet"><span class="mini-num">20</span></div><div class="mini-day is-weekend is-quiet"><span class="mini-num">21</span></div><div class="mini-day is-weekend is-quiet"><span class="mini-num">22</span></div><div class="mini-day is-quiet"><span class="mini-num">23</span></div><div class="mini-day is-quiet"><span class="mini-num">24</span></div><div class="mini-day is-quiet"><span class="mini-num">25</span></div><div class="mini-day is-quiet"><span class="mini-num">26</span></div><div class="mini-day is-quiet"><span class="mini-num">27</span></div><div class="mini-day is-weekend is-quiet"><span class="mini-num">28</span></div><div class="mini-day is-weekend is-quiet"><span class="mini-num">29</span></div><div class="mini-day is-quiet"><span class="mini-num">30</span></div><div class="mini-day is-blank"></div><div class="mini-day is-blank"></div><div class="mini-day is-blank"></div><div class="mini-day is-blank"></div><div class="mini-day is-blank"></div><div class="mini-day is-blank"></div></div>
+      </div>
+      <div class="mini-month">
+        <div class="mini-month-head"><b>12 月</b><span>0 条</span></div>
+        <div class="mini-weekhead"><span>一</span><span>二</span><span>三</span><span>四</span><span>五</span><span>六</span><span>日</span></div>
+        <div class="mini-grid"><div class="mini-day is-blank"></div><div class="mini-day is-quiet"><span class="mini-num">1</span></div><div class="mini-day is-quiet"><span class="mini-num">2</span></div><div class="mini-day is-quiet"><span class="mini-num">3</span></div><div class="mini-day is-quiet"><span class="mini-num">4</span></div><div class="mini-day is-weekend is-quiet"><span class="mini-num">5</span></div><div class="mini-day is-weekend is-quiet"><span class="mini-num">6</span></div><div class="mini-day is-quiet"><span class="mini-num">7</span></div><div class="mini-day is-quiet"><span class="mini-num">8</span></div><div class="mini-day is-quiet"><span class="mini-num">9</span></div><div class="mini-day is-quiet"><span class="mini-num">10</span></div><div class="mini-day is-quiet"><span class="mini-num">11</span></div><div class="mini-day is-weekend is-quiet"><span class="mini-num">12</span></div><div class="mini-day is-weekend is-quiet"><span class="mini-num">13</span></div><div class="mini-day is-quiet"><span class="mini-num">14</span></div><div class="mini-day is-quiet"><span class="mini-num">15</span></div><div class="mini-day is-quiet"><span class="mini-num">16</span></div><div class="mini-day is-quiet"><span class="mini-num">17</span></div><div class="mini-day is-quiet"><span class="mini-num">18</span></div><div class="mini-day is-weekend is-quiet"><span class="mini-num">19</span></div><div class="mini-day is-weekend is-quiet"><span class="mini-num">20</span></div><div class="mini-day is-quiet"><span class="mini-num">21</span></div><div class="mini-day is-quiet"><span class="mini-num">22</span></div><div class="mini-day is-quiet"><span class="mini-num">23</span></div><div class="mini-day is-quiet"><span class="mini-num">24</span></div><div class="mini-day is-quiet"><span class="mini-num">25</span></div><div class="mini-day is-weekend is-quiet"><span class="mini-num">26</span></div><div class="mini-day is-weekend is-quiet"><span class="mini-num">27</span></div><div class="mini-day is-quiet"><span class="mini-num">28</span></div><div class="mini-day is-quiet"><span class="mini-num">29</span></div><div class="mini-day is-quiet"><span class="mini-num">30</span></div><div class="mini-day is-quiet"><span class="mini-num">31</span></div><div class="mini-day is-blank"></div><div class="mini-day is-blank"></div><div class="mini-day is-blank"></div></div>
+      </div>
+      </div>
+    </div>
+  </section>
+  <section class="prefs">
+    <div class="prefs-block"><h3>类型偏好<span class="en">Categories</span></h3><div class="genre-tags"><span class="genre-tag g0">文学小说<sup>18</sup></span><span class="genre-tag g1">经济理财<sup>6</sup></span><span class="genre-tag g2">政治哲学<sup>2</sup></span><span class="genre-tag g3">医学健康<sup>1</sup></span><span class="genre-tag g4">传记<sup>1</sup></span><span class="genre-tag g5">科幻<sup>1</sup></span><span class="genre-tag g6">历史<sup>1</sup></span></div><p class="prefs-note">每本书取一个主要类型</p></div>
+    <div class="prefs-block"><h3>年代构成<span class="en">Decades</span></h3><div class="decade-bar"><span class="decade-seg d1980" style="width:3.33%"></span><span class="decade-seg d1990" style="width:13.33%"><em>4</em></span><span class="decade-seg d2000" style="width:23.33%"><em>7</em></span><span class="decade-seg d2010" style="width:46.67%"><em>14</em></span><span class="decade-seg d2020" style="width:13.33%"><em>4</em></span></div><div class="decade-legend"><span class="decade-item"><i class="decade-dot d1980"></i>1980<b>1</b></span><span class="decade-item"><i class="decade-dot d1990"></i>1990<b>4</b></span><span class="decade-item"><i class="decade-dot d2000"></i>2000<b>7</b></span><span class="decade-item"><i class="decade-dot d2010"></i>2010<b>14</b></span><span class="decade-item"><i class="decade-dot d2020"></i>2020<b>4</b></span></div><p class="prefs-note">1987 — 2024 · 平均 2010 年 · 按书籍出版年份统计</p></div>
+  </section>
+  <section class="section">
+    <div class="section-head"><h3>短评摘录</h3><span class="en">Notes</span><span class="count">18 条短评</span></div>
+    <div class="quotes-grid">      <article class="quote-card">
+        <span class="quote-mark">“</span>
+        <p class="quote-text" title="从战前的国内状况，军事布局，政治打算，到战争开始的顶层运筹帷幄，战略隐蔽，初入朝鲜半岛的前三次战役以极限运动战的方式疯狂围堵联合国军的退路，一路将其从鸭绿江边击退至37线附近，成功收复平壤、汉城。取得了前期的伟大胜利，然而因为打的太好了，上上下下都有了骄兵心理，而且美军缓过神来，调整了战略部署，8集团军沃克因车祸身死，换上经验丰富的李奇微。且由于战线拉得过长，后勤压力过大，导致第四次战役没有取得预期战果，反而让联军抵住了志愿军的攻势，开始逐步反击。而后的第五次战役在各方因素不利的情况下展开，导致志愿军惨胜，付出了重大伤亡的代价，其中180师甚至成建制被击溃。此后志愿军由运动战转向阵地战，开始了和联合国军寸土必争的残酷斗争。其中最为残酷的是上甘岭战役，由一次小的战术行动，双方逐渐打红了眼，最终变成了十余万人的战役规模，43天的激战中，志愿军成功守住了阵地，歼敌突出。一直到最后停战之前的金城反击战，此时志愿军已经成长起来了，在准备充分和火力倾泻的情况下成功歼灭韩伪军四个师，给整个抗美援朝收了一个很好的尾。
+
+整个战争以上面七个战役展开，志愿军在这2年9个月，1007天之中，以轻步兵对抗联军海陆空炮四个维度的现代化军队的疯狂绞杀，在血与火中逐渐成长起来，陆地上成长为步炮结合的现代化军队，坦克部队也开始成长，空军更是从零开始，以美为对手，以苏为老师的实战中迅速的成长起来。海军因为经济等因素，虽然成长不高，但是也反登陆中也发挥了自己的作用。到战争的后期，国内领导层是以练兵的心态看待朝鲜战争的走向的，在此战场上走进去的是一支近现代化的轻步兵，走出来的是现代化的强军，打出了现代战争经验，也打出了整个世界的尊重。
+
+本书分为三卷，事无巨细的介绍了每一次战役的先因后果，每一场战斗的战前布局，战场争斗，战后总结，史料翔实，参考了敌我双方的各类记录。以时间维度分别讲述了七次战役，以空间维度讲述了前线进展、后方后勤、空中绞杀与反绞杀、东西海岸的登陆与反登陆。以及对于战争上层的政治交锋，美国总统在这期间从不想扩大战争又想借战争增加军费的杜鲁门换到了起初想扩大战争到最终想早日停战的艾森豪威尔，太平洋军区司令也从疯狂叫嚣的麦克阿瑟换成谨慎细致的李奇微再到克拉克，第八集团军也从沃克到李奇微到范弗里特最后到泰勒。志愿军也从彭德怀换成邓华，在此期间苏联也经历了斯大林猝死。世界局势风云变幻，而此时新生的中国靠这场旷日持久的战争，付出了十几万人生命的代价，赢得了未来几十年的和平与尊严。本书非常非常棒，值得收藏细细品读！">从战前的国内状况，军事布局，政治打算，到战争开始的顶层运筹帷幄，战略隐蔽，初入朝鲜半岛的前三次战役以极限运动战的方式疯狂围堵联合国军的退路，一路将其从鸭绿江边击退至37线附近，成功收复平壤、汉城。取得了前期的伟大胜利，然而因为打的太好了，上上下下都有了骄兵心理，而且美军缓过神来，调整了战略部署，8集团军沃克因车祸身死，换上经验丰富的李奇微。且由于战线拉得过长，后勤压力过大，导致第四次战役没有取得预期战果，反而让联军抵住了志愿军的攻势，开始逐步反击。而后的第五次战役在各方因素不利的情况下展开，导致志愿军惨胜，付出了重大伤亡的代价，其中180师甚至成建制被击溃。此后志愿军由运动战转向阵地战，开始了和联合国军寸土必争的残酷斗争。其中最为残酷的是上甘岭战役，由一次小的战术行动，双方逐渐打红了眼，最终变成了十余万人的战役规模，43天的激战中，志愿军成功守住了阵地，歼敌突出。一直到最后停战之前的金城反击战，此时志愿军已经成长起来了，在准备充分和火力倾泻的情况下成功歼灭韩伪军四个师，给整个抗美援朝收了一个很好的尾。
+
+整个战争以上面七个战役展开，志愿军在这2年9个月，1007天之中，以轻步兵对抗联军海陆空炮四个维度的现代化军队的疯狂绞杀，在血与火中逐渐成长起来，陆地上成长为步炮结合的现代化军队，坦克部队也开始成长，空军更是从零开始，以美为对手，以苏为老师的实战中迅速的成长起来。海军因为经济等因素，虽然成长不高，但是也反登陆中也发挥了自己的作用。到战争的后期，国内领导层是以练兵的心态看待朝鲜战争的走向的，在此战场上走进去的是一支近现代化的轻步兵，走出来的是现代化的强军，打出了现代战争经验，也打出了整个世界的尊重。
+
+本书分为三卷，事无巨细的介绍了每一次战役的先因后果，每一场战斗的战前布局，战场争斗，战后总结，史料翔实，参考了敌我双方的各类记录。以时间维度分别讲述了七次战役，以空间维度讲述了前线进展、后方后勤、空中绞杀与反绞杀、东西海岸的登陆与反登陆。以及对于战争上层的政治交锋，美国总统在这期间从不想扩大战争又想借战争增加军费的杜鲁门换到了起初想扩大战争到最终想早日停战的艾森豪威尔，太平洋军区司令也从疯狂叫嚣的麦克阿瑟换成谨慎细致的李奇微再到克拉克，第八集团军也从沃克到李奇微到范弗里特最后到泰勒。志愿军也从彭德怀换成邓华，在此期间苏联也经历了斯大林猝死。世界局势风云变幻，而此时新生的中国靠这场旷日持久的战争，付出了十几万人生命的代价，赢得了未来几十年的和平与尊严。本书非常非常棒，值得收藏细细品读！</p>
+        <div class="quote-foot"><span class="quote-source" title="1007天的战争：抗美援朝：战略和历次战役（1-3卷）">1007天的战争：抗美援朝：战略和历次战役（1-3卷）</span><span class="quote-date">2026.10.30</span><span class="quote-stars"><span class="gold">★★★★★</span></span></div>
+      </article>      <article class="quote-card">
+        <span class="quote-mark">“</span>
+        <p class="quote-text" title="前三部 基地、基地与帝国、第二基地 很不错，打造了一个全新的科幻世界，从谢顿的心理史学，到第一基地的超发达的科技实力，再到第二基地神奇的心灵能力，以及川陀神奇的未来都市面貌，深刻吸引着读者以及后来的一些文艺作品和游戏的追捧。
+第四部基地前奏和第五部迈向基地 讲述了谢顿波澜壮阔的一生，跟随谢顿的视角，更加细致的讲述了川陀的风土人情，引出了机器人和著名的机器人三大定律。稍微有点偏离了之前科幻的基调，只能说是一部出色的冒险小说故事，在我看来不如前三部那么耀眼。
+第六部基地边缘和第七部基地与地球 讲述了另一个故事，主要是主角寻找地球，虽然说也有盖娅这个被后世经常借鉴的点子，但是整体来说更像《海底两万里》那样的公路片，在我看来不如前五部那么好看，最后结局虽然说有点令人惊讶，不过也是和《永恒的终结》一样，想象其他更大的世界有更大的威胁。
+整体而言，银河帝国有很多新奇、让人眼前一亮的点子，但是对于几千年甚至几万年后的社会，还只是停留在君主制和早期民主制这种古早的制度之中，但是对于身处那个时代的作者也不能苛求太多。整个故事还是具有一种史诗感，我觉得可以位列我所读的科幻故事前五之列，很不错的故事。">前三部 基地、基地与帝国、第二基地 很不错，打造了一个全新的科幻世界，从谢顿的心理史学，到第一基地的超发达的科技实力，再到第二基地神奇的心灵能力，以及川陀神奇的未来都市面貌，深刻吸引着读者以及后来的一些文艺作品和游戏的追捧。
+第四部基地前奏和第五部迈向基地 讲述了谢顿波澜壮阔的一生，跟随谢顿的视角，更加细致的讲述了川陀的风土人情，引出了机器人和著名的机器人三大定律。稍微有点偏离了之前科幻的基调，只能说是一部出色的冒险小说故事，在我看来不如前三部那么耀眼。
+第六部基地边缘和第七部基地与地球 讲述了另一个故事，主要是主角寻找地球，虽然说也有盖娅这个被后世经常借鉴的点子，但是整体来说更像《海底两万里》那样的公路片，在我看来不如前五部那么好看，最后结局虽然说有点令人惊讶，不过也是和《永恒的终结》一样，想象其他更大的世界有更大的威胁。
+整体而言，银河帝国有很多新奇、让人眼前一亮的点子，但是对于几千年甚至几万年后的社会，还只是停留在君主制和早期民主制这种古早的制度之中，但是对于身处那个时代的作者也不能苛求太多。整个故事还是具有一种史诗感，我觉得可以位列我所读的科幻故事前五之列，很不错的故事。</p>
+        <div class="quote-foot"><span class="quote-source" title="银河帝国：基地七部曲">银河帝国：基地七部曲</span><span class="quote-date">2026.09.06</span><span class="quote-stars"><span class="gold">★★★★★</span></span></div>
+      </article>      <article class="quote-card">
+        <span class="quote-mark">“</span>
+        <p class="quote-text" title="可能是因为年代久远的原因，格雷厄姆写的很难看懂和理解，不过大体上能体会到，每一章后面的点评相对来说更切近现况，容易懂一些。
+
+不过万变不离其宗，本书所推崇的是价值投资理论，即将股票看作商品，每一家股票都有其价格和价值，价格受到市场中千万投资和投机者的期望的扰动，在不断的变化。价值是隐藏在企业的年报之中，基本变化不大。
+
+价值投资就是在股票市场中寻找价值 &gt;&gt; 价格，并且内核稳定，能够长期增长的，但是被冷落的优质公司的股票，买下来并坚持持有，直到它因为价值被市场发现，逐渐上涨到本该属于它的位置，甚至更高。此时就应该脱手卖掉，入袋为安。坚持寻找这类股票，并且尽量扩大安全边际(价值 - 价格足够大)，才能一步一步赚取可观的利润。
+
+价格每天都在股票市场上能够看到，价值藏在企业的各类信息中，如果获取其真实的价值，就需要花功夫去研究了，这也是后面读《证券分析》的目的。
+
+总之，做好风险管理，不要盲从市场，不要做短线交易、择时交易，而是根据价值判断何时入场，何时离场，才是一个合格的投资者，而不是投机者该做的事情。">可能是因为年代久远的原因，格雷厄姆写的很难看懂和理解，不过大体上能体会到，每一章后面的点评相对来说更切近现况，容易懂一些。
+
+不过万变不离其宗，本书所推崇的是价值投资理论，即将股票看作商品，每一家股票都有其价格和价值，价格受到市场中千万投资和投机者的期望的扰动，在不断的变化。价值是隐藏在企业的年报之中，基本变化不大。
+
+价值投资就是在股票市场中寻找价值 &gt;&gt; 价格，并且内核稳定，能够长期增长的，但是被冷落的优质公司的股票，买下来并坚持持有，直到它因为价值被市场发现，逐渐上涨到本该属于它的位置，甚至更高。此时就应该脱手卖掉，入袋为安。坚持寻找这类股票，并且尽量扩大安全边际(价值 - 价格足够大)，才能一步一步赚取可观的利润。
+
+价格每天都在股票市场上能够看到，价值藏在企业的各类信息中，如果获取其真实的价值，就需要花功夫去研究了，这也是后面读《证券分析》的目的。
+
+总之，做好风险管理，不要盲从市场，不要做短线交易、择时交易，而是根据价值判断何时入场，何时离场，才是一个合格的投资者，而不是投机者该做的事情。</p>
+        <div class="quote-foot"><span class="quote-source" title="聪明的投资者（第4版注疏点评版）">聪明的投资者（第4版注疏点评版）</span><span class="quote-date">2026.06.02</span><span class="quote-stars"><span class="gold">★★★★★</span></span></div>
+      </article>      <article class="quote-card">
+        <span class="quote-mark">“</span>
+        <p class="quote-text" title="作者以访问学者的身份，切身实地的深入观察研究美国本身，包括美国的制度、文化、习俗、民族等等。不得不说美国的科技领先全球多年，即使是三十年前的美国，依然有许多的科技设备震撼到我了。作者部分感想是美国科技与经济实力的集中体现，随着中国这些的逐步赶上来，看书时有很多时候恍惚感慨，这说的不是当代的中国么。除了科技与经济之外，美国的先进最主要体现在制度之上，借用书中的例子，美国上层的选举带着浓重的商品经济的风格，两党将自己中意的商品推到前台，选民就像逛超市一样，只能在几种商品中选自己较为满意的，实际和普通人没什么多大的关系。但是重要的是基层的选举，这才是民主的基石，涉及到普通人的点点滴滴，这在中国还有很长的路要走。这些都是美国的正面，还有美国的负面，如毒品、黑社会、无家可归者以及全社会集体的精神危机，美国人信奉的个人主义与私域理念，让这些问题更加严重，也很难找到方法解决，也反应了美国的体制、文化和价值反对美国本身。正如书中所说的，美国是儿童的天堂、年轻人的战场、老年人的地狱。。。">作者以访问学者的身份，切身实地的深入观察研究美国本身，包括美国的制度、文化、习俗、民族等等。不得不说美国的科技领先全球多年，即使是三十年前的美国，依然有许多的科技设备震撼到我了。作者部分感想是美国科技与经济实力的集中体现，随着中国这些的逐步赶上来，看书时有很多时候恍惚感慨，这说的不是当代的中国么。除了科技与经济之外，美国的先进最主要体现在制度之上，借用书中的例子，美国上层的选举带着浓重的商品经济的风格，两党将自己中意的商品推到前台，选民就像逛超市一样，只能在几种商品中选自己较为满意的，实际和普通人没什么多大的关系。但是重要的是基层的选举，这才是民主的基石，涉及到普通人的点点滴滴，这在中国还有很长的路要走。这些都是美国的正面，还有美国的负面，如毒品、黑社会、无家可归者以及全社会集体的精神危机，美国人信奉的个人主义与私域理念，让这些问题更加严重，也很难找到方法解决，也反应了美国的体制、文化和价值反对美国本身。正如书中所说的，美国是儿童的天堂、年轻人的战场、老年人的地狱。。。</p>
+        <div class="quote-foot"><span class="quote-source" title="美国反对美国">美国反对美国</span><span class="quote-date">2026.11.10</span><span class="quote-stars"><span class="gold">★★★★★</span></span></div>
+      </article>      <article class="quote-card">
+        <span class="quote-mark">“</span>
+        <p class="quote-text" title="从时代、国家、形式、过程、决策、文化、思维、发展、世界、科学十个角度研究政治从远古到至今的发展，以及对未来的展望。从远古政治发源以来，政治与道德息息相关，而后由于宗教相互影响，到近现代经济的发展与政治紧密相连。政治随着人类物质与精神的发展进步，也在逐渐演化，从而适应每一个时代的需要。每一节从一个通俗易懂的故事开始，到对比古今中外各个大家对相关领域的思考与结论，最后总结出其中的共同之处。在各种比较分析之后，呼之欲出的得出了每一个共同体的政治都应该与自己的历史 - 社会 - 文化相匹配，其他发达的政治体系只能用于借鉴与参考，如果照搬的话只能沦落到处处不适应的结局。
+整本书更像一篇论文，环环相扣，给未来想在政治学深入学习的人指出了发展之路，对于没有什么基础的普通人来说略有难度。不过在阅读之中，深刻感受到了作者博览群书的渊博以及信手拈来的文学功底，也对近现代的政治学发展有了一个较为明晰的认识。">从时代、国家、形式、过程、决策、文化、思维、发展、世界、科学十个角度研究政治从远古到至今的发展，以及对未来的展望。从远古政治发源以来，政治与道德息息相关，而后由于宗教相互影响，到近现代经济的发展与政治紧密相连。政治随着人类物质与精神的发展进步，也在逐渐演化，从而适应每一个时代的需要。每一节从一个通俗易懂的故事开始，到对比古今中外各个大家对相关领域的思考与结论，最后总结出其中的共同之处。在各种比较分析之后，呼之欲出的得出了每一个共同体的政治都应该与自己的历史 - 社会 - 文化相匹配，其他发达的政治体系只能用于借鉴与参考，如果照搬的话只能沦落到处处不适应的结局。
+整本书更像一篇论文，环环相扣，给未来想在政治学深入学习的人指出了发展之路，对于没有什么基础的普通人来说略有难度。不过在阅读之中，深刻感受到了作者博览群书的渊博以及信手拈来的文学功底，也对近现代的政治学发展有了一个较为明晰的认识。</p>
+        <div class="quote-foot"><span class="quote-source" title="比较政治分析">比较政治分析</span><span class="quote-date">2026.10.20</span><span class="quote-stars"><span class="gold">★★★★☆</span></span></div>
+      </article>      <article class="quote-card">
+        <span class="quote-mark">“</span>
+        <p class="quote-text" title="从尼克松的视角看那个时代的各个领袖们，从世界大国的丘吉尔、戴高乐、麦克阿瑟与吉田茂、周恩来、西德的阿登纳以及赫鲁晓夫，到各个小国，比如加纳、新加坡、以色列、澳大利亚、意大利那个时代的领导者们。每一位领袖都有各自的风采，都对自己的国家做出了自己卓绝的贡献。虽然由于意识形态的原因，尼克松对共产党有一些偏见与刻板印象，但是能从另一个角度看世界也是一种奇妙的体验。本书最大的不足应该是翻译的问题，可能是没有专门的人去进行翻译校对，导致有很多地方语义错误，不好理解。不过瑕不掩瑜，领袖们风格与处事各不相同，但是依旧有很多的共同点，比如面对困境与低谷从不放弃，没有人是一帆风顺的登顶，挫折与失败是每个人永恒的命题。还有大量的阅读与持续不断对记忆力的训练，让他们能够在七八十岁，普通人飘摇欲坠的年龄段依旧能保持敏锐的思维能力，这些都是值得普通人学习参考的。">从尼克松的视角看那个时代的各个领袖们，从世界大国的丘吉尔、戴高乐、麦克阿瑟与吉田茂、周恩来、西德的阿登纳以及赫鲁晓夫，到各个小国，比如加纳、新加坡、以色列、澳大利亚、意大利那个时代的领导者们。每一位领袖都有各自的风采，都对自己的国家做出了自己卓绝的贡献。虽然由于意识形态的原因，尼克松对共产党有一些偏见与刻板印象，但是能从另一个角度看世界也是一种奇妙的体验。本书最大的不足应该是翻译的问题，可能是没有专门的人去进行翻译校对，导致有很多地方语义错误，不好理解。不过瑕不掩瑜，领袖们风格与处事各不相同，但是依旧有很多的共同点，比如面对困境与低谷从不放弃，没有人是一帆风顺的登顶，挫折与失败是每个人永恒的命题。还有大量的阅读与持续不断对记忆力的训练，让他们能够在七八十岁，普通人飘摇欲坠的年龄段依旧能保持敏锐的思维能力，这些都是值得普通人学习参考的。</p>
+        <div class="quote-foot"><span class="quote-source" title="领袖们">领袖们</span><span class="quote-date">2026.10.13</span><span class="quote-stars"><span class="gold">★★★★☆</span></span></div>
+      </article></div>
+  </section>
+  <footer><span>数据来自本地 SQLite 记录 · 标记日期为本地生效时间 · 报告由书影记录生成</span><span>2026-11-26T19:59:57+08:00</span></footer>
+</div>
+</body></html>

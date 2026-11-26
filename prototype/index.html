@@ -142,20 +142,25 @@ figcaption b{display:block;margin-bottom:3px;font-size:13px;color:var(--text);fo
 .btn .ico{width:16px;height:16px}
 
 /* ---------- poster wall ---------- */
-.day-head{display:flex;align-items:center;justify-content:space-between;padding:15px 2px 9px;font-size:12.5px;color:var(--text3)}
+.day-head{display:flex;align-items:center;justify-content:space-between;padding:8px 2px 4px;font-size:12.5px;color:var(--text3)}
 .day-head .l{display:flex;align-items:center;gap:7px}
 .day-head .d{font-size:13px;font-weight:600;color:var(--text2)}
 .day-head .sum{font-variant-numeric:tabular-nums}
-.wall{display:grid;grid-template-columns:repeat(3,1fr);gap:14px 10px}
+.wall{display:grid;grid-template-columns:repeat(3,1fr);gap:12px 10px}
 .pitem{min-width:0}
 .poster{position:relative;border-radius:9px;overflow:hidden;aspect-ratio:2/3;display:flex;flex-direction:column;justify-content:flex-end;padding:9px 8px;color:#fff;background-color:#1A1511;box-shadow:inset 0 0 0 1px rgba(255,255,255,.1),0 4px 12px rgba(40,28,14,.18);isolation:isolate}
 .poster .art{position:absolute;inset:0;width:100%;height:100%;z-index:0}
+.poster .cover-img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0}
+.poster.has-cover{padding:0;background:#17120C}
+.poster.has-cover .pt,.poster.has-cover .pb{display:none}
+.poster.has-cover::after{background:linear-gradient(180deg,rgba(0,0,0,0) 68%,rgba(0,0,0,.18) 100%)}
+.poster.book.has-cover::before,.poster.book.has-cover::after{display:none}
 .poster::after{content:"";position:absolute;inset:0;z-index:1;background:linear-gradient(180deg,rgba(0,0,0,0) 36%,rgba(0,0,0,.5) 100%),repeating-linear-gradient(0deg,rgba(255,255,255,.022) 0 1px,transparent 1px 3px);pointer-events:none}
 .poster .pt{position:relative;z-index:2;font-size:12.5px;font-weight:700;line-height:1.25;letter-spacing:.02em;text-shadow:0 1px 8px rgba(0,0,0,.5)}
 .poster .pb{position:relative;z-index:2;font-size:5.5px;letter-spacing:.16em;opacity:.66;margin-top:3px;text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .poster .rbadge{position:absolute;top:6px;right:6px;z-index:3;font-size:8px;font-weight:700;color:#241804;background:var(--gold-bright);border-radius:4px;padding:1px 4px;letter-spacing:.02em;box-shadow:0 1px 4px rgba(40,24,4,.25)}
 .poster .wbadge{position:absolute;top:6px;left:6px;z-index:3;font-size:8px;font-weight:600;color:#fff;background:rgba(0,0,0,.4);border-radius:4px;padding:2px 5px;backdrop-filter:blur(4px)}
-.p-title{font-size:13.5px;font-weight:600;line-height:1.32;margin-top:6px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.p-title{font-size:13.5px;font-weight:600;line-height:1.32;margin-top:5px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 .p-meta{font-size:11.5px;color:var(--text3);margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .p-foot{display:flex;align-items:center;justify-content:space-between;margin-top:3px}
 .stars{color:var(--star);font-size:10.5px;letter-spacing:.4px}
@@ -340,6 +345,18 @@ figcaption b{display:block;margin-bottom:3px;font-size:13px;color:var(--text);fo
 .progress{height:6px;border-radius:3px;background:var(--track);overflow:hidden}
 .progress .fill{height:100%;border-radius:3px;background:linear-gradient(90deg,#F4D083,#BC7C1D)}
 .progress.teal .fill{background:linear-gradient(90deg,#7AC9B8,var(--teal))}
+
+/* ---------- search result rows ---------- */
+.search-row{display:flex;gap:10px;padding:10px;background:var(--surface);border:1px solid var(--border);border-radius:13px;margin-bottom:8px}
+.search-row .thumb{width:46px;flex:0 0 46px;aspect-ratio:2/3;border-radius:6px;overflow:hidden;position:relative}
+.search-row .thumb .poster{height:100%;aspect-ratio:auto;border-radius:6px}
+.search-main{flex:1;min-width:0}
+.search-title{font-size:15px;font-weight:600;line-height:1.3;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.search-snippet{font-size:11.5px;color:var(--text2);line-height:1.45;margin-top:3px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.search-meta{display:flex;align-items:center;gap:6px;font-size:10.5px;color:var(--text3);margin-top:4px;line-height:1}
+.search-meta .stars{font-size:10px;letter-spacing:.3px}
+.search-meta .sp{flex:1}
+.hl{background:var(--gold-soft);color:var(--gold-deep);border-radius:2px;padding:0 1px}
 
 /* ---------- report ---------- */
 .report-compose{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:13px}
@@ -535,12 +552,37 @@ body.only .theme-toggle{display:none}
 .re-go{display:flex;align-items:center;gap:2px;font-size:11.5px;font-weight:600;color:var(--gold-deep);flex:0 0 auto}
 
 .page-head{flex:0 0 auto;min-height:var(--head-h);display:flex;flex-direction:column;overflow:hidden}
+#g-records .page-head{min-height:0}
 .page-head .profile{margin-left:16px;margin-right:16px}
 .page-head > .group-card{margin-left:16px;margin-right:16px}
 
 .rpt-cover{flex:1;min-height:0;margin:0 16px;padding:14px 14px 10px;border-radius:12px 12px 0 0}
 .rpt-body{padding-top:0;border-radius:0 0 12px 12px}
 .rpt-body .rp-sec:first-of-type{margin-top:14px}
+
+/* ---------- report style lab ---------- */
+.report-style-lab{display:flex;align-items:flex-start;gap:44px;flex-wrap:wrap;padding-top:2px}
+.report-style-panel{width:438px;flex:0 0 438px;background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:24px 24px 20px}
+.report-style-panel .eyebrow{font-size:11px;font-weight:700;letter-spacing:.18em;color:var(--gold);text-transform:uppercase}
+.report-style-panel h3{margin:10px 0 8px;font-size:25px;line-height:1.25;letter-spacing:-.02em}
+.report-style-panel > p{margin:0;color:var(--text2);font-size:14px;line-height:1.7}
+.report-style-tabs{display:grid;gap:8px;margin-top:22px}
+.report-style-tab{display:grid;grid-template-columns:10px minmax(0,1fr);grid-template-rows:auto auto;column-gap:10px;align-items:center;text-align:left;background:var(--surface2);border:1px solid var(--border);border-radius:13px;padding:12px 13px;color:var(--text);cursor:pointer;font:inherit;transition:border-color .18s ease,background .18s ease,box-shadow .18s ease}
+.report-style-tab:hover{border-color:var(--gold-border)}
+.report-style-tab.on{background:var(--gold-soft);border-color:var(--gold-border);box-shadow:0 4px 14px rgba(150,96,18,.10)}
+.report-style-tab .style-dot{grid-row:1 / span 2;width:10px;height:10px;border-radius:50%;background:var(--bg);box-shadow:inset 0 0 0 1px var(--border-strong)}
+.report-style-tab .style-dot.dark{background:#121722;box-shadow:inset 0 0 0 1px #3b4250}
+.report-style-tab .style-dot.paper{background:#f4efe5;box-shadow:inset 0 0 0 1px #d9cfbe}
+.report-style-tab .style-dot.compact{background:#0d1119;box-shadow:inset 0 0 0 1px #3b4250}
+.report-style-tab b{font-size:14px;font-weight:700}
+.report-style-tab small{font-size:11.5px;color:var(--text3);margin-top:2px}
+.report-style-note{margin-top:20px;padding:12px 13px;border-left:2px solid var(--gold-bright);background:var(--surface2);border-radius:0 9px 9px 0;font-size:12px;line-height:1.65;color:var(--text2)}
+.report-style-note .tag{margin-right:5px}
+.report-style-meta{display:flex;gap:6px;flex-wrap:wrap;margin-top:18px;color:var(--text3);font-size:11px}
+.report-style-meta span{padding:4px 8px;border:1px solid var(--border);border-radius:999px;background:var(--surface2)}
+.report-style-figure{margin:0;width:390px;flex:0 0 390px}
+.report-preview-phone{width:390px;height:844px;background:var(--bg)}
+.report-style-frame{display:block;width:390px;height:844px;border:0;background:var(--bg)}
 
 </style>
 </head>
@@ -690,7 +732,7 @@ body.only .theme-toggle{display:none}
 <header class="board-header">
   <div class="brand"><img src="assets/icon.png" alt="书影记录">书影记录 <span class="en">BookFilmJournal</span></div>
   <h1>iOS App 原型 <span style="color:var(--text3);font-weight:600">v2</span></h1>
-  <p class="sub">把桌面版「书影记录」重构为 iPhone 原生应用。v2 重做视觉：浅色「暖纸 + 墨字」、深色「墨蓝 + 香槟金」，海报与书籍封面全部换成 13 套内嵌 SVG 插画；新增探索空间与详情页「资源」搜索；28 个界面覆盖记录、豆列、计划、报告、设置与探索空间；全屏页固定头约 30%、滚动区约 70%，正文统一 16px。</p>
+  <p class="sub">把桌面版「书影记录」重构为 iPhone 原生应用。v2 重做视觉：浅色「暖纸 + 墨字」、深色「墨蓝 + 香槟金」，海报与书籍封面全部换成 13 套内嵌 SVG 插画；新增探索空间与详情页「资源」搜索；29 个界面覆盖记录、豆列、计划、报告、设置与探索空间；云同步、字数统计、设置与开发者入口已按当前实现对齐；全屏页固定头约 30%、滚动区约 70%，正文统一 16px。</p>
   <div class="meta">
     <span class="pill">iPhone 15 · 390 × 844</span>
     <span class="pill">目标 iOS 18+ / SwiftUI</span>
@@ -707,6 +749,7 @@ body.only .theme-toggle{display:none}
   <a href="#g-doulist">02 豆列</a>
   <a href="#g-plan">03 计划</a>
   <a href="#g-report">04 报告</a>
+  <a href="#g-reportstyles">04B 报告样式</a>
   <a href="#g-settings">05 设置</a>
   <a href="#g-decisions">方案已确认</a>
 </nav>
@@ -727,7 +770,7 @@ body.only .theme-toggle{display:none}
         <div class="large">
           <div>
             <h3>观影记录</h3>
-            <div class="cap">同步自豆瓣 · 38 部 · 11-20 21:06</div>
+            <div class="cap">同步自豆瓣 · 163 部 · 11-20 21:06</div>
           </div>
           <div class="icons"><svg class="ico"><use href="#i-search"/></svg><svg class="ico"><use href="#i-cal"/></svg></div>
         </div>
@@ -740,73 +783,44 @@ body.only .theme-toggle{display:none}
         </div>
         </div>
         <div class="body scroll">
-          <div class="day-head"><span class="l"><span class="d">2026 年 10 月 25 日</span>· 周日</span><span class="sum">2 部</span></div>
-          <div class="wall">
-            <div class="pitem">
-              <div class="poster p-a"><span class="rbadge">8.4</span><span class="pt">大决战<br>辽沈战役</span><span class="pb">The Great Decisive War</span></div>
-              <div class="p-title">大决战之辽沈战役</div>
-              <div class="p-meta">3 小时 29 分</div>
-              <div class="p-foot"><span class="stars">★★★★★</span><span class="d">10-25</span></div>
-            </div>
-            <div class="pitem">
-              <div class="poster p-b"><span class="rbadge">8.3</span><span class="pt">流浪地球 2</span><span class="pb">The Wandering Earth II</span></div>
-              <div class="p-title">流浪地球 2</div>
-              <div class="p-meta">2 小时 53 分</div>
-              <div class="p-foot"><span class="stars">★★★★<span style="opacity:.28">★</span></span><span class="d">10-25</span></div>
-            </div>
-            <div class="pitem">
-              <div class="poster p-m"><span class="rbadge">7.9</span><span class="pt">路边野餐</span><span class="pb">Kaili Blues</span></div>
-              <div class="p-title">路边野餐</div>
-              <div class="p-meta">1 小时 50 分</div>
-              <div class="p-foot"><span class="stars">★★★★<span style="opacity:.28">★</span></span><span class="d">10-24</span></div>
-            </div>
-          </div>
 
-          <div class="day-head"><span class="l"><span class="d">2026 年 10 月 12 日</span>· 周一</span><span class="sum">3 部</span></div>
-          <div class="wall">
-            <div class="pitem">
-              <div class="poster p-h"><span class="rbadge">8.6</span><span class="pt">疯狂的麦克斯 4<br>狂暴之路</span><span class="pb">Mad Max: Fury Road</span></div>
-              <div class="p-title">疯狂的麦克斯 4：狂暴之路</div>
-              <div class="p-meta">2 小时</div>
-              <div class="p-foot"><span class="stars">★★★★★</span><span class="d">10-12</span></div>
-            </div>
-            <div class="pitem">
-              <div class="poster p-k"><span class="rbadge">9.3</span><span class="pt">海上钢琴师</span><span class="pb">The Legend of 1900</span></div>
-              <div class="p-title">海上钢琴师</div>
-              <div class="p-meta">2 小时 45 分</div>
-              <div class="p-foot"><span class="stars">★★★★★</span><span class="d">10-12</span></div>
-            </div>
-            <div class="pitem">
-              <div class="poster p-g"><span class="rbadge">8.5</span><span class="pt">白日梦想家</span><span class="pb">The Secret Life of Walter Mitty</span></div>
-              <div class="p-title">白日梦想家</div>
-              <div class="p-meta">1 小时 54 分</div>
-              <div class="p-foot"><span class="stars">★★★★<span style="opacity:.28">★</span></span><span class="d">10-11</span></div>
-            </div>
-          </div>
-
-          <div class="day-head"><span class="l"><span class="d">2026 年 09 月 30 日</span>· 周三</span><span class="sum">1 部</span></div>
-          <div class="wall">
-            <div class="pitem">
-              <div class="poster p-n"><span class="rbadge">8.9</span><span class="pt">情书</span><span class="pb">Love Letter</span></div>
-              <div class="p-title">情书 <span class="local-dot"></span></div>
-              <div class="p-meta">1 小时 57 分</div>
-              <div class="p-foot"><span class="stars">★★★★★</span><span class="d">09-30</span></div>
-            </div>
-            <div class="pitem">
-              <div class="poster p-d"><span class="rbadge">9.0</span><span class="pt">小森林<br>夏秋篇</span><span class="pb">Little Forest</span></div>
-              <div class="p-title">小森林 夏秋篇</div>
-              <div class="p-meta">1 小时 51 分</div>
-              <div class="p-foot"><span class="stars">★★★★<span style="opacity:.28">★</span></span><span class="d">09-30</span></div>
-            </div>
-            <div class="pitem" style="display:flex;align-items:center;justify-content:center">
-              <div style="width:100%;aspect-ratio:2/3;border:1px dashed var(--border-strong);border-radius:8px;display:grid;place-items:center;color:var(--text3);font-size:11px;text-align:center;line-height:1.5">补录<br>未同步的条目</div>
-            </div>
-          </div>
+<div class="day-head"><span class="l"><span class="d">2026 年 11 月</span>· 最近记录</span><span class="sum">5 部</span></div><div class="wall"><div class="pitem">
+  <div class="poster has-cover"><img class="cover-img" src="assets/covers/movie-2997076.jpg" alt=""><span class="rbadge">5.0</span></div>
+  <div class="p-title">华尔街之狼</div>
+  <div class="p-meta">3 小时</div>
+  <div class="p-foot"><span class="stars">★★★★★</span><span class="d">11-21</span></div>
+</div><div class="pitem">
+  <div class="poster has-cover"><img class="cover-img" src="assets/covers/movie-33455421.jpg" alt=""><span class="rbadge">5.0</span></div>
+  <div class="p-title">疾速追杀4</div>
+  <div class="p-meta">2 小时 49 分</div>
+  <div class="p-foot"><span class="stars">★★★★★</span><span class="d">11-14</span></div>
+</div><div class="pitem">
+  <div class="poster has-cover"><img class="cover-img" src="assets/covers/movie-26909790.jpg" alt=""><span class="rbadge">4.0</span></div>
+  <div class="p-title">疾速追杀3</div>
+  <div class="p-meta">2 小时 11 分</div>
+  <div class="p-foot"><span class="stars">★★★★<span style="opacity:.28">★</span></span><span class="d">11-13</span></div>
+</div><div class="pitem">
+  <div class="poster has-cover"><img class="cover-img" src="assets/covers/movie-26333560.jpg" alt=""><span class="rbadge">5.0</span></div>
+  <div class="p-title">疾速追杀2</div>
+  <div class="p-meta">2 小时 2 分</div>
+  <div class="p-foot"><span class="stars">★★★★★</span><span class="d">11-07</span></div>
+</div><div class="pitem">
+  <div class="poster has-cover"><img class="cover-img" src="assets/covers/movie-25798131.jpg" alt=""><span class="rbadge">5.0</span></div>
+  <div class="p-title">疾速追杀</div>
+  <div class="p-meta">1 小时 42 分</div>
+  <div class="p-foot"><span class="stars">★★★★★</span><span class="d">11-05</span></div>
+</div></div>
+<div class="day-head"><span class="l"><span class="d">2026 年 10 月</span>· 最近记录</span><span class="sum">1 部</span></div><div class="wall"><div class="pitem">
+  <div class="poster has-cover"><img class="cover-img" src="assets/covers/movie-1292064.jpg" alt=""><span class="rbadge">5.0</span></div>
+  <div class="p-title">楚门的世界</div>
+  <div class="p-meta">1 小时 43 分</div>
+  <div class="p-foot"><span class="stars">★★★★★</span><span class="d">10-31</span></div>
+</div></div>
           <div class="note">按本地生效日期分组；金色圆点表示日期、评分或短评被本地改过，同步不会覆盖。</div>
         </div>
         <div class="tabbar"><div class="tab on"><svg class="ico"><use href="#i-record"/></svg><span>记录</span></div><div class="tab"><svg class="ico"><use href="#i-list"/></svg><span>豆列</span></div><div class="tab"><svg class="ico"><use href="#i-folder"/></svg><span>计划</span></div><div class="tab"><svg class="ico"><use href="#i-report"/></svg><span>报告</span></div><div class="tab"><svg class="ico"><use href="#i-set"/></svg><span>设置</span></div><div class="homebar"></div></div>
       </div>
-      <figcaption><b>观影记录 <span class="tagline">默认 Tab</span></b>桌面版是 5 列海报墙，手机改为 3 列：日期分组保留，卡片收成海报 + 标题 + 时长 + 星级；点卡片看详情，长按卡片可直接编辑或删除，日历图标跳转日期。</figcaption>
+      <figcaption><b>观影记录 <span class="tagline">默认 Tab</span></b>桌面版是 5 列海报墙，手机改为 3 列：日期分组保留，卡片收成海报 + 标题 + 时长 + 星级；点卡片看详情，右上角 ⋯ 可直接编辑或删除，日历图标跳转日期。</figcaption>
     </figure>
 
     <figure>
@@ -816,7 +830,7 @@ body.only .theme-toggle{display:none}
         <div class="large">
           <div>
             <h3>读书记录</h3>
-            <div class="cap">已读 52 本 · 累计 1,842.6 万字</div>
+            <div class="cap">已读 98 本 · 累计 3,051.0 万字</div>
           </div>
           <div class="icons"><svg class="ico"><use href="#i-search"/></svg><svg class="ico"><use href="#i-cal"/></svg></div>
         </div>
@@ -829,49 +843,39 @@ body.only .theme-toggle{display:none}
         </div>
         </div>
         <div class="body scroll">
-          <div class="day-head"><span class="l"><span class="d">2026 年 11 月 08 日</span>· 周日</span><span class="sum">2 本</span></div>
-          <div class="wall">
-            <div class="pitem">
-              <div class="poster book p-c"><span class="rbadge">9.2</span><span class="pt">百年孤独</span><span class="pb">Cien años de soledad</span></div>
-              <div class="p-title">百年孤独</div>
-              <div class="p-meta">26.2 万字 · 360 页</div>
-              <div class="p-foot"><span class="stars">★★★★★</span><span class="d">11-08</span></div>
-            </div>
-            <div class="pitem">
-              <div class="poster book p-e"><span class="rbadge">9.1</span><span class="pt">献给阿尔吉侬<br>的花束</span><span class="pb">Flowers for Algernon</span></div>
-              <div class="p-title">献给阿尔吉侬的花束</div>
-              <div class="p-meta">22.4 万字 · 320 页</div>
-              <div class="p-foot"><span class="stars">★★★★★</span><span class="d">11-08</span></div>
-            </div>
-            <div class="pitem">
-              <div class="poster book p-l"><span class="rbadge">9.3</span><span class="pt">杀死一只<br>知更鸟</span><span class="pb">To Kill a Mockingbird</span></div>
-              <div class="p-title">杀死一只知更鸟</div>
-              <div class="p-meta">18.6 万字 · 442 页</div>
-              <div class="p-foot"><span class="stars">★★★★<span style="opacity:.28">★</span></span><span class="d">11-08</span></div>
-            </div>
-          </div>
 
-          <div class="day-head"><span class="l"><span class="d">2026 年 10 月 30 日</span>· 周五</span><span class="sum">2 本</span></div>
-          <div class="wall">
-            <div class="pitem">
-              <div class="poster book p-f"><span class="rbadge">9.0</span><span class="pt">悉达多</span><span class="pb">Siddhartha</span></div>
-              <div class="p-title">悉达多 <span class="local-dot"></span></div>
-              <div class="p-meta">12.8 万字 · 208 页</div>
-              <div class="p-foot"><span class="stars">★★★★<span style="opacity:.28">★</span></span><span class="d">10-30</span></div>
-            </div>
-            <div class="pitem">
-              <div class="poster book p-i"><span class="rbadge">9.4</span><span class="pt">我与地坛</span><span class="pb">The Temple of Earth</span></div>
-              <div class="p-title">我与地坛</div>
-              <div class="p-meta">11.2 万字 · 256 页</div>
-              <div class="p-foot"><span class="stars">★★★★★</span><span class="d">10-30</span></div>
-            </div>
-            <div class="pitem">
-              <div class="poster book p-j"><span class="rbadge">8.8</span><span class="pt">人类简史</span><span class="pb">Sapiens</span></div>
-              <div class="p-title">人类简史</div>
-              <div class="p-meta">32.5 万字 · 440 页</div>
-              <div class="p-foot"><span class="stars">★★★★<span style="opacity:.28">★</span></span><span class="d">10-29</span></div>
-            </div>
-          </div>
+<div class="day-head"><span class="l"><span class="d">2026 年 11 月</span>· 最近记录</span><span class="sum">3 部</span></div><div class="wall"><div class="pitem">
+  <div class="poster book has-cover"><img class="cover-img" src="assets/covers/book-25887924.jpg" alt=""><span class="rbadge">5.0</span></div>
+  <div class="p-title">卡拉马佐夫兄弟</div>
+  <div class="p-meta">59.5 万字 · 985 页</div>
+  <div class="p-foot"><span class="stars">★★★★★</span><span class="d">11-17</span></div>
+</div><div class="pitem">
+  <div class="poster book has-cover"><img class="cover-img" src="assets/covers/book-1418776.jpg" alt=""><span class="rbadge">5.0</span></div>
+  <div class="p-title">美国反对美国 <span class="local-dot"></span></div>
+  <div class="p-meta">20.2 万字 · 390 页</div>
+  <div class="p-foot"><span class="stars">★★★★★</span><span class="d">11-09</span></div>
+</div><div class="pitem">
+  <div class="poster book has-cover"><img class="cover-img" src="assets/covers/book-24737829.jpg" alt=""><span class="rbadge">5.0</span></div>
+  <div class="p-title">金赛性学报告</div>
+  <div class="p-meta">27.3 万字 · 480 页</div>
+  <div class="p-foot"><span class="stars">★★★★★</span><span class="d">11-04</span></div>
+</div></div>
+<div class="day-head"><span class="l"><span class="d">2026 年 10 月</span>· 最近记录</span><span class="sum">3 部</span></div><div class="wall"><div class="pitem">
+  <div class="poster book has-cover"><img class="cover-img" src="assets/covers/book-36157472.jpg" alt=""><span class="rbadge">5.0</span></div>
+  <div class="p-title">1007天的战争：抗美援朝：战略和历次战役（1-3卷） <span class="local-dot"></span></div>
+  <div class="p-meta">127.0 万字 · 2219 页</div>
+  <div class="p-foot"><span class="stars">★★★★★</span><span class="d">10-29</span></div>
+</div><div class="pitem">
+  <div class="poster book has-cover"><img class="cover-img" src="assets/covers/book-35295592.jpg" alt=""><span class="rbadge">5.0</span></div>
+  <div class="p-title">小狗钱钱 <span class="local-dot"></span></div>
+  <div class="p-meta">8.4 万字 · 240 页</div>
+  <div class="p-foot"><span class="stars">★★★★★</span><span class="d">10-23</span></div>
+</div><div class="pitem">
+  <div class="poster book has-cover"><img class="cover-img" src="assets/covers/book-35578318.jpg" alt=""><span class="rbadge">3.0</span></div>
+  <div class="p-title">小狗钱钱2 <span class="local-dot"></span></div>
+  <div class="p-meta">7.4 万字</div>
+  <div class="p-foot"><span class="stars">★★★<span style="opacity:.28">★★</span></span><span class="d">10-23</span></div>
+</div></div>
           <div class="note">读书页额外显示页数与字数；字数可本地统计 EPUB / TXT / DOCX，也可手动修正。</div>
         </div>
         <div class="tabbar"><div class="tab on"><svg class="ico"><use href="#i-record"/></svg><span>记录</span></div><div class="tab"><svg class="ico"><use href="#i-list"/></svg><span>豆列</span></div><div class="tab"><svg class="ico"><use href="#i-folder"/></svg><span>计划</span></div><div class="tab"><svg class="ico"><use href="#i-report"/></svg><span>报告</span></div><div class="tab"><svg class="ico"><use href="#i-set"/></svg><span>设置</span></div><div class="homebar"></div></div>
@@ -886,7 +890,7 @@ body.only .theme-toggle{display:none}
         <div class="large">
           <div>
             <h3>观影记录</h3>
-            <div class="cap">想看 12 部 · 按标记日期</div>
+            <div class="cap">想看 51 部 · 按标记日期</div>
           </div>
           <div class="icons"><svg class="ico"><use href="#i-search"/></svg><svg class="ico"><use href="#i-cal"/></svg></div>
         </div>
@@ -899,50 +903,44 @@ body.only .theme-toggle{display:none}
         </div>
         </div>
         <div class="body scroll">
-          <div class="day-head"><span class="l"><span class="d">想看的 12 部</span>· 最近标记</span><span class="sum">按豆瓣排序</span></div>
-          <div class="wall">
-            <div class="pitem">
-              <div class="poster p-j"><span class="wbadge">待映 · 12-20</span><span class="pt">沙丘 3</span><span class="pb">Dune: Part Three</span></div>
-              <div class="p-title">沙丘 3</div>
-              <div class="p-meta">标记于 11-18</div>
-              <div class="p-foot"><span class="stars" style="color:var(--text4)">未评分</span><span class="d">想看</span></div>
-            </div>
-            <div class="pitem">
-              <div class="poster p-g"><span class="wbadge">想看</span><span class="pt">完美的日子</span><span class="pb">Perfect Days</span></div>
-              <div class="p-title">完美的日子</div>
-              <div class="p-meta">标记于 11-10</div>
-              <div class="p-foot"><span class="stars" style="color:var(--text4)">未评分</span><span class="d">想看</span></div>
-            </div>
-            <div class="pitem">
-              <div class="poster p-b2"><span class="wbadge">想看</span><span class="pt">机器人之梦</span><span class="pb">Robot Dreams</span></div>
-              <div class="p-title">机器人之梦</div>
-              <div class="p-meta">标记于 10-22</div>
-              <div class="p-foot"><span class="stars" style="color:var(--text4)">未评分</span><span class="d">想看</span></div>
-            </div>
-            <div class="pitem">
-              <div class="poster p-a2"><span class="wbadge">想看</span><span class="pt">椒麻堂会</span><span class="pb">A New Old Play</span></div>
-              <div class="p-title">椒麻堂会</div>
-              <div class="p-meta">标记于 10-20</div>
-              <div class="p-foot"><span class="stars" style="color:var(--text4)">未评分</span><span class="d">想看</span></div>
-            </div>
-            <div class="pitem">
-              <div class="poster p-k2"><span class="wbadge">想看</span><span class="pt">火山挚恋</span><span class="pb">Fire of Love</span></div>
-              <div class="p-title">火山挚恋</div>
-              <div class="p-meta">标记于 10-02</div>
-              <div class="p-foot"><span class="stars" style="color:var(--text4)">未评分</span><span class="d">想看</span></div>
-            </div>
-            <div class="pitem">
-              <div class="poster p-e"><span class="wbadge">想看</span><span class="pt">可怜的东西</span><span class="pb">Poor Things</span></div>
-              <div class="p-title">可怜的东西</div>
-              <div class="p-meta">标记于 09-18</div>
-              <div class="p-foot"><span class="stars" style="color:var(--text4)">未评分</span><span class="d">想看</span></div>
-            </div>
-          </div>
-          <div class="note">点卡片看详情；详情页「资源」可选择站点搜索。长按可加入计划，看完切回「已看」补评分。</div>
+
+<div class="day-head"><span class="l"><span class="d">2026 年 11 月 21 日</span>· 周六</span><span class="sum">4 部</span></div><div class="wall"><div class="pitem">
+  <div class="poster has-cover"><img class="cover-img" src="assets/covers/movie-1292365.jpg" alt=""></div>
+  <div class="p-title">活着</div>
+  <div class="p-meta">标记于 11-21</div>
+  <div class="p-foot"><span class="stars" style="color:var(--text4)">未评分</span><span class="d">想看</span></div>
+</div><div class="pitem">
+  <div class="poster has-cover"><img class="cover-img" src="assets/covers/movie-1293172.jpg" alt=""></div>
+  <div class="p-title">末代皇帝</div>
+  <div class="p-meta">标记于 11-21</div>
+  <div class="p-foot"><span class="stars" style="color:var(--text4)">未评分</span><span class="d">想看</span></div>
+</div><div class="pitem">
+  <div class="poster has-cover"><img class="cover-img" src="assets/covers/movie-5912992.jpg" alt=""></div>
+  <div class="p-title">熔炉</div>
+  <div class="p-meta">标记于 11-21</div>
+  <div class="p-foot"><span class="stars" style="color:var(--text4)">未评分</span><span class="d">想看</span></div>
+</div><div class="pitem">
+  <div class="poster has-cover"><img class="cover-img" src="assets/covers/movie-1292063.jpg" alt=""></div>
+  <div class="p-title">美丽人生</div>
+  <div class="p-meta">标记于 11-21</div>
+  <div class="p-foot"><span class="stars" style="color:var(--text4)">未评分</span><span class="d">想看</span></div>
+</div></div>
+<div class="day-head"><span class="l"><span class="d">2026 年 11 月 07 日</span>· 周六</span><span class="sum">2 部</span></div><div class="wall"><div class="pitem">
+  <div class="poster has-cover"><img class="cover-img" src="assets/covers/movie-1301726.jpg" alt=""></div>
+  <div class="p-title">兵临城下</div>
+  <div class="p-meta">标记于 11-07</div>
+  <div class="p-foot"><span class="stars" style="color:var(--text4)">未评分</span><span class="d">想看</span></div>
+</div><div class="pitem">
+  <div class="poster has-cover"><img class="cover-img" src="assets/covers/movie-1309071.jpg" alt=""></div>
+  <div class="p-title">天国王朝</div>
+  <div class="p-meta">标记于 11-07</div>
+  <div class="p-foot"><span class="stars" style="color:var(--text4)">未评分</span><span class="d">想看</span></div>
+</div></div>
+          <div class="note">点卡片看详情；详情页「资源」可选择站点搜索。详情页可加入计划，看完切回「已看」补评分。</div>
         </div>
         <div class="tabbar"><div class="tab on"><svg class="ico"><use href="#i-record"/></svg><span>记录</span></div><div class="tab"><svg class="ico"><use href="#i-list"/></svg><span>豆列</span></div><div class="tab"><svg class="ico"><use href="#i-folder"/></svg><span>计划</span></div><div class="tab"><svg class="ico"><use href="#i-report"/></svg><span>报告</span></div><div class="tab"><svg class="ico"><use href="#i-set"/></svg><span>设置</span></div><div class="homebar"></div></div>
       </div>
-      <figcaption><b>想看 / 想读 <span class="tagline">同一页切换</span></b>不新增一级入口，用分段控件在「已看 / 想看」之间切换；想看状态保留「待映」等信息；点卡片看详情，详情页新增「资源」入口，长按可加入计划。</figcaption>
+      <figcaption><b>想看 / 想读 <span class="tagline">同一页切换</span></b>不新增一级入口，用分段控件在「已看 / 想看」之间切换；想看状态保留「待映」等信息；点卡片看详情，详情页新增「资源」入口，详情页可加入计划。</figcaption>
     </figure>
 
     <figure>
@@ -958,17 +956,17 @@ body.only .theme-toggle{display:none}
           <div class="sheet-body scroll">
             <div class="flexb" style="align-items:flex-start;gap:10px;margin-bottom:10px">
               <div style="min-width:0">
-                <div class="t18 b700">沙丘 3</div>
-                <div class="t11 mt2" style="color:var(--text3)">想看 · 待映 12-20 · 豆瓣 8.9</div>
+                <div class="t18 b700">活着</div>
+                <div class="t11 mt2" style="color:var(--text3)">想看 · 标记于 11-21 · 1994</div>
               </div>
               <span class="tag wish">想看</span>
             </div>
-            <div class="searchbar"><svg class="ico"><use href="#i-search"/></svg><span style="color:var(--text)">沙丘 3</span><span class="tag gold" style="margin-left:auto">标题自动填入</span></div>
+            <div class="searchbar"><svg class="ico"><use href="#i-search"/></svg><span style="color:var(--text)">活着</span><span class="tag gold" style="margin-left:auto">标题自动填入</span></div>
 
             <div class="section-t"><span>电影站点 · 4 个</span><span class="link">优先 searchUrl</span></div>
             <div class="group-card">
               <div class="field"><span class="fl"><span class="sstat ok"><svg class="ico"><use href="#i-check"/></svg></span><span><span class="t135 b600">豆瓣电影</span><br><span class="t105 muted">站内搜索 · 标题自动填入</span></span></span><span class="vl"><span class="tag gold">搜索</span></span></div>
-              <div class="field"><span class="fl"><span class="sstat ok"><svg class="ico"><use href="#i-check"/></svg></span><span><span class="t135 b600">TMDB</span><br><span class="t105 muted">站内搜索 · query=沙丘 3</span></span></span><span class="vl"><span class="tag gold">搜索</span></span></div>
+              <div class="field"><span class="fl"><span class="sstat ok"><svg class="ico"><use href="#i-check"/></svg></span><span><span class="t135 b600">TMDB</span><br><span class="t105 muted">站内搜索 · query=活着</span></span></span><span class="vl"><span class="tag gold">搜索</span></span></div>
               <div class="field"><span class="fl"><span class="sstat bad"><svg class="ico"><use href="#i-close"/></svg></span><span><span class="t135 b600">爱奇艺</span><br><span class="t105 muted">连通性异常 · 仍可尝试打开首页</span></span></span><span class="vl"><span class="tag wish">异常</span></span></div>
               <div class="field"><span class="fl"><span class="sstat ok"><svg class="ico"><use href="#i-check"/></svg></span><span><span class="t135 b600">我的 NAS 片库 <span class="tag teal">本地</span></span><br><span class="t105 muted">站内搜索 · 标题自动填入</span></span></span><span class="vl"><span class="tag gold">搜索</span></span></div>
             </div>
@@ -998,7 +996,7 @@ body.only .theme-toggle{display:none}
           <div style="display:flex;align-items:center;gap:10px;padding:8px 16px 10px">
             <div class="searchbar" style="flex:1;border:1px solid var(--gold-border);background:var(--surface)">
               <svg class="ico"><use href="#i-search"/></svg>
-              <span style="color:var(--text);font-size:14px">流</span>
+              <span style="color:var(--text);font-size:14px">疾</span>
               <span style="margin-left:auto;width:1px;height:18px;background:var(--gold)"></span>
               <svg class="ico" style="color:var(--text3)"><use href="#i-close"/></svg>
             </div>
@@ -1006,33 +1004,32 @@ body.only .theme-toggle{display:none}
           </div>
           <div class="sheet-body scroll">
             <div class="chips" style="margin:2px 0 10px">
-              <span class="chip">最近：<b class="hl">流</b>浪地球</span><span class="chip">沙丘</span><span class="chip">小森林</span>
+              <span class="chip">最近：<b class="hl">疾</b>速追杀</span><span class="chip">华尔街</span><span class="chip">活着</span>
             </div>
-            <div class="section-t" style="padding-top:4px"><span>标题与短评 · 2 条</span><span class="link">查看全部 8 条</span></div>
-            <div class="wall">
-              <div class="pitem">
-                <div class="poster p-b"><span class="rbadge">8.3</span><span class="pt"><span class="hl">流</span>浪地球 2</span><span class="pb">The Wandering Earth II</span></div>
-                <div class="p-title"><span class="hl">流</span>浪地球 2</div>
-                <div class="p-meta">2 小时 53 分</div>
-                <div class="p-foot"><span class="stars">★★★★<span style="opacity:.28">★</span></span><span class="d">10-25</span></div>
-              </div>
-              <div class="pitem">
-                <div class="poster p-b"><span class="rbadge">7.9</span><span class="pt"><span class="hl">流</span>浪地球</span><span class="pb">The Wandering Earth</span></div>
-                <div class="p-title"><span class="hl">流</span>浪地球</div>
-                <div class="p-meta">2 小时 5 分</div>
-                <div class="p-foot"><span class="stars">★★★★★</span><span class="d">02-11</span></div>
-              </div>
-              <div class="pitem">
-                <div class="poster p-e"><span class="rbadge">8.8</span><span class="pt">瞬息全宇宙</span><span class="pb">Everything Everywhere</span></div>
-                <div class="p-title">瞬息全宇宙</div>
-                <div class="p-meta">短评命中：像一条<span class="hl">流</span>动的河</div>
-                <div class="p-foot"><span class="stars">★★★★<span style="opacity:.28">★</span></span><span class="d">2025</span></div>
+            <div class="section-t" style="padding-top:4px"><span>标题与短评 · 3 条</span><span class="link">共 3 条</span></div>
+            <div class="search-row">
+              <div class="thumb"><div class="poster p-b has-cover"><img class="cover-img" src="assets/covers/movie-33455421.jpg" alt=""></div></div>
+              <div class="search-main">
+                <div class="search-title"><span class="hl">疾</span>速追杀 4</div>
+                <div class="search-snippet">整部剧的配乐、运镜、调色、人物塑造、打斗观赏性再创新高，从头爽到尾。</div>
+                <div class="search-meta"><span>2 小时 49 分</span><span class="stars">★★★★★</span><span class="sp"></span><span>2026-11-14</span></div>
               </div>
             </div>
-            <div class="section-t"><span>内容匹配 · 3 条</span><span class="link">短评关键词</span></div>
-            <div class="group-card">
-              <div class="field"><span class="fl"><span class="t13">《<span class="hl">流</span>浪地球 2》的短评</span></span><span class="vl muted">10-25</span></div>
-              <div class="field"><span class="fl"><span class="t13">电影资料：太空电梯与行星发动机</span></span><span class="vl muted">简介</span></div>
+            <div class="search-row">
+              <div class="thumb"><div class="poster p-b has-cover"><img class="cover-img" src="assets/covers/movie-26909790.jpg" alt=""></div></div>
+              <div class="search-main">
+                <div class="search-title"><span class="hl">疾</span>速追杀 3</div>
+                <div class="search-snippet">我们的威克先生真的是全纽约最抗揍的人物了😂</div>
+                <div class="search-meta"><span>2 小时 11 分</span><span class="stars">★★★★<span style="opacity:.28">★</span></span><span class="sp"></span><span>2026-11-13</span></div>
+              </div>
+            </div>
+            <div class="search-row">
+              <div class="thumb"><div class="poster p-e has-cover"><img class="cover-img" src="assets/covers/movie-26333560.jpg" alt=""></div></div>
+              <div class="search-main">
+                <div class="search-title"><span class="hl">疾</span>速追杀 2</div>
+                <div class="search-snippet">反派安东尼奥：不杀了我还想走？质量一如既往的高，就是爽杀！</div>
+                <div class="search-meta"><span>2 小时 2 分</span><span class="stars">★★★★★</span><span class="sp"></span><span>2026-11-07</span></div>
+              </div>
             </div>
             <div class="note">搜索覆盖标题、短评与条目简介，命中词高亮；结果与主列表共用卡片，清空关键词即退出搜索。</div>
           </div>
@@ -1056,15 +1053,15 @@ body.only .theme-toggle{display:none}
           <div class="sheet-body scroll">
             <div class="detail-top">
               <div class="detail-cover">
-                <div class="poster p-a"><span class="rbadge">8.4</span><span class="pt">大决战<br>辽沈战役</span><span class="pb">The Great Decisive War</span></div>
+                <div class="poster p-a has-cover"><img class="cover-img" src="assets/covers/movie-2997076.jpg" alt=""><span class="rbadge">5.0</span></div>
               </div>
               <div class="detail-info">
-                <h4>大决战之辽沈战役</h4>
-                <div class="sub">观影 · 已看 · 豆瓣 8.4</div>
+                <h4>华尔街之狼</h4>
+                <div class="sub">观影 · 已看 · 5.0 星</div>
                 <div class="kv mt8"><span class="k">我的评分</span><span class="v gold">★★★★★</span></div>
-                <div class="kv"><span class="k">本地日期</span><span class="v">2026-10-25 <span class="local-dot"></span></span></div>
-                <div class="kv"><span class="k">时长</span><span class="v">3 小时 29 分</span></div>
-                <div class="kv"><span class="k">来源</span><span class="v">豆瓣 · 本地修改</span></div>
+                <div class="kv"><span class="k">本地日期</span><span class="v">2026-11-21</span></div>
+                <div class="kv"><span class="k">时长</span><span class="v">3 小时</span></div>
+                <div class="kv"><span class="k">来源</span><span class="v">豆瓣</span></div>
               </div>
             </div>
             <div class="resource-entry">
@@ -1073,12 +1070,10 @@ body.only .theme-toggle{display:none}
               <span class="re-go">去找 <svg class="ico xs chev"><use href="#i-chev"/></svg></span>
             </div>
             <div class="section-t"><span>感想</span><span class="link">复制</span></div>
-            <div class="comment">拍得真稳。辽沈战役从锦州攻坚到黑山阻击，几条线并行推进而不乱，宏观调度与战壕里的具体恐惧都照顾到了。
+            <div class="comment">顶级的传销话术，超绝的精神洗脑，糜烂的荒淫生活。一窥了顶层的纸醉金迷，酒池肉林，尺度也大的惊人，每一句台词都带着 fuck，对金钱上瘾，对性上瘾，但再怎么富甲天下，最终也得复归平凡，钱与名在权面前不堪一击。
 
-最喜欢的是攻打配水池那一段：没有喊口号，只有雪、泥、冻僵的手和一张张年轻的脸。战争片最难的是让人记住「代价」，这部做到了。结尾的胜利没有配乐狂欢，反而安静得让人心里发沉。
-
-五星，是给这份克制。</div>
-            <div class="section-t"><span>操作</span><span class="link">长按卡片也可快速操作</span></div>
+不过小李子在里面的演技确实登峰造极，让人沉浸于那个充满金钱暴力的奢华世界。</div>
+            <div class="section-t"><span>操作</span><span class="link">右上角「编辑」可快速操作</span></div>
             <div style="display:flex;gap:8px">
               <div class="btn ghost sm" style="flex:1"><svg class="ico"><use href="#i-link"/></svg>豆瓣页面</div>
               <div class="btn ghost sm" style="flex:1"><svg class="ico"><use href="#i-photo"/></svg>换封面</div>
@@ -1104,26 +1099,26 @@ body.only .theme-toggle{display:none}
           <div class="sheet-body scroll">
             <div class="detail-top">
               <div class="detail-cover">
-                <div class="poster p-j"><span class="wbadge">想看</span><span class="pt">沙丘 3</span><span class="pb">Dune: Part Three</span></div>
+                <div class="poster p-j has-cover"><img class="cover-img" src="assets/covers/movie-1292365.jpg" alt=""><span class="wbadge">想看</span></div>
               </div>
               <div class="detail-info">
-                <h4>沙丘 3</h4>
-                <div class="sub">观影 · 想看 · 豆瓣 8.9</div>
+                <h4>活着</h4>
+                <div class="sub">观影 · 想看 · 想看电影</div>
                 <div class="kv mt8"><span class="k">我的评分</span><span class="v muted">未评分</span></div>
-                <div class="kv"><span class="k">标记日期</span><span class="v">2026-11-18</span></div>
-                <div class="kv"><span class="k">上映日期</span><span class="v">2026-12-20</span></div>
+                <div class="kv"><span class="k">标记日期</span><span class="v">2026-11-21</span></div>
+                <div class="kv"><span class="k">上映年份</span><span class="v">1994</span></div>
                 <div class="kv"><span class="k">来源</span><span class="v">豆瓣</span></div>
               </div>
             </div>
             <div class="resource-entry">
               <span class="re-ico"><svg class="ico"><use href="#i-compass"/></svg></span>
-              <div class="re-main"><div class="re-t">资源</div><div class="re-s">在 4 个站点搜索《沙丘 3》</div></div>
+              <div class="re-main"><div class="re-t">资源</div><div class="re-s">在 4 个站点搜索《活着》</div></div>
               <span class="re-go">去找 <svg class="ico xs chev"><use href="#i-chev"/></svg></span>
             </div>
             <div class="section-t"><span>感想</span><span class="link">编辑</span></div>
             <div style="text-align:center;padding:18px 0 8px;color:var(--text3);font-size:12px">暂时还没感想</div>
             <div class="btn primary sm" style="width:126px;margin:0 auto"><svg class="ico"><use href="#i-edit"/></svg>前去添加</div>
-            <div class="section-t"><span>操作</span><span class="link">长按卡片也可快速操作</span></div>
+            <div class="section-t"><span>操作</span><span class="link">右上角「编辑」可快速操作</span></div>
             <div style="display:flex;gap:8px">
               <div class="btn ghost sm" style="flex:1"><svg class="ico"><use href="#i-link"/></svg>豆瓣页面</div>
               <div class="btn ghost sm" style="flex:1"><svg class="ico"><use href="#i-plus"/></svg>加入计划</div>
@@ -1149,25 +1144,25 @@ body.only .theme-toggle{display:none}
           <div class="sheet-body scroll">
             <div style="display:flex;gap:12px;align-items:center;margin-bottom:12px">
               <div style="width:54px;flex:0 0 54px;aspect-ratio:2/3;border-radius:6px;overflow:hidden">
-                <div class="poster p-a" style="height:100%;aspect-ratio:auto;border-radius:6px;padding:4px"><span class="pt" style="font-size:7px">大决战</span></div>
+                <div class="poster p-a has-cover" style="height:100%;aspect-ratio:auto;border-radius:6px"><img class="cover-img" src="assets/covers/movie-2997076.jpg" alt=""></div>
               </div>
               <div style="flex:1;min-width:0">
-                <div class="t14 b600" style="line-height:1.35">大决战之辽沈战役</div>
-                <div class="t11 mt2" style="color:var(--text3)">豆瓣来源 · 8.4</div>
+                <div class="t14 b600" style="line-height:1.35">华尔街之狼</div>
+                <div class="t11 mt2" style="color:var(--text3)">豆瓣来源 · 5.0</div>
               </div>
               <div class="btn ghost xs">换封面</div>
             </div>
 
             <div class="group-label">我自己的记录</div>
             <div class="group-card">
-              <div class="field"><span class="lb">本地日期</span><span class="vl">2026-10-25 <svg class="ico xs chev"><use href="#i-chev"/></svg></span></div>
+              <div class="field"><span class="lb">本地日期</span><span class="vl">2026-11-21 <svg class="ico xs chev"><use href="#i-chev"/></svg></span></div>
               <div class="field"><span class="lb">状态</span><span class="vl"><span class="seg sm" style="width:116px;flex:0 0 116px"><span class="on">已看</span><span>想看</span></span></span></div>
               <div class="field"><span class="lb">评分</span><span class="vl" style="font-size:17px;color:var(--star);letter-spacing:2px">★★★★★</span></div>
-              <div class="field"><span class="lb">时长（分钟）</span><span class="vl">209</span></div>
+              <div class="field"><span class="lb">时长（分钟）</span><span class="vl">180</span></div>
             </div>
 
             <div class="group-label">短评</div>
-            <div class="textarea">拍得真稳。辽沈战役从锦州攻坚到黑山阻击，几条线并行推进而不乱，宏观调度与战壕里的具体恐惧都照顾到了。五星，是给这份克制。</div>
+            <div class="textarea">顶级的传销话术，超绝的精神洗脑，糜烂的荒淫生活。一窥了顶层的纸醉金迷，酒池肉林，尺度也大的惊人。</div>
             <div class="note" style="padding-top:6px">本地改过的评分、短评与日期不会被豆瓣同步覆盖。</div>
 
             <div class="group-card mt12">
@@ -1234,7 +1229,7 @@ body.only .theme-toggle{display:none}
           <div class="under-wall"><i></i><i></i><i></i><i></i><i></i><i></i></div>
         </div>
         <div class="sheet-scrim"></div>
-        <div class="sheet" style="height:726px">
+        <div class="sheet" style="height:760px">
           <div class="grabber"></div>
           <div class="sheet-head"><span class="link">关闭</span><span class="st">同步豆瓣</span><span class="link strong">开始同步</span></div>
           <div class="sheet-body scroll">
@@ -1254,9 +1249,11 @@ body.only .theme-toggle{display:none}
 
             <div class="group-label">同步范围</div>
             <div class="group-card">
-              <div class="field"><span class="fl"><span class="checkbox on"><svg class="ico"><use href="#i-check"/></svg></span><span>观影记录</span></span><span class="vl muted">38 部</span></div>
-              <div class="field"><span class="fl"><span class="checkbox on"><svg class="ico"><use href="#i-check"/></svg></span><span>读书记录</span></span><span class="vl muted">52 本</span></div>
-              <div class="field"><span class="fl"><span class="checkbox on"><svg class="ico"><use href="#i-check"/></svg></span><span>豆列</span></span><span class="vl muted">8 个</span></div>
+              <div class="field"><span class="fl"><span class="checkbox on"><svg class="ico"><use href="#i-check"/></svg></span><span>观影记录</span></span><span class="vl muted">112 部</span></div>
+              <div class="field"><span class="fl"><span class="checkbox on"><svg class="ico"><use href="#i-check"/></svg></span><span>读书记录</span></span><span class="vl muted">98 本</span></div>
+              <div class="field"><span class="fl"><span class="checkbox on"><svg class="ico"><use href="#i-check"/></svg></span><span>想看</span></span><span class="vl muted">51 部</span></div>
+              <div class="field"><span class="fl"><span class="checkbox on"><svg class="ico"><use href="#i-check"/></svg></span><span>想读</span></span><span class="vl muted">57 本</span></div>
+              <div class="field"><span class="fl"><span class="checkbox on"><svg class="ico"><use href="#i-check"/></svg></span><span>豆列</span></span><span class="vl muted">40 个</span></div>
             </div>
             <div class="note" style="padding-top:6px">本地改过的日期、评分与短评始终保留；手动新增的记录不会因远端缺失而被删除。</div>
 
@@ -1339,7 +1336,7 @@ body.only .theme-toggle{display:none}
         <div class="large">
           <div>
             <h3>我的豆列</h3>
-            <div class="cap">自己创建与关注的片单 / 书单 · 8 个</div>
+            <div class="cap">自己创建与关注的片单 / 书单 · 40 个</div>
           </div>
           <div class="icons"><svg class="ico"><use href="#i-search"/></svg><svg class="ico"><use href="#i-sync"/></svg></div>
         </div>
@@ -1347,89 +1344,40 @@ body.only .theme-toggle{display:none}
           <div class="seg gold"><span class="on">影视</span><span>书籍</span></div>
         </div>
         <div class="chips hscroll" style="padding:0 16px 4px">
-          <span class="chip on">全部 8</span><span class="chip">自建 3</span><span class="chip">关注 5</span><span class="chip">含待看</span>
+          <span class="chip on">全部 40</span><span class="chip">关注 40</span><span class="chip">含待看</span>
         </div>
         </div>
         <div class="body scroll">
-          <div class="dl-card">
-            <div class="mosaic">
-              <div class="poster p-a"><span class="pt">大决战</span></div>
-              <div class="poster p-h"><span class="pt">麦克斯</span></div>
-              <div class="poster p-k"><span class="pt">钢琴师</span></div>
-              <div class="poster p-g"><span class="pt">白日梦</span></div>
-            </div>
-            <div class="dl-main">
-              <h5>黑色电影 · 私人片单</h5>
-              <div class="meta">32 部 · 已看 21 部 · 更新 11-12</div>
-              <div class="tags"><span class="tag gold">自建</span><span class="tag">公开</span><span class="tag wish">待看 11</span></div>
-            </div>
-            <div style="display:flex;align-items:center;color:var(--chevron)"><svg class="ico sm"><use href="#i-chev"/></svg></div>
-          </div>
-
-          <div class="dl-card">
-            <div class="mosaic">
-              <div class="poster p-b"><span class="pt">流浪地球</span></div>
-              <div class="poster p-n"><span class="pt">情书</span></div>
-              <div class="poster p-m"><span class="pt">野餐</span></div>
-              <div class="poster p-d"><span class="pt">小森林</span></div>
-            </div>
-            <div class="dl-main">
-              <h5>想在大银幕重看一遍</h5>
-              <div class="meta">18 部 · 已看 9 部 · 更新 11-03</div>
-              <div class="tags"><span class="tag gold">自建</span><span class="tag">仅自己</span></div>
-            </div>
-            <div style="display:flex;align-items:center;color:var(--chevron)"><svg class="ico sm"><use href="#i-chev"/></svg></div>
-          </div>
-
-          <div class="dl-card">
-            <div class="mosaic">
-              <div class="poster p-e"><span class="pt">可怜</span></div>
-              <div class="poster p-j"><span class="pt">沙丘</span></div>
-              <div class="poster p-k2"><span class="pt">火山</span></div>
-              <div class="poster p-b2"><span class="pt">机器人</span></div>
-            </div>
-            <div class="dl-main">
-              <h5>2026 待映 · 关注豆列</h5>
-              <div class="meta">26 部 · 已看 4 部 · 关注中</div>
-              <div class="tags"><span class="tag teal">关注</span><span class="tag wish">待映 14</span></div>
-            </div>
-            <div style="display:flex;align-items:center;color:var(--chevron)"><svg class="ico sm"><use href="#i-chev"/></svg></div>
-          </div>
-
-          <div class="dl-card">
-            <div class="mosaic">
-              <div class="poster p-a2"><span class="pt">椒麻堂会</span></div>
-              <div class="poster p-m"><span class="pt">路边野餐</span></div>
-              <div class="poster p-g"><span class="pt">完美的日子</span></div>
-              <div class="poster p-k"><span class="pt">海上钢琴师</span></div>
-            </div>
-            <div class="dl-main">
-              <h5>华语作者电影补完计划</h5>
-              <div class="meta">41 部 · 已看 27 部 · 更新 10-28</div>
-              <div class="tags"><span class="tag gold">自建</span><span class="tag">协作</span></div>
-            </div>
-            <div style="display:flex;align-items:center;color:var(--chevron)"><svg class="ico sm"><use href="#i-chev"/></svg></div>
-          </div>
-
-          <div class="dl-card">
-            <div class="mosaic">
-              <div class="poster p-b"><span class="pt">沙丘</span></div>
-              <div class="poster p-j"><span class="pt">沙丘 2</span></div>
-              <div class="poster p-n"><span class="pt">瞬息</span></div>
-              <div class="poster p-h"><span class="pt">麦克斯</span></div>
-            </div>
-            <div class="dl-main">
-              <h5>科幻 · 视觉奇观</h5>
-              <div class="meta">24 部 · 已看 16 部 · 关注中</div>
-              <div class="tags"><span class="tag teal">关注</span><span class="tag">公开</span></div>
-            </div>
-            <div style="display:flex;align-items:center;color:var(--chevron)"><svg class="ico sm"><use href="#i-chev"/></svg></div>
-          </div>
+<div class="dl-card">
+  <div class="mosaic"><div class="poster has-cover"><img class="cover-img" src="assets/covers/movie-2353023.jpg" alt=""></div><div class="poster has-cover"><img class="cover-img" src="assets/covers/movie-4824512.jpg" alt=""></div><div class="poster has-cover"><img class="cover-img" src="assets/covers/movie-19899707.jpg" alt=""></div></div>
+  <div class="dl-main"><h5>驯龙高手系列</h5><div class="meta">3 部 · 已看 0 部 · 更新 11-26</div><div class="tags"><span class="tag teal">关注</span><span class="tag">公开</span><span class="tag wish">待看 3</span></div></div>
+  <div style="display:flex;align-items:center;color:var(--chevron)"><svg class="ico sm"><use href="#i-chev"/></svg></div>
+</div>
+<div class="dl-card">
+  <div class="mosaic"><div class="poster has-cover"><img class="cover-img" src="assets/covers/movie-1432146.jpg" alt=""></div><div class="poster has-cover"><img class="cover-img" src="assets/covers/movie-3066739.jpg" alt=""></div><div class="poster has-cover"><img class="cover-img" src="assets/covers/movie-3231742.jpg" alt=""></div></div>
+  <div class="dl-main"><h5>钢铁侠系列</h5><div class="meta">3 部 · 已看 0 部 · 更新 11-26</div><div class="tags"><span class="tag teal">关注</span><span class="tag">公开</span><span class="tag wish">待看 3</span></div></div>
+  <div style="display:flex;align-items:center;color:var(--chevron)"><svg class="ico sm"><use href="#i-chev"/></svg></div>
+</div>
+<div class="dl-card">
+  <div class="mosaic"><div class="poster book has-cover"><img class="cover-img" src="assets/covers/book-1856494.jpg" alt=""></div><div class="poster book has-cover"><img class="cover-img" src="assets/covers/book-1858568.jpg" alt=""></div><div class="poster book has-cover"><img class="cover-img" src="assets/covers/book-1859108.jpg" alt=""></div><div class="poster book has-cover"><img class="cover-img" src="assets/covers/book-1088418.jpg" alt=""></div></div>
+  <div class="dl-main"><h5>陀思妥耶夫斯基代表作</h5><div class="meta">9 部 · 已看 1 部 · 更新 11-26</div><div class="tags"><span class="tag teal">关注</span><span class="tag">公开</span><span class="tag wish">待看 8</span></div></div>
+  <div style="display:flex;align-items:center;color:var(--chevron)"><svg class="ico sm"><use href="#i-chev"/></svg></div>
+</div>
+<div class="dl-card">
+  <div class="mosaic"><div class="poster book has-cover"><img class="cover-img" src="assets/covers/book-26954760.jpg" alt=""></div><div class="poster book has-cover"><img class="cover-img" src="assets/covers/book-2035162.jpg" alt=""></div><div class="poster book has-cover"><img class="cover-img" src="assets/covers/book-10560798.jpg" alt=""></div><div class="poster book has-cover"><span class="pt" style="font-size:7px">人生的枷锁</span></div></div>
+  <div class="dl-main"><h5>毛姆代表作</h5><div class="meta">10 部 · 已看 0 部 · 更新 11-26</div><div class="tags"><span class="tag teal">关注</span><span class="tag">公开</span><span class="tag wish">待看 10</span></div></div>
+  <div style="display:flex;align-items:center;color:var(--chevron)"><svg class="ico sm"><use href="#i-chev"/></svg></div>
+</div>
+<div class="dl-card">
+  <div class="mosaic"><div class="poster book has-cover"><img class="cover-img" src="assets/covers/book-1361264.jpg" alt=""></div><div class="poster book has-cover"><img class="cover-img" src="assets/covers/book-2070844.jpg" alt=""></div><div class="poster book has-cover"><img class="cover-img" src="assets/covers/book-1029111.jpg" alt=""></div><div class="poster book has-cover"><img class="cover-img" src="assets/covers/book-2136140.jpg" alt=""></div></div>
+  <div class="dl-main"><h5>三毛代表作</h5><div class="meta">8 部 · 已看 1 部 · 更新 11-26</div><div class="tags"><span class="tag teal">关注</span><span class="tag">公开</span><span class="tag wish">待看 7</span></div></div>
+  <div style="display:flex;align-items:center;color:var(--chevron)"><svg class="ico sm"><use href="#i-chev"/></svg></div>
+</div>
           <div class="note">豆列按「影视 / 书籍」拆分，封面用 2×2 拼贴；点开可调整条目顺序，或把整列加入某个计划。</div>
         </div>
         <div class="tabbar"><div class="tab"><svg class="ico"><use href="#i-record"/></svg><span>记录</span></div><div class="tab on"><svg class="ico"><use href="#i-list"/></svg><span>豆列</span></div><div class="tab"><svg class="ico"><use href="#i-folder"/></svg><span>计划</span></div><div class="tab"><svg class="ico"><use href="#i-report"/></svg><span>报告</span></div><div class="tab"><svg class="ico"><use href="#i-set"/></svg><span>设置</span></div><div class="homebar"></div></div>
       </div>
-      <figcaption><b>我的豆列 <span class="tagline">列表</span></b>桌面是三列卡片墙，手机改为纵向列表：拼贴封面 + 标题 + 数量 + 状态标签，一屏能看到更多豆列；长按可删除或加入计划。</figcaption>
+      <figcaption><b>我的豆列 <span class="tagline">列表</span></b>桌面是三列卡片墙，手机改为纵向列表：拼贴封面 + 标题 + 数量 + 状态标签，一屏能看到更多豆列；右上角 ⋯ 可删除或加入计划。</figcaption>
     </figure>
 
     <figure>
@@ -1441,83 +1389,59 @@ body.only .theme-toggle{display:none}
           <span class="icons"><svg class="ico"><use href="#i-more"/></svg></span>
         </div>
         <div style="padding:2px 16px 10px">
-          <div class="t22 b700" style="font-size:23px;line-height:1.3">黑色电影 · 私人片单</div>
-          <div class="t115 mt4" style="color:var(--text3)">32 部 · 已看 21 部 · 豆瓣片单 · 更新于 11-12</div>
-          <div class="chips mt8"><span class="tag gold">自建</span><span class="tag">公开</span><span class="tag wish">待看 11</span></div>
+          <div class="t22 b700" style="font-size:23px;line-height:1.3">陀思妥耶夫斯基代表作</div>
+          <div class="t115 mt4" style="color:var(--text3)">9 部 · 已看 1 部 · 豆瓣豆列 · 更新于 11-22</div>
+          <div class="chips mt8"><span class="tag teal">关注</span><span class="tag">公开</span><span class="tag wish">待看 8</span></div>
         </div>
         <div class="title-row" style="padding-bottom:6px">
-          <div class="seg sm"><span class="on">全部 32</span><span>已看 21</span><span>待看 11</span></div>
+          <div class="seg sm"><span class="on">全部 9</span><span>已看 1</span><span>待看 8</span></div>
         </div>
         <div class="chips hscroll" style="padding:0 16px 6px">
           <span class="chip">默认顺序</span><span class="chip on">豆瓣排序</span><span class="chip">评分</span><span class="chip">年份</span>
         </div>
         </div>
         <div class="body scroll">
-          <div class="row">
-            <div class="thumb"><div class="poster p-a"><span class="pt">大决战</span></div></div>
-            <div class="row-main">
-              <div class="row-title">大决战之辽沈战役 <span class="local-dot"></span></div>
-              <div class="row-sub">1991 · 3 小时 29 分 · 已看</div>
-            </div>
-            <div class="right"><span class="tag read">已看</span><svg class="ico xs" style="color:var(--text3)"><use href="#i-edit"/></svg></div>
-          </div>
-          <div class="row">
-            <div class="thumb"><div class="poster p-h"><span class="pt">麦克斯</span></div></div>
-            <div class="row-main">
-              <div class="row-title">疯狂的麦克斯 4：狂暴之路</div>
-              <div class="row-sub">2015 · 2 小时 · 已看</div>
-            </div>
-            <div class="right"><span class="tag read">已看</span><svg class="ico xs" style="color:var(--text3)"><use href="#i-edit"/></svg></div>
-          </div>
-          <div class="row">
-            <div class="thumb"><div class="poster p-k"><span class="pt">钢琴师</span></div></div>
-            <div class="row-main">
-              <div class="row-title">海上钢琴师</div>
-              <div class="row-sub">1998 · 2 小时 45 分 · 已看</div>
-            </div>
-            <div class="right"><span class="tag read">已看</span><svg class="ico xs" style="color:var(--text3)"><use href="#i-edit"/></svg></div>
-          </div>
-          <div class="row">
-            <div class="thumb"><div class="poster p-g"><span class="pt">白日梦</span></div></div>
-            <div class="row-main">
-              <div class="row-title">白日梦想家</div>
-              <div class="row-sub">2013 · 1 小时 54 分 · 已看</div>
-            </div>
-            <div class="right"><span class="tag read">已看</span><svg class="ico xs" style="color:var(--text3)"><use href="#i-edit"/></svg></div>
-          </div>
-          <div class="row">
-            <div class="thumb"><div class="poster p-n"><span class="pt">情书</span></div></div>
-            <div class="row-main">
-              <div class="row-title">情书</div>
-              <div class="row-sub">1995 · 1 小时 57 分 · 已看</div>
-            </div>
-            <div class="right"><span class="tag read">已看</span><svg class="ico xs" style="color:var(--text3)"><use href="#i-edit"/></svg></div>
-          </div>
-          <div class="row">
-            <div class="thumb"><div class="poster p-m"><span class="pt">野餐</span></div></div>
-            <div class="row-main">
-              <div class="row-title">路边野餐</div>
-              <div class="row-sub">2015 · 1 小时 50 分 · 已看</div>
-            </div>
-            <div class="right"><span class="tag read">已看</span><svg class="ico xs" style="color:var(--text3)"><use href="#i-edit"/></svg></div>
-          </div>
-          <div class="row">
-            <div class="thumb"><div class="poster p-b"><span class="pt">流浪地球</span></div></div>
-            <div class="row-main">
-              <div class="row-title">流浪地球 2</div>
-              <div class="row-sub">2023 · 2 小时 53 分 · 已看</div>
-            </div>
-            <div class="right"><span class="tag read">已看</span><svg class="ico xs" style="color:var(--text3)"><use href="#i-edit"/></svg></div>
-          </div>
-          <div class="row">
-            <div class="thumb"><div class="poster p-d"><span class="pt">小森林</span></div></div>
-            <div class="row-main">
-              <div class="row-title">小森林 夏秋篇</div>
-              <div class="row-sub">2014 · 1 小时 51 分 · 已看</div>
-            </div>
-            <div class="right"><span class="tag read">已看</span><svg class="ico xs" style="color:var(--text3)"><use href="#i-edit"/></svg></div>
-          </div>
-          <div class="note">点条目右侧铅笔可改时长 / 页数 / 字数；长按拖动调整顺序。豆列本身只读时，条目变更只影响本地展示。</div>
+<div class="row">
+ <div class="thumb"><div class="poster book has-cover"><img class="cover-img" src="assets/covers/book-1856494.jpg" alt=""></div></div>
+ <div class="row-main"><div class="row-title">卡拉马佐夫兄弟</div><div class="row-sub">未看 · 豆瓣条目</div></div>
+ <div class="right"><span class="tag ">未看</span><svg class="ico xs" style="color:var(--text3)"><use href="#i-edit"/></svg></div>
+</div>
+<div class="row">
+ <div class="thumb"><div class="poster book has-cover"><img class="cover-img" src="assets/covers/book-1858568.jpg" alt=""></div></div>
+ <div class="row-main"><div class="row-title">罪与罚</div><div class="row-sub">已看 · 豆瓣条目</div></div>
+ <div class="right"><span class="tag read">已看</span><svg class="ico xs" style="color:var(--text3)"><use href="#i-edit"/></svg></div>
+</div>
+<div class="row">
+ <div class="thumb"><div class="poster book has-cover"><img class="cover-img" src="assets/covers/book-1859108.jpg" alt=""></div></div>
+ <div class="row-main"><div class="row-title">白痴</div><div class="row-sub">未看 · 豆瓣条目</div></div>
+ <div class="right"><span class="tag ">未看</span><svg class="ico xs" style="color:var(--text3)"><use href="#i-edit"/></svg></div>
+</div>
+<div class="row">
+ <div class="thumb"><div class="poster book has-cover"><img class="cover-img" src="assets/covers/book-1088418.jpg" alt=""></div></div>
+ <div class="row-main"><div class="row-title">死屋手记</div><div class="row-sub">未看 · 豆瓣条目</div></div>
+ <div class="right"><span class="tag ">未看</span><svg class="ico xs" style="color:var(--text3)"><use href="#i-edit"/></svg></div>
+</div>
+<div class="row">
+ <div class="thumb"><div class="poster book has-cover"><img class="cover-img" src="assets/covers/book-1437488.jpg" alt=""></div></div>
+ <div class="row-main"><div class="row-title">群魔</div><div class="row-sub">未看 · 豆瓣条目</div></div>
+ <div class="right"><span class="tag ">未看</span><svg class="ico xs" style="color:var(--text3)"><use href="#i-edit"/></svg></div>
+</div>
+<div class="row">
+ <div class="thumb"><div class="poster book has-cover"><img class="cover-img" src="assets/covers/book-10759466.jpg" alt=""></div></div>
+ <div class="row-main"><div class="row-title">地下室手记</div><div class="row-sub">未看 · 豆瓣条目</div></div>
+ <div class="right"><span class="tag ">未看</span><svg class="ico xs" style="color:var(--text3)"><use href="#i-edit"/></svg></div>
+</div>
+<div class="row">
+ <div class="thumb"><div class="poster book has-cover"><span class="pt" style="font-size:7px">被伤害与侮辱的人</span></div></div>
+ <div class="row-main"><div class="row-title">被伤害与侮辱的人们</div><div class="row-sub">未看 · 豆瓣条目</div></div>
+ <div class="right"><span class="tag ">未看</span><svg class="ico xs" style="color:var(--text3)"><use href="#i-edit"/></svg></div>
+</div>
+<div class="row">
+ <div class="thumb"><div class="poster book has-cover"><span class="pt" style="font-size:7px">中短篇小说选</span></div></div>
+ <div class="row-main"><div class="row-title">中短篇小说选</div><div class="row-sub">未看 · 豆瓣条目</div></div>
+ <div class="right"><span class="tag ">未看</span><svg class="ico xs" style="color:var(--text3)"><use href="#i-edit"/></svg></div>
+</div>
+          <div class="note">点条目右侧铅笔可改时长 / 页数 / 字数；右上角 ⋯ 可调整顺序。豆列本身只读时，条目变更只影响本地展示。</div>
         </div>
         <div class="homebar"></div>
       </div>
@@ -1537,19 +1461,18 @@ body.only .theme-toggle{display:none}
           <div class="sheet-body scroll">
             <div style="display:flex;gap:12px;align-items:center;margin-bottom:12px">
               <div style="width:56px;flex:0 0 56px;aspect-ratio:2/3;border-radius:6px;overflow:hidden">
-                <div class="poster p-a" style="height:100%;aspect-ratio:auto;border-radius:6px;padding:4px"><span class="pt" style="font-size:7px">大决战</span></div>
+                <img class="cover-img" src="assets/covers/book-1858568.jpg" alt="" style="width:100%;height:100%;object-fit:cover">
               </div>
               <div style="flex:1;min-width:0">
-                <div class="t14 b600">大决战之辽沈战役</div>
+                <div class="t14 b600">罪与罚</div>
                 <div class="t11 mt2" style="color:var(--text3)">豆列条目 · 豆瓣来源</div>
               </div>
             </div>
             <div class="group-label">本地补充信息</div>
             <div class="group-card">
               <div class="field"><span class="lb">状态</span><span class="vl"><span class="tag read">已看</span></span></div>
-              <div class="field"><span class="lb">时长（分钟）</span><span class="vl">209</span></div>
-              <div class="field"><span class="lb">页数</span><span class="vl muted">书籍条目可填</span></div>
-              <div class="field"><span class="lb">字数</span><span class="vl muted">书籍条目可填</span></div>
+              <div class="field"><span class="lb">页数</span><span class="vl">471</span></div>
+              <div class="field"><span class="lb">字数</span><span class="vl">367,100</span></div>
             </div>
             <div class="note">这些值只写在本地豆列条目上，用于展示与统计；书籍页数会随云备份快照同步，换设备无需重新从豆瓣补全。</div>
             <div class="group-card mt12">
@@ -1579,60 +1502,39 @@ body.only .theme-toggle{display:none}
         <div class="large">
           <div>
             <h3>我的计划</h3>
-            <div class="cap">观影计划 4 个 · 已看 31/68 部</div>
+            <div class="cap">3 个计划 · 已完成 0/49 项</div>
           </div>
           <div class="icons"><svg class="ico" style="color:var(--gold)"><use href="#i-plus"/></svg></div>
         </div>
         <div class="title-row">
-          <div class="seg gold"><span class="on">观影计划</span><span>读书计划</span></div>
+          <div class="seg gold"><span class="on">全部计划</span><span>已完成</span></div>
         </div>
         <div class="chips hscroll" style="padding:0 16px 4px">
-          <span class="chip on">全部 4</span><span class="chip">进行中 3</span><span class="chip">已完成 1</span>
+          <span class="chip on">全部 3</span><span class="chip">进行中 3</span>
         </div>
         </div>
         <div class="body scroll">
-          <div class="folder-grid">
-            <div class="folder">
-              <div class="stack">
-                <div class="poster p-a s1"><span class="pt">大决战</span></div>
-                <div class="poster p-h s2"><span class="pt">麦克斯</span></div>
-              </div>
-              <h6>2026 年补完 · 战争片</h6>
-              <div class="fm"><span>已看 6/12 部</span><span>50%</span></div>
-              <div class="progress"><div class="fill" style="width:50%"></div></div>
-            </div>
-            <div class="folder">
-              <div class="stack">
-                <div class="poster p-b s1"><span class="pt">流浪地球</span></div>
-                <div class="poster p-n s2"><span class="pt">情书</span></div>
-              </div>
-              <h6>想在大银幕重看</h6>
-              <div class="fm"><span>已看 9/18 部</span><span>50%</span></div>
-              <div class="progress"><div class="fill" style="width:50%"></div></div>
-            </div>
-            <div class="folder">
-              <div class="stack">
-                <div class="poster p-j s1"><span class="pt">沙丘</span></div>
-                <div class="poster p-e s2"><span class="pt">可怜</span></div>
-              </div>
-              <h6>科幻 · 视觉奇观</h6>
-              <div class="fm"><span>已看 11/24 部</span><span>46%</span></div>
-              <div class="progress"><div class="fill" style="width:46%"></div></div>
-            </div>
-            <div class="folder">
-              <div class="stack">
-                <div class="poster p-m s1"><span class="pt">野餐</span></div>
-                <div class="poster p-k s2"><span class="pt">钢琴师</span></div>
-              </div>
-              <h6>华语作者电影</h6>
-              <div class="fm"><span>已看 5/14 部</span><span>36%</span></div>
-              <div class="progress"><div class="fill" style="width:36%"></div></div>
-            </div>
-          </div>
-          <div class="group-card mt12">
-            <div class="field"><span class="fl"><span class="sf-ico read"><svg class="ico"><use href="#i-check"/></svg></span><span>已完成计划</span></span><span class="vl muted">1 个 <svg class="ico xs chev"><use href="#i-chev"/></svg></span></div>
-          </div>
-          <div class="note">每个计划是一个文件夹；卡片可用右上菜单上移、下移或删除，进度按已看条目计算。</div>
+<div class="folder-grid">
+<div class="folder">
+  <div class="stack"><div class="poster has-cover s1"><img class="cover-img" src="assets/covers/movie-2353023.jpg" alt=""></div><div class="poster has-cover s2"><img class="cover-img" src="assets/covers/movie-4824512.jpg" alt=""></div></div>
+  <h6>补完计划</h6>
+  <div class="fm"><span>已完成 0/21 项</span><span>0%</span></div>
+  <div class="progress"><div class="fill" style="width:0%"></div></div>
+</div>
+<div class="folder">
+  <div class="stack"><div class="poster book has-cover s1"><img class="cover-img" src="assets/covers/book-35897952.jpg" alt=""></div><div class="poster book has-cover s2"><img class="cover-img" src="assets/covers/book-25720918.jpg" alt=""></div></div>
+  <h6>读书计划 壹</h6>
+  <div class="fm"><span>已完成 0/14 项</span><span>0%</span></div>
+  <div class="progress"><div class="fill" style="width:0%"></div></div>
+</div>
+<div class="folder">
+  <div class="stack"><div class="poster book has-cover s1"><img class="cover-img" src="assets/covers/book-24736899.jpg" alt=""></div><div class="poster book has-cover s2"><img class="cover-img" src="assets/covers/book-1205054.jpg" alt=""></div></div>
+  <h6>读书计划 贰</h6>
+  <div class="fm"><span>已完成 0/14 项</span><span>0%</span></div>
+  <div class="progress"><div class="fill" style="width:0%"></div></div>
+</div>
+</div>
+          <div class="note">每个计划是一个文件夹；卡片可用右上菜单上移、下移或删除，进度按已完成条目计算。</div>
         </div>
         <div class="tabbar"><div class="tab"><svg class="ico"><use href="#i-record"/></svg><span>记录</span></div><div class="tab"><svg class="ico"><use href="#i-list"/></svg><span>豆列</span></div><div class="tab on"><svg class="ico"><use href="#i-folder"/></svg><span>计划</span></div><div class="tab"><svg class="ico"><use href="#i-report"/></svg><span>报告</span></div><div class="tab"><svg class="ico"><use href="#i-set"/></svg><span>设置</span></div><div class="homebar"></div></div>
       </div>
@@ -1648,64 +1550,64 @@ body.only .theme-toggle{display:none}
           <span class="icons"><svg class="ico"><use href="#i-more"/></svg></span>
         </div>
         <div style="padding:2px 16px 8px">
-          <div class="t22 b700" style="font-size:23px;line-height:1.3">2026 年补完 · 战争片</div>
-          <div class="t115 mt4" style="color:var(--text3)">已看 6/12 部 · 未看 6 部 · 备注：按时间顺序补</div>
+          <div class="t22 b700" style="font-size:23px;line-height:1.3">补完计划</div>
+          <div class="t115 mt4" style="color:var(--text3)">已看 0/21 项 · 未看 21 项</div>
           <div class="progress mt8" style="height:7px"><div class="fill" style="width:50%"></div></div>
         </div>
         <div class="title-row" style="padding-bottom:6px">
-          <div class="seg sm"><span class="on">全部 12</span><span>已看 6</span><span>未看 6</span></div>
+          <div class="seg sm"><span class="on">全部 21</span><span>已看 0</span><span>未看 21</span></div>
         </div>
         </div>
         <div class="body scroll" style="padding-bottom:4px">
-          <div class="row">
-            <span class="pos">1</span>
-            <div class="thumb"><div class="poster p-a"><span class="pt">大决战</span></div></div>
-            <div class="row-main"><div class="row-title">大决战之辽沈战役</div><div class="row-sub">已看 · 3 小时 29 分 · 10-25</div></div>
-            <div class="right"><svg class="ico xs" style="color:var(--text4)"><use href="#i-drag"/></svg></div>
-          </div>
-          <div class="row">
-            <span class="pos">2</span>
-            <div class="thumb"><div class="poster p-a"><span class="pt">大决战</span></div></div>
-            <div class="row-main"><div class="row-title">大决战之淮海战役</div><div class="row-sub">未看 · 3 小时 40 分</div></div>
-            <div class="right"><svg class="ico xs" style="color:var(--text4)"><use href="#i-drag"/></svg></div>
-          </div>
-          <div class="row">
-            <span class="pos">3</span>
-            <div class="thumb"><div class="poster p-a"><span class="pt">大决战</span></div></div>
-            <div class="row-main"><div class="row-title">大决战之平津战役</div><div class="row-sub">未看 · 3 小时 6 分</div></div>
-            <div class="right"><svg class="ico xs" style="color:var(--text4)"><use href="#i-drag"/></svg></div>
-          </div>
-          <div class="row">
-            <span class="pos">4</span>
-            <div class="thumb"><div class="poster p-m"><span class="pt">野餐</span></div></div>
-            <div class="row-main"><div class="row-title">路边野餐</div><div class="row-sub">已看 · 1 小时 50 分 · 10-24</div></div>
-            <div class="right"><svg class="ico xs" style="color:var(--text4)"><use href="#i-drag"/></svg></div>
-          </div>
-          <div class="row">
-            <span class="pos">5</span>
-            <div class="thumb"><div class="poster p-h"><span class="pt">麦克斯</span></div></div>
-            <div class="row-main"><div class="row-title">疯狂的麦克斯 4：狂暴之路</div><div class="row-sub">已看 · 2 小时 · 10-12</div></div>
-            <div class="right"><svg class="ico xs" style="color:var(--text4)"><use href="#i-drag"/></svg></div>
-          </div>
-          <div class="row">
-            <span class="pos">6</span>
-            <div class="thumb"><div class="poster p-k"><span class="pt">钢琴师</span></div></div>
-            <div class="row-main"><div class="row-title">海上钢琴师</div><div class="row-sub">已看 · 2 小时 45 分 · 10-12</div></div>
-            <div class="right"><svg class="ico xs" style="color:var(--text4)"><use href="#i-drag"/></svg></div>
-          </div>
-          <div class="row">
-            <span class="pos">7</span>
-            <div class="thumb"><div class="poster p-g"><span class="pt">白日梦</span></div></div>
-            <div class="row-main"><div class="row-title">白日梦想家</div><div class="row-sub">已看 · 1 小时 54 分 · 10-11</div></div>
-            <div class="right"><svg class="ico xs" style="color:var(--text4)"><use href="#i-drag"/></svg></div>
-          </div>
-          <div class="row">
-            <span class="pos">8</span>
-            <div class="thumb"><div class="poster p-n"><span class="pt">情书</span></div></div>
-            <div class="row-main"><div class="row-title">情书</div><div class="row-sub">已看 · 1 小时 57 分 · 09-30</div></div>
-            <div class="right"><svg class="ico xs" style="color:var(--text4)"><use href="#i-drag"/></svg></div>
-          </div>
-          <div class="note">长按行拖动排序；点条目打开豆瓣页面。已看条目不占「未看」计数，可随时从计划移除。</div>
+<div class="row">
+ <span class="pos">1</span>
+ <div class="thumb"><div class="poster has-cover"><img class="cover-img" src="assets/covers/movie-2353023.jpg" alt=""></div></div>
+ <div class="row-main"><div class="row-title">驯龙高手</div><div class="row-sub">未看 · 1 小时 38 分</div></div>
+ <div class="right"><svg class="ico xs" style="color:var(--text4)"><use href="#i-drag"/></svg></div>
+</div>
+<div class="row">
+ <span class="pos">2</span>
+ <div class="thumb"><div class="poster has-cover"><img class="cover-img" src="assets/covers/movie-4824512.jpg" alt=""></div></div>
+ <div class="row-main"><div class="row-title">驯龙高手2</div><div class="row-sub">未看 · 1 小时 42 分</div></div>
+ <div class="right"><svg class="ico xs" style="color:var(--text4)"><use href="#i-drag"/></svg></div>
+</div>
+<div class="row">
+ <span class="pos">3</span>
+ <div class="thumb"><div class="poster has-cover"><img class="cover-img" src="assets/covers/movie-19899707.jpg" alt=""></div></div>
+ <div class="row-main"><div class="row-title">驯龙高手3</div><div class="row-sub">未看 · 1 小时 44 分</div></div>
+ <div class="right"><svg class="ico xs" style="color:var(--text4)"><use href="#i-drag"/></svg></div>
+</div>
+<div class="row">
+ <span class="pos">4</span>
+ <div class="thumb"><div class="poster has-cover"><img class="cover-img" src="assets/covers/movie-1292720.jpg" alt=""></div></div>
+ <div class="row-main"><div class="row-title">阿甘正传 / Forrest Gump</div><div class="row-sub">未看 · 2 小时 22 分</div></div>
+ <div class="right"><svg class="ico xs" style="color:var(--text4)"><use href="#i-drag"/></svg></div>
+</div>
+<div class="row">
+ <span class="pos">5</span>
+ <div class="thumb"><div class="poster has-cover"><img class="cover-img" src="assets/covers/movie-1432146.jpg" alt=""></div></div>
+ <div class="row-main"><div class="row-title">钢铁侠</div><div class="row-sub">未看 · 2 小时 6 分</div></div>
+ <div class="right"><svg class="ico xs" style="color:var(--text4)"><use href="#i-drag"/></svg></div>
+</div>
+<div class="row">
+ <span class="pos">6</span>
+ <div class="thumb"><div class="poster has-cover"><img class="cover-img" src="assets/covers/movie-3066739.jpg" alt=""></div></div>
+ <div class="row-main"><div class="row-title">钢铁侠2</div><div class="row-sub">未看 · 2 小时 4 分</div></div>
+ <div class="right"><svg class="ico xs" style="color:var(--text4)"><use href="#i-drag"/></svg></div>
+</div>
+<div class="row">
+ <span class="pos">7</span>
+ <div class="thumb"><div class="poster has-cover"><img class="cover-img" src="assets/covers/movie-3231742.jpg" alt=""></div></div>
+ <div class="row-main"><div class="row-title">钢铁侠3</div><div class="row-sub">未看 · 2 小时 14 分</div></div>
+ <div class="right"><svg class="ico xs" style="color:var(--text4)"><use href="#i-drag"/></svg></div>
+</div>
+<div class="row">
+ <span class="pos">8</span>
+ <div class="thumb"><div class="poster has-cover"><img class="cover-img" src="assets/covers/movie-1305487.jpg" alt=""></div></div>
+ <div class="row-main"><div class="row-title">猫鼠游戏 / Catch Me If You Can</div><div class="row-sub">未看 · 2 小时 21 分</div></div>
+ <div class="right"><svg class="ico xs" style="color:var(--text4)"><use href="#i-drag"/></svg></div>
+</div>
+          <div class="note">拖动行右侧手柄排序；点条目打开豆瓣页面。已看条目不占「未看」计数，可随时从计划移除。</div>
         </div>
         <div class="plan-actions">
           <div class="pa"><svg class="ico"><use href="#i-plus"/></svg><span>想读 / 想看</span></div>
@@ -1730,37 +1632,37 @@ body.only .theme-toggle{display:none}
           <div class="sheet-body scroll">
             <div class="searchbar"><svg class="ico"><use href="#i-search"/></svg><span>搜索标题 / 简介</span></div>
             <div class="chips mt8">
-              <span class="chip on">全部 38</span><span class="chip">电影 28</span><span class="chip">剧集 10</span>
+              <span class="chip on">全部 51</span><span class="chip">电影 51</span>
             </div>
             <div class="section-t"><span>想读 / 想看 · 未加入计划</span><span class="link">全选</span></div>
             <div class="row">
-              <div class="thumb"><div class="poster p-j"><span class="pt">沙丘</span></div></div>
-              <div class="row-main"><div class="row-title">沙丘 3</div><div class="row-sub">想看 · 待映 12-20</div></div>
+              <div class="thumb"><div class="poster p-j has-cover"><img class="cover-img" src="assets/covers/movie-1292365.jpg" alt=""></div></div>
+              <div class="row-main"><div class="row-title">活着</div><div class="row-sub">想看 · 标记于 11-21</div></div>
               <div class="right"><span class="checkbox on"><svg class="ico"><use href="#i-check"/></svg></span></div>
             </div>
             <div class="row">
-              <div class="thumb"><div class="poster p-g"><span class="pt">完美的日子</span></div></div>
-              <div class="row-main"><div class="row-title">完美的日子</div><div class="row-sub">想看 · 2 小时 4 分</div></div>
+              <div class="thumb"><div class="poster p-g has-cover"><img class="cover-img" src="assets/covers/movie-1293172.jpg" alt=""></div></div>
+              <div class="row-main"><div class="row-title">末代皇帝</div><div class="row-sub">想看 · 标记于 11-21</div></div>
               <div class="right"><span class="checkbox on"><svg class="ico"><use href="#i-check"/></svg></span></div>
             </div>
             <div class="row">
-              <div class="thumb"><div class="poster p-b2"><span class="pt">机器人</span></div></div>
-              <div class="row-main"><div class="row-title">机器人之梦</div><div class="row-sub">想看 · 1 小时 42 分 · 已在「科幻 · 视觉奇观」计划中</div></div>
+              <div class="thumb"><div class="poster p-b2 has-cover"><img class="cover-img" src="assets/covers/movie-5912992.jpg" alt=""></div></div>
+              <div class="row-main"><div class="row-title">熔炉</div><div class="row-sub">想看 · 标记于 11-21</div></div>
               <div class="right"><span class="checkbox lock"><svg class="ico"><use href="#i-lock"/></svg></span></div>
             </div>
             <div class="row">
-              <div class="thumb"><div class="poster p-a2"><span class="pt">椒麻堂会</span></div></div>
-              <div class="row-main"><div class="row-title">椒麻堂会</div><div class="row-sub">想看 · 2 小时 59 分</div></div>
+              <div class="thumb"><div class="poster p-a2 has-cover"><img class="cover-img" src="assets/covers/movie-1292063.jpg" alt=""></div></div>
+              <div class="row-main"><div class="row-title">美丽人生</div><div class="row-sub">想看 · 标记于 11-21</div></div>
               <div class="right"><span class="checkbox"></span></div>
             </div>
             <div class="row">
-              <div class="thumb"><div class="poster p-k2"><span class="pt">火山</span></div></div>
-              <div class="row-main"><div class="row-title">火山挚恋</div><div class="row-sub">想看 · 1 小时 38 分</div></div>
+              <div class="thumb"><div class="poster p-k2 has-cover"><img class="cover-img" src="assets/covers/movie-1301726.jpg" alt=""></div></div>
+              <div class="row-main"><div class="row-title">兵临城下</div><div class="row-sub">想看 · 标记于 11-07</div></div>
               <div class="right"><span class="checkbox"></span></div>
             </div>
             <div class="row">
-              <div class="thumb"><div class="poster p-e"><span class="pt">可怜</span></div></div>
-              <div class="row-main"><div class="row-title">可怜的东西</div><div class="row-sub">想看 · 2 小时 21 分 · 已在「2026 待映」计划中</div></div>
+              <div class="thumb"><div class="poster p-e has-cover"><img class="cover-img" src="assets/covers/movie-1309071.jpg" alt=""></div></div>
+              <div class="row-main"><div class="row-title">天国王朝</div><div class="row-sub">想看 · 标记于 11-07</div></div>
               <div class="right"><span class="checkbox lock"><svg class="ico"><use href="#i-lock"/></svg></span></div>
             </div>
             <div class="note">已在其他计划中的条目会给出提示；同一计划内不可重复添加。添加后计划内可继续拖动排序。</div>
@@ -1782,42 +1684,27 @@ body.only .theme-toggle{display:none}
           <div class="sheet-head"><span class="link">取消</span><span class="st">从豆列添加</span><span class="link strong">添加 3 项</span></div>
           <div class="sheet-body scroll">
             <div class="group-card">
-              <div class="field"><span class="lb">选择豆列</span><span class="vl">黑色电影 · 私人片单 <svg class="ico xs chev"><use href="#i-chev"/></svg></span></div>
+              <div class="field"><span class="lb">选择豆列</span><span class="vl">钢铁侠系列 <svg class="ico xs chev"><use href="#i-chev"/></svg></span></div>
             </div>
             <div class="flexb mt10">
               <div class="searchbar" style="flex:1"><svg class="ico"><use href="#i-search"/></svg><span>搜索标题 / 简介</span></div>
               <span class="btn ghost xs" style="margin-left:8px">全选</span>
             </div>
-            <div class="section-t"><span>这个豆列 · 32 部</span><span class="link">已选 3</span></div>
+            <div class="section-t"><span>这个豆列 · 3 部</span><span class="link">已选 3</span></div>
             <div class="row">
-              <div class="thumb"><div class="poster p-a"><span class="pt">大决战</span></div></div>
-              <div class="row-main"><div class="row-title">大决战之辽沈战役</div><div class="row-sub">已看 · 3 小时 29 分</div></div>
+              <div class="thumb"><div class="poster p-a has-cover"><img class="cover-img" src="assets/covers/movie-1432146.jpg" alt=""></div></div>
+              <div class="row-main"><div class="row-title">钢铁侠</div><div class="row-sub">未看 · 2 小时 6 分</div></div>
               <div class="right"><span class="checkbox on"><svg class="ico"><use href="#i-check"/></svg></span></div>
             </div>
             <div class="row">
-              <div class="thumb"><div class="poster p-a"><span class="pt">大决战</span></div></div>
-              <div class="row-main"><div class="row-title">大决战之淮海战役</div><div class="row-sub">未看 · 3 小时 40 分</div></div>
+              <div class="thumb"><div class="poster p-a has-cover"><img class="cover-img" src="assets/covers/movie-3066739.jpg" alt=""></div></div>
+              <div class="row-main"><div class="row-title">钢铁侠 2</div><div class="row-sub">未看 · 2 小时 4 分</div></div>
               <div class="right"><span class="checkbox on"><svg class="ico"><use href="#i-check"/></svg></span></div>
             </div>
             <div class="row">
-              <div class="thumb"><div class="poster p-a"><span class="pt">大决战</span></div></div>
-              <div class="row-main"><div class="row-title">大决战之平津战役</div><div class="row-sub">未看 · 3 小时 6 分</div></div>
+              <div class="thumb"><div class="poster p-a has-cover"><img class="cover-img" src="assets/covers/movie-3231742.jpg" alt=""></div></div>
+              <div class="row-main"><div class="row-title">钢铁侠 3</div><div class="row-sub">未看 · 2 小时 14 分</div></div>
               <div class="right"><span class="checkbox on"><svg class="ico"><use href="#i-check"/></svg></span></div>
-            </div>
-            <div class="row">
-              <div class="thumb"><div class="poster p-h"><span class="pt">麦克斯</span></div></div>
-              <div class="row-main"><div class="row-title">疯狂的麦克斯 4：狂暴之路</div><div class="row-sub">已看 · 2 小时</div></div>
-              <div class="right"><span class="checkbox"></span></div>
-            </div>
-            <div class="row">
-              <div class="thumb"><div class="poster p-k"><span class="pt">钢琴师</span></div></div>
-              <div class="row-main"><div class="row-title">海上钢琴师</div><div class="row-sub">已看 · 2 小时 45 分</div></div>
-              <div class="right"><span class="checkbox"></span></div>
-            </div>
-            <div class="row">
-              <div class="thumb"><div class="poster p-n"><span class="pt">情书</span></div></div>
-              <div class="row-main"><div class="row-title">情书</div><div class="row-sub">已在「想在大银幕重看」计划中</div></div>
-              <div class="right"><span class="checkbox lock"><svg class="ico"><use href="#i-lock"/></svg></span></div>
             </div>
             <div class="note">只显示与当前计划类型一致的条目；已在当前计划中的条目不可重复添加。</div>
           </div>
@@ -1839,7 +1726,7 @@ body.only .theme-toggle{display:none}
           <div class="sheet-body">
             <div class="seg gold" style="margin-bottom:12px"><span class="on">观影计划</span><span>读书计划</span></div>
             <div class="group-label" style="padding-top:0">计划名称</div>
-            <div class="input on"><span>2026 年补完 · 战争片</span></div>
+            <div class="input on"><span>补完计划</span></div>
             <div class="group-label">备注（可选）</div>
             <div class="textarea" style="min-height:84px"><span class="ph">例如：按时间顺序补，先看辽沈战役</span></div>
             <div class="note">创建后在计划详情里从「想读/想看」或「豆列」添加条目，也可以随时重命名或删除。</div>
@@ -1917,6 +1804,21 @@ body.only .theme-toggle{display:none}
             </div>
             <svg class="ico sm" style="color:var(--text3)"><use href="#i-more"/></svg>
           </div>
+          <div class="report-file">
+            <div class="rf-ico"><svg class="ico"><use href="#i-doc"/></svg></div>
+            <div class="rf-main"><div class="rf-title">2026 年 · 读书年报</div><div class="rf-meta">42 本 · HTML + PNG · 生成于 01-06 22:20</div></div>
+            <svg class="ico sm" style="color:var(--text3)"><use href="#i-more"/></svg>
+          </div>
+          <div class="report-file">
+            <div class="rf-ico"><svg class="ico"><use href="#i-doc"/></svg></div>
+            <div class="rf-main"><div class="rf-title">2026 年 10 月 · 读书月报</div><div class="rf-meta">3 本 · HTML + PNG · 生成于 11-01 09:14</div></div>
+            <svg class="ico sm" style="color:var(--text3)"><use href="#i-more"/></svg>
+          </div>
+          <div class="report-file">
+            <div class="rf-ico"><svg class="ico"><use href="#i-doc"/></svg></div>
+            <div class="rf-main"><div class="rf-title">观影 · 自定义报告</div><div class="rf-meta">28 部 · HTML · 生成于 09-18 10:20</div></div>
+            <svg class="ico sm" style="color:var(--text3)"><use href="#i-more"/></svg>
+          </div>
           <div class="btn ghost mt8" style="width:100%"><svg class="ico"><use href="#i-cal"/></svg>批量生成 2026 年全部月报</div>
           <div class="note">桌面按「月 / 年 / 自定义 / 全部」四档生成；手机保留同样四档，把「最近生成」做成可打开、分享、删除的清单。</div>
         </div>
@@ -1957,26 +1859,27 @@ body.only .theme-toggle{display:none}
 
             <div class="rp-sec">TOP 5 · TOP RATED</div>
             <div class="rp-hero">
-              <div class="poster p-a"><span class="pt">大决战<br>辽沈战役</span><span class="pb">The Great Decisive War</span></div>
+              <div class="poster p-a has-cover"><img class="cover-img" src="assets/covers/movie-1292064.jpg" alt=""></div>
               <div class="rp-rank">
-                <div class="it"><span class="no">01</span><div><b>大决战之辽沈战役</b><span class="st">★★★★★</span><span class="dt">2026-10-25 · 3 小时 29 分</span></div></div>
-                <div class="it"><span class="no">02</span><div><b>疯狂的麦克斯 4：狂暴之路</b><span class="st">★★★★★</span><span class="dt">2026-10-12 · 2 小时</span></div></div>
-                <div class="it"><span class="no">03</span><div><b>海上钢琴师</b><span class="st">★★★★★</span><span class="dt">2026-10-12 · 2 小时 45 分</span></div></div>
-                <div class="it"><span class="no">04</span><div><b>流浪地球 2</b><span class="st">★★★★</span><span class="dt">2026-10-25 · 2 小时 53 分</span></div></div>
-                <div class="it"><span class="no">05</span><div><b>情书</b><span class="st">★★★★★</span><span class="dt">2026-09-30 · 1 小时 57 分</span></div></div>
+                <div class="it"><span class="no">01</span><div><b>楚门的世界</b><span class="st">★★★★★</span><span class="dt">2026-10-31 · 1 小时 43 分</span></div></div>
+                <div class="it"><span class="no">02</span><div><b>大决战之平津战役</b><span class="st">★★★★</span><span class="dt">2026-10-30 · 2 小时 41 分</span></div></div>
+                <div class="it"><span class="no">03</span><div><b>大决战之淮海战役</b><span class="st">★★★★★</span><span class="dt">2026-10-30 · 3 小时 40 分</span></div></div>
+                <div class="it"><span class="no">04</span><div><b>大决战之辽沈战役</b><span class="st">★★★★★</span><span class="dt">2026-10-24 · 3 小时 29 分</span></div></div>
+                <div class="it"><span class="no">05</span><div><b>疯狂的麦克斯 4：狂暴之路</b><span class="st">★★★★★</span><span class="dt">2026-10-17 · 2 小时</span></div></div>
               </div>
             </div>
 
             <div class="rp-sec">整合海报 · POSTER WALL</div>
             <div class="rp-wall">
-              <div class="poster p-a"><span class="pt">大决战</span></div>
-              <div class="poster p-h"><span class="pt">麦克斯</span></div>
-              <div class="poster p-n"><span class="pt">情书</span></div>
-              <div class="poster p-b"><span class="pt">流浪地球</span></div>
-              <div class="poster p-k"><span class="pt">钢琴师</span></div>
-              <div class="poster p-g"><span class="pt">白日梦</span></div>
-              <div class="poster p-d"><span class="pt">小森林</span></div>
-              <div class="poster p-m"><span class="pt">野餐</span></div>
+              <div class="poster has-cover"><img class="cover-img" src="assets/covers/movie-1292064.jpg" alt=""></div>
+              <div class="poster has-cover"><img class="cover-img" src="assets/covers/movie-1307729.jpg" alt=""></div>
+              <div class="poster has-cover"><img class="cover-img" src="assets/covers/movie-1424551.jpg" alt=""></div>
+              <div class="poster has-cover"><img class="cover-img" src="assets/covers/movie-1424552.jpg" alt=""></div>
+              <div class="poster has-cover"><img class="cover-img" src="assets/covers/movie-34996127.jpg" alt=""></div>
+              <div class="poster has-cover"><img class="cover-img" src="assets/covers/movie-3592854.jpg" alt=""></div>
+              <div class="poster has-cover"><img class="cover-img" src="assets/covers/movie-33455421.jpg" alt=""></div>
+              <div class="poster has-cover"><img class="cover-img" src="assets/covers/movie-26909790.jpg" alt=""></div>
+              <div class="poster has-cover"><img class="cover-img" src="assets/covers/movie-26333560.jpg" alt=""></div>
             </div>
 
             <div class="rp-sec">观影日历 · CALENDAR</div>
@@ -1991,10 +1894,10 @@ body.only .theme-toggle{display:none}
 
             <div class="rp-sec">短评摘录 · NOTES</div>
             <div class="rp-notes">
-              <div class="rp-note"><b>大决战之辽沈战役</b>拍得真稳。锦州攻坚到黑山阻击，几条线并行不亂。<div class="dt"><span>10.25</span><span>★★★★★</span></div></div>
-              <div class="rp-note"><b>海上钢琴师</b>他最后没有下船，因为城市没有尽头。<div class="dt"><span>10.12</span><span>★★★★★</span></div></div>
-              <div class="rp-note"><b>路边野餐</b>过去心不可得，现在心不可得。<div class="dt"><span>10.24</span><span>★★★★</span></div></div>
-              <div class="rp-note"><b>白日梦想家</b>生活的目的就是生活本身。<div class="dt"><span>10.11</span><span>★★★★</span></div></div>
+              <div class="rp-note"><b>楚门的世界</b>什么也挡不住对远方与自由的向往。<div class="dt"><span>10.31</span><span>★★★★★</span></div></div>
+              <div class="rp-note"><b>大决战之平津战役</b>东野出关，先以雷霆之势二十九小时解放天津。<div class="dt"><span>10.30</span><span>★★★★</span></div></div>
+              <div class="rp-note"><b>大决战之淮海战役</b>华野与中野合力，最终全歼杜聿明部。<div class="dt"><span>10.30</span><span>★★★★★</span></div></div>
+              <div class="rp-note"><b>疯狂的麦克斯 4</b>两个小时几乎一直在跑，但每一帧都在讲故事。<div class="dt"><span>10.17</span><span>★★★★★</span></div></div>
             </div>
 
             <div class="rp-foot"><span>数据来自「书影记录」观影记录 · 共 14 部</span><span>2026-11-01 生成</span></div>
@@ -2048,6 +1951,67 @@ body.only .theme-toggle{display:none}
   </div>
 </section>
 
+<section class="group" id="g-reportstyles" data-group="reportstyles">
+  <div class="group-head">
+    <span class="group-num">04B</span>
+    <h2>报告样式</h2>
+    <p>同一份报告内容 · 五种移动端样式 · 页内切换</p>
+  </div>
+  <div class="report-style-lab">
+    <div class="report-style-panel">
+      <div class="eyebrow">REPORT / MOBILE</div>
+      <h3>同一份内容，换一种阅读节奏</h3>
+      <p>报告仍由桌面端数据生成，只调整移动端 CSS。切换不会离开当前原型，也不需要重新导出一份文件。</p>
+      <div class="report-style-tabs" role="tablist" aria-label="报告样式">
+        <button class="report-style-tab on" type="button" data-file="v1-noir.html" role="tab" aria-selected="true">
+          <span class="style-dot dark"></span><b>V1 · Noir</b><small>深色延续 · 推荐默认</small>
+        </button>
+        <button class="report-style-tab" type="button" data-file="v2-paper.html" role="tab" aria-selected="false">
+          <span class="style-dot paper"></span><b>V2 · Paper</b><small>暖白纸感 · 亮色主题</small>
+        </button>
+        <button class="report-style-tab" type="button" data-file="v3-compact.html" role="tab" aria-selected="false">
+          <span class="style-dot compact"></span><b>V3 · Compact</b><small>高密度 · 长报告</small>
+        </button>
+        <button class="report-style-tab" type="button" data-file="v4-book-dark.html" role="tab" aria-selected="false">
+          <span class="style-dot dark"></span><b>V4 · Book Dark</b><small>书籍年报 · 深色</small>
+        </button>
+        <button class="report-style-tab" type="button" data-file="v5-book-light.html" role="tab" aria-selected="false">
+          <span class="style-dot paper"></span><b>V5 · Book Light</b><small>书籍年报 · 亮色</small>
+        </button>
+      </div>
+      <div class="report-style-note"><span class="tag gold">建议</span>移动端用 V1 Noir / V2 Paper；书籍年报用 V4 Book Dark / V5 Book Light；V3 保留为高密度备选。</div>
+      <div class="report-style-meta">
+        <span>390pt 宽</span><span>电影 / 书籍</span><span>可滚动预览</span>
+      </div>
+    </div>
+    <figure class="report-style-figure">
+      <div class="phone report-preview-phone">
+        <iframe id="reportStyleFrame" class="report-style-frame" src="report-styles/v1-noir.html" title="移动端报告预览"></iframe>
+      </div>
+      <figcaption><b>报告样式预览 <span class="tagline" id="reportStyleLabel">V1 · Noir</span></b>在手机壳内直接滚动查看；切换上面的样式只是替换 iframe 的 HTML，不会改变原型其它屏幕。</figcaption>
+    </figure>
+  </div>
+</section>
+<script>
+  (function () {
+    var frame = document.getElementById('reportStyleFrame');
+    var label = document.getElementById('reportStyleLabel');
+    if (!frame) return;
+    document.querySelectorAll('.report-style-tab').forEach(function (tab) {
+      tab.addEventListener('click', function () {
+        document.querySelectorAll('.report-style-tab').forEach(function (item) {
+          item.classList.remove('on');
+          item.setAttribute('aria-selected', 'false');
+        });
+        tab.classList.add('on');
+        tab.setAttribute('aria-selected', 'true');
+        frame.src = 'report-styles/' + tab.dataset.file;
+        if (label) label.textContent = tab.querySelector('b').textContent;
+      });
+    });
+  })();
+</script>
+
 <section class="group" id="g-settings" data-group="settings">
   <div class="group-head">
     <span class="group-num">05</span>
@@ -2073,10 +2037,10 @@ body.only .theme-toggle{display:none}
               <div class="pn">猫九</div>
               <div class="ps">豆瓣 ID catnine · 上次同步 11-20 21:06</div>
             </div>
-            <span class="pstat">已连接</span>
+            <span class="pstat">未登录</span>
           </div>
           <div class="flexb" style="padding:2px 4px 6px">
-            <span class="t12" style="color:var(--text3)">128 条记录 · 8 个豆列 · 4 个计划</span>
+            <span class="t12" style="color:var(--text3)">318 条记录 · 40 个豆列 · 3 个计划</span>
             <span class="t12" style="color:var(--gold)">数据概览</span>
           </div>
         </div>
@@ -2093,10 +2057,10 @@ body.only .theme-toggle{display:none}
           <div class="settings-group">
             <div class="group-label">数据与探索</div>
             <div class="group-card">
-              <div class="field"><span class="fl"><span class="sf-ico blue"><svg class="ico"><use href="#i-upload"/></svg></span><span>Excel 导入 / 导出</span></span><span class="vl muted">128 条记录 <svg class="ico xs chev"><use href="#i-chev"/></svg></span></div>
-              <div class="field"><span class="fl"><span class="sf-ico gold"><svg class="ico"><use href="#i-cloud"/></svg></span><span>云同步</span></span><span class="vl">iCloud Drive · 11-20 <svg class="ico xs chev"><use href="#i-chev"/></svg></span></div>
-              <div class="field"><span class="fl"><span class="sf-ico violet"><svg class="ico"><use href="#i-doc"/></svg></span><span>书籍字数统计</span></span><span class="vl">1,842.6 万字 <svg class="ico xs chev"><use href="#i-chev"/></svg></span></div>
-              <div class="field"><span class="fl"><span class="sf-ico red"><svg class="ico"><use href="#i-trash"/></svg></span><span>回收站</span></span><span class="vl">3 条 <svg class="ico xs chev"><use href="#i-chev"/></svg></span></div>
+              <div class="field"><span class="fl"><span class="sf-ico blue"><svg class="ico"><use href="#i-upload"/></svg></span><span>Excel 导入 / 导出</span></span><span class="vl muted">318 条记录 <svg class="ico xs chev"><use href="#i-chev"/></svg></span></div>
+              <div class="field"><span class="fl"><span class="sf-ico gold"><svg class="ico"><use href="#i-cloud"/></svg></span><span>云同步</span></span><span class="vl">书影记录 · 11 月 22 日 01:37 <svg class="ico xs chev"><use href="#i-chev"/></svg></span></div>
+              <div class="field"><span class="fl"><span class="sf-ico violet"><svg class="ico"><use href="#i-doc"/></svg></span><span>书籍字数统计</span></span><span class="vl">4,052.4 万字 <svg class="ico xs chev"><use href="#i-chev"/></svg></span></div>
+              <div class="field"><span class="fl"><span class="sf-ico red"><svg class="ico"><use href="#i-trash"/></svg></span><span>回收站</span></span><span class="vl">0 条 <svg class="ico xs chev"><use href="#i-chev"/></svg></span></div>
               <div class="field"><span class="fl"><span class="sf-ico teal"><svg class="ico"><use href="#i-compass"/></svg></span><span>探索空间</span></span><span class="vl">电影 4 · 书籍 4 <svg class="ico xs chev"><use href="#i-chev"/></svg></span></div>
             </div>
           </div>
@@ -2104,16 +2068,22 @@ body.only .theme-toggle{display:none}
           <div class="settings-group">
             <div class="group-label">账号</div>
             <div class="group-card">
-              <div class="field"><span class="fl"><span class="sf-ico blue"><svg class="ico"><use href="#i-lock"/></svg></span><span>豆瓣登录与 Cookie</span></span><span class="vl">Keychain 已保存 <svg class="ico xs chev"><use href="#i-chev"/></svg></span></div>
+              <div class="field"><span class="fl"><span class="sf-ico blue"><svg class="ico"><use href="#i-lock"/></svg></span><span>豆瓣登录与 Cookie</span></span><span class="vl">未登录 <svg class="ico xs chev"><use href="#i-chev"/></svg></span></div>
             </div>
           </div>
 
-          <div class="note" style="text-align:center;padding:18px 0 6px">书影记录 v0.1.0 · 关于与开源许可</div>
-          <div class="note" style="text-align:center;padding:0 0 6px">把豆瓣上的观影与阅读，整理成一座私人档案馆</div>
+          <div class="settings-group">
+            <div class="group-label">开发者</div>
+            <div class="group-card">
+              <div class="field"><span class="fl"><span class="sf-ico red"><svg class="ico"><use href="#i-trash"/></svg></span><span style="color:var(--danger)">清理全部数据</span></span><span class="vl danger">不可恢复 <svg class="ico xs chev"><use href="#i-chev"/></svg></span></div>
+            </div>
+          </div>
+
+          <div class="note" style="text-align:center;padding:18px 0 6px">关于与开源许可</div>
         </div>
         <div class="tabbar"><div class="tab"><svg class="ico"><use href="#i-record"/></svg><span>记录</span></div><div class="tab"><svg class="ico"><use href="#i-list"/></svg><span>豆列</span></div><div class="tab"><svg class="ico"><use href="#i-folder"/></svg><span>计划</span></div><div class="tab"><svg class="ico"><use href="#i-report"/></svg><span>报告</span></div><div class="tab on"><svg class="ico"><use href="#i-set"/></svg><span>设置</span></div><div class="homebar"></div></div>
       </div>
-      <figcaption><b>设置首页 <span class="tagline">分组列表</span></b>桌面是纵向卡片流，手机按 iOS 惯例收成分组列表：账号卡 + 外观 / 数据与探索 / 账号三组，云同步、字数、回收站都从这里二次进入。</figcaption>
+      <figcaption><b>设置首页 <span class="tagline">分组列表</span></b>桌面是纵向卡片流，手机按 iOS 惯例收成分组列表：账号卡 + 外观 / 数据与探索 / 账号三组，云同步、字数、回收站都从这里二次进入；底部新增 Debug 开发者入口。</figcaption>
     </figure>
 
     <figure>
@@ -2188,7 +2158,7 @@ body.only .theme-toggle{display:none}
               <div class="field"><span class="fl"><span class="checkbox on"><svg class="ico"><use href="#i-check"/></svg></span><span>保存后立即检测连通性</span></span><span class="vl"><span class="tag read">推荐</span></span></div>
               <div class="field"><span class="fl"><span>仅保存在本机</span></span><span class="vl muted">不同步 GitHub</span></div>
             </div>
-            <div class="note">本地站点会在列表里标记「本地」；拉取远端配置不会覆盖，可在列表左滑删除。</div>
+            <div class="note">本地站点会在列表里标记「本地」；拉取远端配置不会覆盖，可在列表内删除。</div>
           </div>
         </div>
       </div>
@@ -2204,58 +2174,77 @@ body.only .theme-toggle{display:none}
           <span class="nav-title">云同步</span>
           <span class="icons" style="color:var(--gold)"><svg class="ico"><use href="#i-cloud"/></svg></span>
         </div>
-<div class="report-compose" style="padding:14px;margin:0 16px">
-            <div class="flexb">
-              <div class="hstack" style="gap:10px">
-                <span class="sf-ico gold" style="width:36px;height:36px"><svg class="ico"><use href="#i-cloud"/></svg></span>
-                <div>
-                  <div class="t14 b600">iCloud Drive 可用</div>
-                  <div class="t11 mt2" style="color:var(--text3)">同步文件夹：iCloud Drive / 书影记录</div>
-                </div>
-              </div>
-              <span class="tag read">已连接</span>
-            </div>
-            <div class="divider" style="margin:12px 0 10px"></div>
-            <div class="flexb">
-              <div>
-                <div class="t12" style="color:var(--text2)">最近备份</div>
-                <div class="t135 b600 mt2">11-20 22:00 · 128 条记录 · 4.2 MB</div>
-              </div>
-              <span class="tag">自动</span>
-            </div>
+        <div class="group-card" style="margin:0 16px">
+          <div class="field">
+            <span class="fl"><span class="sf-ico teal"><svg class="ico"><use href="#i-cloud"/></svg></span><span><span class="t135 b600">同步文件夹</span><br><span class="t11 muted">书影记录</span></span></span>
+            <span class="vl muted"><svg class="ico xs chev"><use href="#i-chev"/></svg></span>
           </div>
         </div>
+        </div>
         <div class="body scroll">
-          
+          <div class="group-card">
+            <div class="field"><span class="fl"><span>本机记录</span></span><span class="vl muted">318 条</span></div>
+            <div class="field"><span class="fl"><span>云端备份</span></span><span class="vl muted">3 份</span></div>
+            <div class="field"><span class="fl"><span>上次备份</span></span><span class="vl muted">11 月 22 日 01:37</span></div>
+            <div class="field"><span class="fl"><span>自动备份</span></span><span class="toggle off"></span></div>
+            <div class="field"><span class="fl"><span>自动同步</span></span><span class="toggle off"></span></div>
+          </div>
+          <div class="note">每次备份会保存一份与桌面版兼容的完整数据。每台设备自动保留 3 份、手动保留 2 份。自动同步只会在本机没有未备份改动时恢复。</div>
 
-          <div class="group-card mt12">
-            <div class="field"><span class="fl"><span>自动备份</span></span><span class="toggle"></span></div>
-            <div class="field" style="align-items:flex-start"><span class="fl" style="align-items:flex-start"><span class="t13">自动同步</span></span><span class="toggle"></span></div>
+          <div class="btn primary mt14" style="width:100%"><svg class="ico"><use href="#i-sync"/></svg>同步数据</div>
+          <div style="display:flex;gap:10px;margin-top:10px">
+            <div class="btn ghost" style="flex:1"><svg class="ico"><use href="#i-folder"/></svg>更换文件夹</div>
+            <div class="btn danger" style="flex:1"><svg class="ico"><use href="#i-close"/></svg>清除</div>
           </div>
-          <div class="note" style="padding-top:6px">自动备份：数据变动后生成快照，每台设备保留 3 份自动 + 2 份手动；自动同步：启动时若云端更新且本机没有未备份改动，自动恢复。</div>
-
-          <div class="section-t"><span>云端快照</span><span class="link">选择同步目录</span></div>
-          <div class="report-file">
-            <div class="rf-ico"><svg class="ico"><use href="#i-cloud"/></svg></div>
-            <div class="rf-main"><div class="rf-title">自动快照 · 11-20 22:00</div><div class="rf-meta">128 条记录 · 3 个豆列 · 4 个计划 · 来自「猫九的 iPhone」</div></div>
-            <span class="tag gold">最新</span>
-          </div>
-          <div class="report-file">
-            <div class="rf-ico"><svg class="ico"><use href="#i-download"/></svg></div>
-            <div class="rf-main"><div class="rf-title">手动备份 · 11-18 21:00</div><div class="rf-meta">121 条记录 · 8.1 MB · 来自「MacBook Pro」</div></div>
-            <span class="tag">手动</span>
-          </div>
-          <div class="report-file">
-            <div class="rf-ico"><svg class="ico"><use href="#i-cloud"/></svg></div>
-            <div class="rf-main"><div class="rf-title">自动快照 · 11-17 23:40</div><div class="rf-meta">118 条记录 · 7.9 MB · 来自「猫九的 iPhone」</div></div>
-          </div>
-          <div class="btn ghost sm" style="width:100%"><svg class="ico"><use href="#i-download"/></svg>检查并恢复最新快照</div>
-          <div class="note">快照不含登录 Cookie 与封面图片；恢复前会把当前数据库自动备份到本机 backups 目录，封面可在恢复后按提示补全。</div>
+          <div class="note">恢复会用所选备份覆盖本机的记录、豆列和计划；恢复前会先在本机自动留一份旧数据副本。建议把同步文件夹设为 iCloud Drive 里的「书影记录」。</div>
         </div>
         <div class="homebar"></div>
       </div>
-      <figcaption><b>云同步 <span class="tagline">快照列表</span></b>桌面基于 iCloud/OneDrive 目录写 SQLite 快照；iOS 用「文件」里的 iCloud Drive 目录，同样列出自动/手动快照，选择某一份恢复，先本机备份再覆盖。</figcaption>
+      <figcaption><b>云同步 <span class="tagline">单一入口</span></b>对齐 Record-iOS：不再把「备份」和「恢复」拆成两个按钮，统一从「同步数据」进入版本选择；本机上传与云端恢复在同一个浮层完成，自动同步/备份开关留在本页。</figcaption>
     </figure>
+
+    <figure>
+      <div class="phone">
+        <div class="under">
+          <div class="under-nav"></div>
+          <div class="under-row"></div><div class="under-row"></div><div class="under-row"></div><div class="under-row"></div>
+        </div>
+        <div class="sheet-scrim"></div>
+        <div class="sheet" style="height:694px">
+          <div class="grabber"></div>
+          <div class="sheet-head"><span class="link">关闭</span><span class="st">选择要同步到的版本</span><span class="link strong" style="opacity:0">同步</span></div>
+          <div class="sheet-body scroll">
+            <div class="group-card">
+              <div class="field">
+                <span class="fl"><span class="sf-ico gold"><svg class="ico"><use href="#i-upload"/></svg></span><span><span class="t135 b600">本机数据</span><br><span class="t11 muted">318 条记录 · 40 个豆列</span></span></span>
+              </div>
+              <div style="padding:0 14px 12px"><div class="btn primary sm" style="width:100%"><svg class="ico"><use href="#i-upload"/></svg>备份本机数据到云端</div></div>
+            </div>
+
+            <div class="section-t"><span>云端备份</span><span class="link">3 份</span></div>
+            <div class="report-file">
+              <div class="rf-ico"><svg class="ico"><use href="#i-cloud"/></svg></div>
+              <div class="rf-main"><div class="rf-title">自动快照 · 11-22 01:37</div><div class="rf-meta">318 条记录 · 40 个豆列 · 3 个计划 · 来自「猫九的 iPhone」</div></div>
+              <span class="tag gold">最新</span>
+            </div>
+            <div class="report-file">
+              <div class="rf-ico"><svg class="ico"><use href="#i-download"/></svg></div>
+              <div class="rf-main"><div class="rf-title">手动备份 · 11-20 22:00</div><div class="rf-meta">128 条记录 · 4.2 MB · 来自「MacBook Pro」</div></div>
+              <span class="tag">手动</span>
+            </div>
+            <div class="report-file">
+              <div class="rf-ico"><svg class="ico"><use href="#i-cloud"/></svg></div>
+              <div class="rf-main"><div class="rf-title">自动快照 · 11-17 23:40</div><div class="rf-meta">118 条记录 · 7.9 MB · 来自「猫九的 iPhone」</div></div>
+            </div>
+            <div class="note">选择云端备份可恢复到本机；本机数据不会自动覆盖。恢复前会先在 backups/ 留一份本机副本。</div>
+          </div>
+        </div>
+        <div class="homebar"></div>
+      </div>
+      <figcaption><b>选择同步版本 <span class="tagline">本机上传 / 云端恢复</span></b>顶部「本机数据」负责上传，下面列出全部自动/手动快照；点击快照回到云同步页确认覆盖。未下载的 iCloud 占位会标记「未下载」，不会误点恢复。</figcaption>
+    </figure>
+
+
 
     <figure>
       <div class="phone">
@@ -2266,41 +2255,37 @@ body.only .theme-toggle{display:none}
           <span class="nav-title">字数统计</span>
           <span class="icons" style="color:var(--text3)"><svg class="ico"><use href="#i-doc"/></svg></span>
         </div>
-<div style="padding:0 16px">
-<div class="group-card">
-            <div class="field"><span class="lb">本地书库目录</span><span class="vl">iCloud Drive / Books <svg class="ico xs chev"><use href="#i-chev"/></svg></span></div>
-            <div class="field"><span class="lb">支持格式</span><span class="vl">EPUB · TXT · DOCX</span></div>
-            <div class="field"><span class="lb">匹配方式</span><span class="vl">书名 + 作者</span></div>
-          </div>
+        <div class="group-card" style="margin:0 16px">
+          <div class="field"><span class="lb">文件来源</span><span class="vl">系统「文件」App</span></div>
+          <div class="field"><span class="lb">支持格式</span><span class="vl">EPUB · TXT · DOCX</span></div>
+          <div class="field"><span class="lb">匹配方式</span><span class="vl">文件名匹配书名</span></div>
         </div>
         </div>
         <div class="body scroll">
-          
-          <div class="note">iOS 版直接读取「文件」中的电子书，不再依赖 Calibre；MOBI / AZW3 需先转换格式。</div>
+          <div class="note">直接读取「文件」中的 EPUB / TXT / DOCX；按文件名匹配书籍并写入字数。MOBI / AZW3 需先转换格式。</div>
 
-          <div class="report-compose mt12">
-            <div class="flexb"><span class="t13 b600">正在统计 · 第 128 / 134 本</span><span class="t115 gold">62%</span></div>
-            <div class="progress teal mt8" style="height:7px"><div class="fill" style="width:62%"></div></div>
-            <div class="flexb mt10">
-              <div><div class="t11" style="color:var(--text3)">已统计字数</div><div class="t18 b700 mt2 nums">1,842.6 万字</div></div>
-              <div style="text-align:right"><div class="t11" style="color:var(--text3)">已匹配书籍</div><div class="t18 b700 mt2 nums">128 / 134</div></div>
-            </div>
+          <div class="report-compose">
+            <div class="flexb"><span class="t13 b600">已统计 101 本</span><span class="t18 b700 nums gold">4,052.4 <span class="t11" style="font-weight:600">万字</span></span></div>
+            <div class="progress teal mt8" style="height:7px"><div class="fill" style="width:96%"></div></div>
+            <div class="flexb mt10"><span class="t11" style="color:var(--text3)">已统计书籍</span><span class="t11 muted">101 / 204</span></div>
           </div>
 
-          <div class="section-t"><span>最近统计</span><span class="link">重新统计</span></div>
+          <div class="section-t"><span>统计历史</span><span class="link">2 次</span></div>
           <div class="group-card">
-            <div class="field"><span class="fl"><span class="t13">百年孤独</span></span><span class="vl muted">26.2 万字</span></div>
-            <div class="field"><span class="fl"><span class="t13">献给阿尔吉侬的花束</span></span><span class="vl muted">22.4 万字</span></div>
-            <div class="field"><span class="fl"><span class="t13">杀死一只知更鸟</span></span><span class="vl muted">18.6 万字</span></div>
-            <div class="field"><span class="fl"><span class="t13">人类简史</span></span><span class="vl muted">32.5 万字</span></div>
+            <div class="field"><span class="fl"><span><span class="t13 b600">11 月 25 日 22:30</span><br><span class="t105 muted">成功 21 · 未完成 30 · 书库 128 本</span></span></span><span class="vl muted"><svg class="ico xs chev"><use href="#i-chev"/></svg></span></div>
+            <div class="field"><span class="fl"><span><span class="t13 b600">11 月 24 日 20:12</span><br><span class="t105 muted">成功 18 · 未完成 26 · 书库 120 本</span></span></span><span class="vl muted"><svg class="ico xs chev"><use href="#i-chev"/></svg></span></div>
           </div>
-          <div class="note">字数随记录显示在读书海报的统计行；手动填写的字数优先于本地统计结果。</div>
-          <div class="btn ghost sm mt12" style="width:100%">清除字数缓存并重新匹配</div>
+          <div class="note">字数会写回书籍记录，并随云备份同步；低于 1 万字的结果会判为异常，不写入记录。</div>
+          <div class="btn primary mt14" style="width:100%"><svg class="ico"><use href="#i-doc"/></svg>统计</div>
+          <div class="btn ghost mt10" style="width:100%"><svg class="ico"><use href="#i-folder"/></svg>统计文件夹</div>
+          <div class="btn danger mt10" style="width:100%"><svg class="ico"><use href="#i-trash"/></svg>清除全部字数</div>
         </div>
         <div class="homebar"></div>
       </div>
-      <figcaption><b>字数统计 <span class="tagline">文件 App 书库</span></b>桌面用 Calibre / 本地目录统计；手机改为选择「文件」里的书库文件夹，直接解析 EPUB / TXT / DOCX，进度与已匹配数量一屏可见。</figcaption>
+      <figcaption><b>字数统计 <span class="tagline">文件 App 书库</span></b>与当前实现对齐：顶部只展示来源/格式/匹配方式；统计结果按「记录 + 豆列」去重汇总，低于 1 万字按失败处理；历史记录可回看每次成功/未完成数量。</figcaption>
     </figure>
+
+
 
     <figure>
       <div class="phone">
@@ -2312,10 +2297,10 @@ body.only .theme-toggle{display:none}
           <span class="icons" style="color:var(--danger)"><svg class="ico"><use href="#i-trash"/></svg></span>
         </div>
                 <div class="title-row" style="padding-top:2px;padding-bottom:8px">
-          <div class="seg sm"><span class="on">记录 3</span><span>豆列 1</span><span>计划 1</span></div>
+          <div class="seg sm"><span class="on">记录 0</span><span>豆列 0</span><span>计划 0</span></div>
         </div>
         <div class="flexb" style="padding:0 16px 6px">
-          <span class="t12" style="color:var(--text3)">3 条记录 · 1 个豆列 · 1 个计划</span>
+          <span class="t12" style="color:var(--text3)">0 条记录 · 0 个豆列 · 0 个计划</span>
           <span class="tag">永久保留</span>
         </div>
         <div class="group-card" style="margin:0 16px 4px">
@@ -2324,36 +2309,13 @@ body.only .theme-toggle{display:none}
         </div>
         </div>
         <div class="body scroll">
-          <div class="row">
-            <div class="thumb"><div class="poster p-j"><span class="pt">沙丘</span></div></div>
-            <div class="row-main">
-              <div class="row-title">沙丘 2</div>
-              <div class="row-sub">观影 · 手动删除 · 11-20 18:22</div>
-            </div>
-            <div class="right"><span class="btn ghost xs">恢复</span><span class="btn danger xs">删除</span></div>
-          </div>
-          <div class="row">
-            <div class="thumb"><div class="poster book p-i"><span class="pt">我与地坛</span></div></div>
-            <div class="row-main">
-              <div class="row-title">我与地坛</div>
-              <div class="row-sub">读书 · 手动删除 · 11-18 09:40</div>
-            </div>
-            <div class="right"><span class="btn ghost xs">恢复</span><span class="btn danger xs">删除</span></div>
-          </div>
-          <div class="row">
-            <div class="thumb"><div class="poster p-d"><span class="pt">小森林</span></div></div>
-            <div class="row-main">
-              <div class="row-title">小森林 夏秋篇</div>
-              <div class="row-sub">观影 · 豆瓣同步移除 · 11-12 21:06</div>
-            </div>
-            <div class="right"><span class="btn ghost xs">恢复</span><span class="btn danger xs">删除</span></div>
-          </div>
+          <div class="empty">回收站为空<br><span style="font-size:11.5px">删除的记录会在这里保留，可随时恢复或彻底删除</span></div>
           <div class="note">「同步移除」的记录在豆瓣条目重新出现时会自动恢复；「彻底删除」会留下删除标记，导入 Excel 到其他设备时同步删除，且不会被同步重新加回。</div>
 
           <div class="group-card mt12">
             <div class="field"><span class="fl"><span class="t13">回收站保留策略</span></span><span class="vl muted">永久保留</span></div>
-            <div class="field"><span class="fl"><span class="t13">豆列</span></span><span class="vl muted">1 个</span></div>
-            <div class="field"><span class="fl"><span class="t13">计划文件夹</span></span><span class="vl muted">1 个</span></div>
+            <div class="field"><span class="fl"><span class="t13">豆列</span></span><span class="vl muted">0 个</span></div>
+            <div class="field"><span class="fl"><span class="t13">计划文件夹</span></span><span class="vl muted">0 个</span></div>
           </div>
           <div class="btn danger mt14" style="width:100%"><svg class="ico"><use href="#i-trash"/></svg>清空回收站</div>
           <div class="note" style="text-align:center">清空后不可恢复；彻底删除的条目不会再参与统计与同步。</div>

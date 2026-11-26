@@ -78,6 +78,7 @@ iOS 生成的 `.db` 使用桌面端当前 schema 的全部业务表：
 - `plan_items`
 - `book_words`
 - `book_meta`
+- `movie_meta`
 - `settings`
 - `ignored_subjects`
 - `purged_records`
@@ -85,7 +86,7 @@ iOS 生成的 `.db` 使用桌面端当前 schema 的全部业务表：
 快照生成时：
 
 1. 不写入本机专属设置（Cookie、书库路径、同步目录、自动开关、上次同步簿记）；
-2. 写入记录、豆列、计划、书籍字数与页数；
+2. 写入记录、豆列、计划、书籍字数、页数和影片时长（`movie_meta`）；
 3. 在 `settings` 表写入 `ios_explore_sites`，值为探索空间站点数组的 JSON；
 4. 写入 `ignored_subjects` / `purged_records` 的全部行，并在 `settings` 写入 `snapshot_marks_version = '1'`，声明这两张表由本快照完整维护；
 5. 生成后执行 `PRAGMA integrity_check`，必须返回 `ok`。
@@ -253,6 +254,7 @@ iOS 从 v1.3 起维护桌面协议中的两张抑制表，并随快照同步：
     "plan_items": 13,
     "book_words": 9,
     "book_meta": 9,
+    "movie_meta": 9,
     "ignored_subjects": 0,
     "purged_records": 0
   }
@@ -266,6 +268,35 @@ iOS 从 v1.3 起维护桌面协议中的两张抑制表，并随快照同步：
 - `counts` 为数据库实际行数（包含软删除记录）；
 - `records_updated` 取本地记录日期最大值；
 - 写入使用临时文件 + 原子替换，避免同步过程中读到半写清单。
+
+### 4.2 豆列条目扩展列
+
+桌面端新 schema 在 `doulist_items` 增加：
+
+- `status`（`done` / `wish`）
+- `duration_minutes`
+- `pages`
+- `word_count`
+- `year`
+- `release_date`
+- `cover_url`
+
+iOS 读取旧快照时按列是否存在兼容；新快照会写入这些列，同时仍保留 sidecar 以兼容旧桌面端。
+
+### 4.3 影片时长表
+
+`movie_meta` 与桌面端 v0.1.1+ 对齐：
+
+```sql
+CREATE TABLE movie_meta (
+    subject_id TEXT PRIMARY KEY,
+    duration_minutes INTEGER NOT NULL DEFAULT 0,
+    duration_manual INTEGER NOT NULL DEFAULT 0,
+    updated_at TEXT NOT NULL DEFAULT ''
+);
+```
+
+iOS 写入快照时会从电影记录补齐 `duration_minutes`；恢复桌面端快照时优先读取该表补齐影片时长。旧快照没有此表时按 0 处理，不影响恢复。
 
 ## 6. 保留策略
 

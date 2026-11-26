@@ -25,39 +25,6 @@ struct WordCountView: View {
     @State private var activeSheet: WordCountSheet?
     @State private var history = WordCountHistoryStore.shared
 
-    private var wordCountSummary: (count: Int, total: Int, all: Int) {
-        var keys: [String] = []
-        var words: [String: Int] = [:]
-        var seen = Set<String>()
-
-        func add(title: String, subjectID: String, wordCount: Int?) {
-            let key = summaryKey(title: title, subjectID: subjectID)
-            guard !key.isEmpty else { return }
-            if seen.insert(key).inserted { keys.append(key) }
-            if let wordCount, wordCount > 0 {
-                words[key] = max(words[key] ?? 0, wordCount)
-            }
-        }
-
-        for record in store.records where !record.isDeleted && record.mediaType == .book {
-            add(title: record.title, subjectID: record.subjectID, wordCount: record.wordCount)
-        }
-        let activeListIDs = Set(store.doulists.filter { $0.deletedAt == nil }.map(\.id))
-        for item in store.doulistItems where item.mediaType == .book && activeListIDs.contains(item.doulistID) {
-            add(title: item.title, subjectID: item.subjectID, wordCount: item.wordCount)
-        }
-
-        let counted = keys.compactMap { words[$0] }
-        return (counted.count, counted.reduce(0, +), keys.count)
-    }
-
-    private func summaryKey(title: String, subjectID: String) -> String {
-        let id = subjectID.trimmingCharacters(in: .whitespacesAndNewlines)
-        if !id.isEmpty { return "id:\(id)" }
-        let normalized = title.lowercased().filter { $0.isLetter || $0.isNumber }
-        return normalized.isEmpty ? "" : "title:\(normalized)"
-    }
-
     private func wordText(_ words: Int) -> String {
         if words >= 10_000 {
             return L10n.Stats.tenThousandFormat(Double(words) / 10_000)
@@ -100,16 +67,16 @@ struct WordCountView: View {
 
                 VStack(alignment: .leading, spacing: 8) {
                     HStack {
-                        Text(L10n.WordCount.countedBooksCount(String(describing: wordCountSummary.count)))
+                        Text(L10n.WordCount.countedBooksCount(String(describing: store.wordCountSummary().count)))
                             .font(.appBody)
                             .fontWeight(.semibold)
                         Spacer()
-                        Text(wordText(wordCountSummary.total))
+                        Text(wordText(store.wordCountSummary().total))
                             .font(.appBody)
                             .fontWeight(.bold)
                             .foregroundStyle(Theme.gold)
                     }
-                    ProgressView(value: min(1, Double(wordCountSummary.count) / Double(max(1, wordCountSummary.all))))
+                    ProgressView(value: min(1, Double(store.wordCountSummary().count) / Double(max(1, store.wordCountSummary().all))))
                         .tint(Theme.teal)
                         .scaleEffect(x: 1, y: 0.8, anchor: .center)
                     HStack {
@@ -117,7 +84,7 @@ struct WordCountView: View {
                             .font(.appCaption)
                             .foregroundStyle(Theme.text3)
                         Spacer()
-                        Text("\(wordCountSummary.count) / \(wordCountSummary.all)")
+                        Text("\(store.wordCountSummary().count) / \(store.wordCountSummary().all)")
                             .font(.appCaption)
                             .foregroundStyle(Theme.text3)
                     }

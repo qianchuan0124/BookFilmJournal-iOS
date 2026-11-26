@@ -38,7 +38,7 @@ def tabs(active: str) -> str:
 def main():
     layout = (SRC / "layout.html").read_text(encoding="utf-8")
     html = layout.replace("{{STYLE}}", (SRC / "style.css").read_text(encoding="utf-8"))
-    for name in ["records", "doulist", "plan", "report", "settings", "decisions"]:
+    for name in ["records", "doulist", "plan", "report", "reportstyles", "settings", "decisions"]:
         part = (SRC / f"part-{name}.html").read_text(encoding="utf-8")
         html = html.replace("{{" + name.upper() + "}}", part)
     html = html.replace("{{SB}}", SB)

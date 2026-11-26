@@ -12,9 +12,13 @@ python3 "$ROOT/build.py"
 for theme in light dark; do
   suffix=""
   [ "$theme" = "dark" ] && suffix="-dark"
-  for group in records doulist plan report settings decisions; do
+  for group in records doulist plan report reportstyles settings decisions; do
     height=2200
     [ "$group" = "records" ] && height=4400
+    [ "$group" = "settings" ] && height=3000
+    [ "$group" = "report" ] && height=1160
+    [ "$group" = "reportstyles" ] && height=1220
+    [ "$group" = "doulist" ] && height=1200
     "$CHROME" --headless=new --disable-gpu --hide-scrollbars \
       --window-size=1500,$height --force-device-scale-factor=2 \
       --screenshot="$OUT/$group$suffix.png" \

@@ -365,12 +365,6 @@ extension DateFormatter {
     }()
 }
 
-extension Date {
-    static func sample(_ year: Int, _ month: Int, _ day: Int) -> Date {
-        Calendar.current.date(from: DateComponents(year: year, month: month, day: day)) ?? Date()
-    }
-}
-
 
 enum StatsInputFormat {
     static func wordsHint(_ raw: String) -> String? {
