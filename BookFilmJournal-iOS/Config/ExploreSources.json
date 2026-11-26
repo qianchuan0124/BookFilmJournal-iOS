@@ -4,13 +4,13 @@
       "id": "github",
       "name": "GitHub",
       "description": "优先从 GitHub 拉取远端站点配置。",
-      "url": "https://raw.githubusercontent.com/catnine/bookfilm-sites/main/sites.json"
+      "url": "https://github.com/qianchuan0124/BookFilmJournal/releases/download/v0.1.1/sites.json"
     },
     {
       "id": "gitee",
       "name": "Gitee",
       "description": "GitHub 拉取失败时回退到 Gitee 镜像。",
-      "url": "https://gitee.com/catnine/bookfilm-sites/raw/main/sites.json"
+      "url": "https://gitee.com/qian_chuan/book-film-journal/releases/download/v0.1.0/sites.json"
     }
   ]
 }
