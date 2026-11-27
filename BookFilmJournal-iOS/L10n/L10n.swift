@@ -929,12 +929,16 @@ enum L10n {
         }
         /// 暗色
         static let dark = L10nCore.string("report_dark")
+        /// 报告已删除
+        static let deletedToast = L10nCore.string("report_deletedToast")
         /// 结束
         static let end = L10nCore.string("report_end")
         /// 结束日期
         static let endDate = L10nCore.string("report_endDate")
-        /// 同时导出 PNG
+        /// 生成 PNG
         static let exportPNGToo = L10nCore.string("report_exportPNGToo")
+        /// 导出成功
+        static let exportSuccessToast = L10nCore.string("report_exportSuccessToast")
         /// 生成报告
         static let generateReport = L10nCore.string("report_generateReport")
         /// 已生成报告 · %@ 份
@@ -945,6 +949,8 @@ enum L10n {
         static func generatedSummary(_ p1: Any, _ p2: Any) -> String {
             L10nCore.string("report_generated_summary", String(describing: p1), String(describing: p2))
         }
+        /// 报告已生成
+        static let generatedToast = L10nCore.string("report_generatedToast")
         /// 正在生成报告…
         static let generatingReport = L10nCore.string("report_generatingReport")
         /// 亮色
@@ -973,9 +979,9 @@ enum L10n {
         static let reportGenerateFailed = L10nCore.string("report_reportGenerateFailed")
         /// 报告
         static let reportLabel = L10nCore.string("report_reportLabel")
-        /// 复用桌面报告版式 · 支持 HTML 与 PNG 长图
+        /// 复用桌面报告版式 · 导出 PNG 长图
         static let reportLayoutHint = L10nCore.string("report_reportLayoutHint")
-        /// 报告在 App 内预览，可分享 HTML 与 PNG；封面从本地记录读取，不依赖网络。
+        /// 报告在 App 内预览，仅分享 PNG；封面从本地记录读取，不依赖网络。
         static let reportShareHint = L10nCore.string("report_reportShareHint")
         /// 开始
         static let start = L10nCore.string("report_start")

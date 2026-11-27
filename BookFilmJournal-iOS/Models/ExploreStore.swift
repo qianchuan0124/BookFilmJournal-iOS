@@ -65,6 +65,7 @@ final class ExploreStore {
     var remoteVersion = 3
     var message: String?
     var lastConfigSourceName: String?
+    private var didAutoRefresh = false
 
     private let defaultsKey = "bookfilm.explore.sites.v3"
     private let remoteSources = ExploreRemoteSources.load()
@@ -158,7 +159,7 @@ final class ExploreStore {
                     throw URLError(.badServerResponse)
                 }
                 let config = try JSONDecoder().decode(RemoteExploreConfig.self, from: data)
-                var updated: [ExploreSite] = sites.filter(\.isLocal)
+                var updated: [ExploreSite] = []
                 for site in config.movie {
                     guard let url = site.url.nilIfEmpty else { continue }
                     updated.append(ExploreSite(name: site.name, urlString: url, searchURLTemplate: site.searchUrl, kind: .movie, isLocal: false))
@@ -167,6 +168,7 @@ final class ExploreStore {
                     guard let url = site.url.nilIfEmpty else { continue }
                     updated.append(ExploreSite(name: site.name, urlString: url, searchURLTemplate: site.searchUrl, kind: .book, isLocal: false))
                 }
+                updated.append(contentsOf: sites.filter(\.isLocal))
                 guard !updated.isEmpty else { throw URLError(.cannotParseResponse) }
                 sites = updated
                 remoteVersion = config.version
@@ -175,12 +177,19 @@ final class ExploreStore {
                 reachability = [:]
                 save()
                 message = L10n.Explore.configUpdated(String(describing: updated.count))
+                await refresh(timeout: 15)
                 return
             } catch {
                 continue
             }
         }
         message = L10n.Explore.pullFailed
+    }
+
+    func autoRefreshIfNeeded() async {
+        guard !didAutoRefresh else { return }
+        didAutoRefresh = true
+        await refresh(timeout: 6)
     }
 
     func refresh(timeout: TimeInterval = 15) async {

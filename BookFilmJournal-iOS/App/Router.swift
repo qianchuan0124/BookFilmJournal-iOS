@@ -44,6 +44,7 @@ enum AppRoute: Hashable {
 final class Router {
     var tab: AppTab = .records
     var path: [AppRoute] = []
+    var toastMessage: String?
 
     func switchTab(_ tab: AppTab) {
         if self.tab == tab {
@@ -52,6 +53,10 @@ final class Router {
         }
         self.tab = tab
         path.removeAll()
+    }
+
+    func showToast(_ message: String) {
+        toastMessage = message
     }
 
     func push(_ route: AppRoute) {

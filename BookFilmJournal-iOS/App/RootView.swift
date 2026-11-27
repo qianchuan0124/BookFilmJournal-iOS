@@ -34,6 +34,10 @@ struct RootView: View {
             }
         }
         .background(Theme.bg.ignoresSafeArea())
+        .toast(message: Binding(
+            get: { router.toastMessage },
+            set: { router.toastMessage = $0 }
+        ))
     }
 
     @ViewBuilder

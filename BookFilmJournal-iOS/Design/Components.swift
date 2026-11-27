@@ -118,12 +118,14 @@ struct NavHeader: View {
     let title: String
     var backLabel: String? = nil
     var trailing: AnyView? = nil
+    var textColor: Color = Theme.text
+    var accentColor: Color = Theme.gold
 
     var body: some View {
         ZStack {
             Text(title)
                 .font(.appNav)
-                .foregroundStyle(Theme.text)
+                .foregroundStyle(textColor)
                 .lineLimit(1)
             HStack {
                 Button {
@@ -137,7 +139,7 @@ struct NavHeader: View {
                                 .font(.system(size: 16))
                         }
                     }
-                    .foregroundStyle(Theme.gold)
+                    .foregroundStyle(accentColor)
                 }
                 .buttonStyle(.plain)
                 Spacer()

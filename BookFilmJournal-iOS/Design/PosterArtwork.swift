@@ -413,8 +413,7 @@ struct CoverArtwork: View {
     #endif
 
     private var loadToken: String {
-        let version = localKey.map { CoverStore.version(for: $0) } ?? "0"
-        return "\(resolvedURL ?? "")|\(localKey ?? "")|\(version)|\(isEnabled)"
+        "\(resolvedURL ?? "")|\(localKey ?? "")|\(isEnabled)"
     }
 
     private var resolvedURL: String? {

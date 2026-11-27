@@ -27,6 +27,10 @@ struct MyApp: App {
                     guard phase == .active else { return }
                     runCloudChecks()
                 }
+                .task {
+                    try? await Task.sleep(nanoseconds: 800_000_000)
+                    await explore.autoRefreshIfNeeded()
+                }
         }
     }
 

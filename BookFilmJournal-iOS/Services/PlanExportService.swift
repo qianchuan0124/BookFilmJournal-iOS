@@ -17,10 +17,12 @@ enum PlanExportService {
             .appendingPathComponent("Reports", isDirectory: true)
         try? FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
         let safeTitle = folder.title
-            .replacingOccurrences(of: " ", with: "")
-            .replacingOccurrences(of: "/", with: "-")
-        let prefix = folder.mediaType == .movie ? L10n.Plan.movie : L10n.Plan.book
-        let url = directory.appendingPathComponent("\(prefix)-\(safeTitle).png")
+            .replacingOccurrences(of: "/", with: "／")
+            .replacingOccurrences(of: ":", with: "：")
+            .replacingOccurrences(of: "?", with: "？")
+            .replacingOccurrences(of: "*", with: "＊")
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+        let url = directory.appendingPathComponent("\(safeTitle.isEmpty ? "书影记录海报" : safeTitle).png")
         do {
             try data.write(to: url, options: .atomic)
             return url

@@ -96,6 +96,10 @@ enum Theme {
     static let reportText = Color(hex: 0xF0E8D7)
     static let reportGold = Color(hex: 0xE9BE70)
     static let reportMuted = Color(hex: 0x8C8573)
+    static let reportLightBG = Color(hex: 0xF3EEE3)
+    static let reportLightText = Color(hex: 0x2B251D)
+    static let reportLightGold = Color(hex: 0xB57A22)
+    static let reportLightMuted = Color(hex: 0x8A7E6C)
 
     static let scrim = Color.black.opacity(0.45)
 }

@@ -333,6 +333,23 @@ struct GeneratedReport: Identifiable, Codable, Hashable {
     var count: Int
     var fileName: String
     var hasPNG: Bool
+    var year: Int? = nil
+    var month: Int? = nil
+    var startDate: Date? = nil
+    var endDate: Date? = nil
+    var darkTheme: Bool? = nil
+
+    var query: ReportQuery {
+        ReportQuery(
+            mediaType: mediaType,
+            scope: scope,
+            year: year ?? Calendar.current.component(.year, from: generatedAt),
+            month: month ?? Calendar.current.component(.month, from: generatedAt),
+            startDate: startDate ?? generatedAt.addingTimeInterval(-86400 * 30),
+            endDate: endDate ?? generatedAt,
+            darkTheme: darkTheme ?? true
+        )
+    }
 }
 
 extension DateFormatter {

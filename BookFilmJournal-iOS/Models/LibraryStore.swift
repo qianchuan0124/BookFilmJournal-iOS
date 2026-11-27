@@ -544,6 +544,11 @@ final class LibraryStore {
         save()
     }
 
+    func deleteReport(_ id: UUID) {
+        reports.removeAll { $0.id == id }
+        save()
+    }
+
     private func updatePlanCounts(folderID: UUID) {
         guard let index = planFolders.firstIndex(where: { $0.id == folderID }) else { return }
         let items = planItems.filter { $0.folderID == folderID && $0.deletedAt == nil }

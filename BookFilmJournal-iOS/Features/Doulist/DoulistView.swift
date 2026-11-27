@@ -23,6 +23,10 @@ struct DoulistView: View {
     @State private var submittedKeyword = ""
     @State private var toast: String?
 
+    private var doulistItemsByID: [UUID: [DoulistItem]] {
+        Dictionary(grouping: store.doulistItems, by: \.doulistID)
+    }
+
     private var doulists: [Doulist] {
         let keyword = submittedKeyword.trimmingCharacters(in: .whitespacesAndNewlines)
         return store.activeDoulists
@@ -118,7 +122,8 @@ struct DoulistView: View {
                         .listRowSeparator(.hidden)
                 }
                 ForEach(doulists) { doulist in
-                    DoulistCard(doulist: doulist, query: submittedKeyword)
+                    DoulistCard(doulist: doulist, items: doulistItemsByID[doulist.id] ?? [], query: submittedKeyword)
+                        .equatable()
                         .contentShape(Rectangle())
                         .onTapGesture { router.push(.doulistDetail(doulist.id)) }
                         .listRowInsets(EdgeInsets(top: 5, leading: 16, bottom: 5, trailing: 16))
@@ -155,23 +160,37 @@ struct DoulistView: View {
     }
 }
 
-struct DoulistCard: View {
-    @Environment(LibraryStore.self) private var store
+struct DoulistCard: View, Equatable {
     let doulist: Doulist
-    var query: String = ""
+    let items: [DoulistItem]
+    let query: String
+    private let titleText: AttributedString
+    private let updatedText: String
+
+    init(doulist: Doulist, items: [DoulistItem], query: String = "") {
+        self.doulist = doulist
+        self.items = items
+        self.query = query
+        self.titleText = Self.highlighted(doulist.title, query: query)
+        self.updatedText = doulist.metaText
+    }
+
+    static func == (lhs: DoulistCard, rhs: DoulistCard) -> Bool {
+        lhs.doulist == rhs.doulist && lhs.items == rhs.items && lhs.query == rhs.query
+    }
 
     var body: some View {
         HStack(spacing: 12) {
-            DoulistMosaic(items: store.doulistItems(for: doulist.id), media: doulist.mediaType)
+            DoulistMosaic(items: items, media: doulist.mediaType)
                 .frame(width: 84, height: 100)
 
             VStack(alignment: .leading, spacing: 4) {
-                Text(highlighted(doulist.title))
+                Text(titleText)
                     .font(.appTitle)
                     .foregroundStyle(Theme.text)
                     .lineLimit(2)
                     .multilineTextAlignment(.leading)
-                Text(L10n.Doulist.updatedAt(doulist.metaText, DateFormatter.shortDate.string(from: doulist.updatedAt)))
+                Text(updatedText)
                     .font(.appCaption)
                     .foregroundStyle(Theme.text3)
                 HStack(spacing: 5) {
@@ -201,7 +220,7 @@ struct DoulistCard: View {
         )
     }
 
-    private func highlighted(_ text: String) -> AttributedString {
+    private static func highlighted(_ text: String, query: String) -> AttributedString {
         var attributed = AttributedString(text)
         let keyword = query.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !keyword.isEmpty else { return attributed }
@@ -220,7 +239,6 @@ struct DoulistCard: View {
 }
 
 struct DoulistMosaic: View {
-    @Environment(LibraryStore.self) private var store
     let items: [DoulistItem]
     let media: MediaType
 
@@ -231,8 +249,8 @@ struct DoulistMosaic: View {
             } else if items.count == 1 {
                 CoverArtwork(
                     art: items[0].art,
-                    urlString: store.coverRemoteURL(for: items[0].subjectID, media: items[0].mediaType, fallback: items[0].coverURL),
-                    localKey: store.coverLocalKey(for: items[0].subjectID)
+                    urlString: items[0].coverURL,
+                    localKey: items[0].subjectID
                 )
                 .frame(width: 54, height: 78)
                 .clipShape(RoundedRectangle(cornerRadius: 5, style: .continuous))
@@ -251,7 +269,6 @@ struct DoulistMosaic: View {
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
-        .drawingGroup()
     }
 
     @ViewBuilder
@@ -260,8 +277,8 @@ struct DoulistMosaic: View {
             let item = items[index]
             CoverArtwork(
                 art: item.art,
-                urlString: store.coverRemoteURL(for: item.subjectID, media: item.mediaType, fallback: item.coverURL),
-                localKey: store.coverLocalKey(for: item.subjectID)
+                urlString: item.coverURL,
+                localKey: item.subjectID
             )
             .clipped()
         } else {

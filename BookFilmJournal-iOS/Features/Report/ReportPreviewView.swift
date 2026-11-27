@@ -1,115 +1,145 @@
 import SwiftUI
+
 #if canImport(UIKit)
-import WebKit
+import UIKit
 #endif
 
 struct ReportPreviewView: View {
     @Environment(LibraryStore.self) private var store
-    @Environment(\.dismiss) private var dismiss
+    @Environment(Router.self) private var router
 
     let query: ReportQuery
     @State private var toast: String?
     @State private var isExporting = false
-    @State private var showShare = false
-    @State private var shareItems: [Any] = []
-    @State private var html = ""
+    @State private var image: UIImage?
+    @State private var imageURL: URL?
 
     private var records: [MediaRecord] { store.reportRecords(query: query) }
+    private var reportBackground: Color { query.darkTheme ? Theme.reportBG : Theme.reportLightBG }
+    private var reportTextColor: Color { query.darkTheme ? Theme.reportText : Theme.reportLightText }
+    private var reportGoldColor: Color { query.darkTheme ? Theme.reportGold : Theme.reportLightGold }
+    private var reportMutedColor: Color { query.darkTheme ? Theme.reportMuted : Theme.reportLightMuted }
 
     var body: some View {
         VStack(spacing: 0) {
-            NavHeader(title: "", backLabel: L10n.Report.reportLabel, trailing: AnyView(
-                Button {
-                    prepareShare()
-                } label: {
-                    if isExporting {
-                        ProgressView().tint(Theme.reportGold)
-                    } else {
-                        Image(systemName: "square.and.arrow.up")
-                            .font(.system(size: 18, weight: .semibold))
-                            .foregroundStyle(Theme.reportGold)
+            NavHeader(
+                title: "",
+                backLabel: L10n.Report.reportLabel,
+                trailing: AnyView(
+                    Button {
+                        prepareShare()
+                    } label: {
+                        if isExporting {
+                            ProgressView().tint(reportGoldColor)
+                        } else {
+                            Image(systemName: "square.and.arrow.up")
+                                .font(.system(size: 18, weight: .semibold))
+                                .foregroundStyle(reportGoldColor)
+                        }
                     }
-                }
-                .buttonStyle(.plain)
-                .disabled(isExporting)
-            ))
-            .background(Theme.reportBG)
+                    .buttonStyle(.plain)
+                    .disabled(isExporting || imageURL == nil)
+                ),
+                textColor: reportTextColor,
+                accentColor: reportGoldColor
+            )
+            .background(reportBackground)
 
-            if html.isEmpty {
+            if let image {
+                ScrollView {
+                    Image(uiImage: image)
+                        .resizable()
+                        .scaledToFit()
+                        .frame(maxWidth: .infinity)
+                        .background(reportBackground)
+                }
+                .scrollIndicators(.hidden)
+                .background(reportBackground)
+            } else {
                 VStack(spacing: 10) {
-                    ProgressView().tint(Theme.reportGold)
+                    ProgressView().tint(reportGoldColor)
                     Text(L10n.Report.generatingReport)
                         .font(.appCaption)
-                        .foregroundStyle(Theme.reportMuted)
+                        .foregroundStyle(reportMutedColor)
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
-            } else {
-                #if canImport(UIKit)
-                ReportWebView(html: html)
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-                #else
-                Text(L10n.Report.previewUnsupported)
-                    .font(.appBody)
-                    .foregroundStyle(Theme.reportText)
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-                #endif
             }
         }
-        .background(Theme.reportBG.ignoresSafeArea())
+        .background(reportBackground.ignoresSafeArea())
         .toast(message: $toast)
-        .sheet(isPresented: $showShare) {
-            ActivityShareView(items: shareItems)
-        }
+        .preferredColorScheme(query.darkTheme ? .dark : .light)
         .task(id: query) {
-            html = ReportExportService.makeHTML(query: query, records: store.reportRecords(query: query))
+            await Task.yield()
+            if let url = NativeReportRenderer.existingURL(for: query),
+               let existing = UIImage(contentsOfFile: url.path) {
+                image = existing
+                imageURL = url
+                return
+            }
+            guard let rendered = await NativeReportRenderer.render(query: query, records: records) else {
+                toast = L10n.Report.reportGenerateFailed
+                return
+            }
+            image = rendered
+            guard let url = NativeReportRenderer.savePNG(rendered, query: query) else {
+                toast = "文件太大，无法导出"
+                return
+            }
+            imageURL = url
         }
     }
 
     private func prepareShare() {
-        guard !isExporting else { return }
-        isExporting = true
-        Task {
-            let records = store.reportRecords(query: query)
-            guard let htmlURL = ReportExportService.writeHTML(query: query, records: records) else {
-                isExporting = false
-                toast = L10n.Report.reportGenerateFailed
-                return
-            }
-            var items: [Any] = [htmlURL]
-            if let pngs = try? await ReportExportService.renderPNGs(from: htmlURL, baseName: htmlURL.lastPathComponent) {
-                items.append(contentsOf: pngs)
-            }
-            shareItems = items
-            isExporting = false
-            showShare = true
+        guard !isExporting, let imageURL else { return }
+        #if canImport(UIKit)
+        guard let presenter = topViewController() else {
+            toast = "无法打开分享面板"
+            return
         }
+        isExporting = true
+        let controller = UIActivityViewController(activityItems: [imageURL], applicationActivities: nil)
+        controller.completionWithItemsHandler = { _, completed, _, _ in
+            DispatchQueue.main.async {
+                isExporting = false
+                if completed {
+                    router.showToast(L10n.Report.exportSuccessToast)
+                }
+            }
+        }
+        if let popover = controller.popoverPresentationController {
+            popover.sourceView = presenter.view
+            popover.sourceRect = CGRect(
+                x: presenter.view.bounds.midX,
+                y: presenter.view.bounds.midY,
+                width: 1,
+                height: 1
+            )
+            popover.permittedArrowDirections = []
+        }
+        presenter.present(controller, animated: true)
+        #else
+        toast = L10n.Report.previewUnsupported
+        #endif
     }
+
+    #if canImport(UIKit)
+    private func topViewController() -> UIViewController? {
+        let scenes = UIApplication.shared.connectedScenes.compactMap { $0 as? UIWindowScene }
+        guard let scene = scenes.first(where: { $0.activationState == .foregroundActive }) ?? scenes.first,
+              let window = scene.windows.first(where: { $0.isKeyWindow }) ?? scene.windows.first else {
+            return nil
+        }
+        var top = window.rootViewController
+        while let presented = top?.presentedViewController {
+            top = presented
+        }
+        if let navigation = top as? UINavigationController {
+            return navigation.visibleViewController ?? navigation
+        }
+        if let tab = top as? UITabBarController {
+            return tab.selectedViewController ?? tab
+        }
+        return top
+    }
+    #endif
 }
-
-#if canImport(UIKit)
-private struct ReportWebView: UIViewRepresentable {
-    let html: String
-
-    final class Coordinator {
-        var lastHTML: String?
-    }
-
-    func makeCoordinator() -> Coordinator { Coordinator() }
-
-    func makeUIView(context: Context) -> WKWebView {
-        let configuration = WKWebViewConfiguration()
-        let webView = WKWebView(frame: .zero, configuration: configuration)
-        webView.isOpaque = false
-        webView.backgroundColor = .clear
-        webView.scrollView.backgroundColor = .clear
-        webView.scrollView.contentInsetAdjustmentBehavior = .never
-        return webView
-    }
-
-    func updateUIView(_ webView: WKWebView, context: Context) {
-        guard context.coordinator.lastHTML != html else { return }
-        context.coordinator.lastHTML = html
-        webView.loadHTMLString(html, baseURL: nil)
-    }
-}
-#endif

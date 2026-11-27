@@ -226,18 +226,20 @@ def body_html(source, media):
         body = body.replace('../../cache/covers/book_', '../assets/covers/book-')
         body = body.replace('book_year_2026_light_wall.jpg', './book_year_2026_light_wall.jpg')
     body = body.replace(' loading="lazy"', '')
+    body = body.replace('整合海报', '海报墙')
     body = body.replace('<div class="avatar">我</div>', '<div class="avatar">猫</div>')
     body = body.replace('<div class="brand-name">我</div>', '<div class="brand-name">猫九</div>')
     import re
     body = re.sub(r'<p class="period-sub">.*?</p>', '', body)
     body = re.sub(r'<p class="prefs-note">共 .*?评分最高.*?</p>', '', body)
+    body = re.sub(r'(<div class="decade-legend">.*?</div>)<p class="prefs-note">.*?</p>', r'\1', body, flags=re.S)
     body = re.sub(r'\s*<div class="cal-summary">.*?</div>\s*', '', body, count=1, flags=re.S)
     body = re.sub(r'<span class="cal-count">.*?</span>', '', body)
     body = re.sub(r'<span class="ym-count">.*?</span>', '', body)
     body = body.replace('<span class="kpi-label">有记录天数</span><span class="kpi-value">10 <small>天</small></span>', '<span class="kpi-label">有记录天数</span><span class="kpi-value">10 <small>天</small></span><span class="kpi-sub">10 个有记录的日子</span>')
     body = body.replace('<span class="kpi-label">总片长</span><span class="kpi-value">31 <small>小时</small> 30 <small>分</small></span>', '<span class="kpi-label">总片长</span><span class="kpi-value">31 <small>小时</small> 30 <small>分</small></span><span class="kpi-sub">14 部合计</span>')
-    body = body.replace('<span class="kpi-label">总页数</span><span class="kpi-value">16,450 <small>页</small></span>', '<span class="kpi-label">总页数</span><span class="kpi-value">16,450 <small>页</small></span><span class="kpi-sub">30 本合计</span>')
-    body = body.replace('<span class="kpi-label">总字数</span><span class="kpi-value">978.2 <small>万字</small></span>', '<span class="kpi-label">总字数</span><span class="kpi-value">978.2 <small>万字</small></span><span class="kpi-sub">30 本合计</span>')
+    body = body.replace('<span class="kpi-label">总页数</span><span class="kpi-value">16,450 <small>页</small></span>', '<span class="kpi-label">总页数</span><span class="kpi-value">16,450 <small>页</small></span><span class="kpi-sub">平均每天 45.1 页</span>')
+    body = body.replace('<span class="kpi-label">总字数</span><span class="kpi-value">978.2 <small>万字</small></span>', '<span class="kpi-label">总字数</span><span class="kpi-value">978.2 <small>万字</small></span><span class="kpi-sub">平均每天 26,800 字</span>')
     return body
 
 
